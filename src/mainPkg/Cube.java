@@ -16,7 +16,7 @@ public class Cube {
 	public static int LEFT = 3;
 	public static int RIGHT = 4;
 	
-	
+	int x;
 	
 	public ArrayList<String> steps;
 	
