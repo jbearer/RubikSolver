@@ -11,7 +11,7 @@ import mainPkg.Cube;
 
 public class ImageParserTest {
 	public static void main(String args[]) {
-		System.out.println(testGetRed());
+		/*System.out.println(testGetRed());
 		System.out.println(testGetGreen());
 		System.out.println(testGetBlue());
 		
@@ -21,6 +21,71 @@ public class ImageParserTest {
 		System.out.println(testGetCorners());
 		
 		System.out.println(testGetColor());
+		System.out.println(testGetFace());*/
+		
+		int[][] front = new int[3][3];
+		int[][] back = new int[3][3];
+		int[][] left = new int[3][3];
+		int[][] right = new int[3][3];
+		int[][] up = new int[3][3];
+		int[][] down = new int[3][3];
+		
+		parseCube("res/Cube1/front.png", "res/Cube1/back.png", "res/Cube1/left.png", "res/Cube1/right.png", "res/Cube1/up.png", "res/Cube1/down.png",
+				front, back, left, right, up, down);
+		
+		System.out.println("Front:");
+		for(int[] row : front) {
+			for (int color : row) {
+				System.out.print(color + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+		
+		System.out.println("Back:");
+		for(int[] row : back) {
+			for (int color : row) {
+				System.out.print(color + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+		
+		System.out.println("Left:");
+		for(int[] row : left) {
+			for (int color : row) {
+				System.out.print(color + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+		
+		System.out.println("Right:");
+		for(int[] row : right) {
+			for (int color : row) {
+				System.out.print(color + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+		
+		System.out.println("Up:");
+		for(int[] row : up) {
+			for (int color : row) {
+				System.out.print(color + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+		
+		System.out.println("Down:");
+		for(int[] row : down) {
+			for (int color : row) {
+				System.out.print(color + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 	
 	private static String testGetRed() {
@@ -199,7 +264,7 @@ public class ImageParserTest {
 		String outFilePath = "testOut/";
 		
 		String simpleTest = "res/simpleEdges.png";
-		String curvyTest = "res/curvyEdges.png";
+		String curvyTest = "res/realCube1.png";
 		File simpleFile = new File(simpleTest);
 		File curvyFile = new File(curvyTest);
 		BufferedImage simple, curvy;
@@ -219,9 +284,9 @@ public class ImageParserTest {
 			}
 		}
 		
-		BufferedImage curvyOut = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-		for (int x = 0; x < 64; x++) {
-			for (int y = 0; y < 64; y++) {
+		BufferedImage curvyOut = new BufferedImage(945, 945, BufferedImage.TYPE_INT_ARGB);
+		for (int x = 0; x < 945; x++) {
+			for (int y = 0; y < 945; y++) {
 				int luminosity = getLuminosity(curvy, x, y);
 				curvyOut.setRGB(x, y, (luminosity << 24) | (255 << 16) | (255 << 8) | (255));
 			}
@@ -247,7 +312,7 @@ public class ImageParserTest {
 		String outFilePath = "testOut/";
 		
 		String simpleTest = "res/simpleEdges.png";
-		String curvyTest = "res/curvyEdges.png";
+		String curvyTest = "res/realCube1.png";
 		File simpleFile = new File(simpleTest);
 		File curvyFile = new File(curvyTest);
 		BufferedImage simple, curvy;
@@ -277,22 +342,27 @@ public class ImageParserTest {
 			}
 		}
 		
-		double[][] curvyValues = new double[64][64];
+		double[][] curvyValues = new double[945][945];
 		double maxCurvyValue = -1;
-		for (int x = 0; x < 64; x++) {
-			for (int y = 0; y < 64; y++) {
+		double minCurvyValue = 1000;
+		for (int x = 0; x < 945; x++) {
+			for (int y = 0; y < 945; y++) {
 				double gradient = getGradient(curvy, x, y);
 				if (gradient > maxCurvyValue) maxCurvyValue = gradient;
+				if (gradient < minCurvyValue) minCurvyValue = gradient;
 				curvyValues[x][y] = gradient;
 			}
 		}
 		
+		System.out.println("Max gradient: " + maxCurvyValue);
+		System.out.println("Min gradient: " + minCurvyValue);
+		
 		// Normalize to range 0-255 and write to out image
-		BufferedImage curvyOut = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-		for (int x = 0; x < 64; x++) {
-			for (int y = 0; y < 64; y++) {
+		BufferedImage curvyOut = new BufferedImage(945, 945, BufferedImage.TYPE_INT_ARGB);
+		for (int x = 0; x < 945; x++) {
+			for (int y = 0; y < 945; y++) {
 				curvyValues[x][y] = (int)((double)curvyValues[x][y] * 255.0 / (double)maxCurvyValue);
-				curvyOut.setRGB(x, y, ((int)curvyValues[x][y] << 24) | (255 << 16) | (255 << 8) | (255));
+				curvyOut.setRGB(x, y, ((int)curvyValues[x][y] << 24) | (0 << 16) | (0 << 8) | (0));
 			}
 		}
 		
@@ -381,5 +451,23 @@ public class ImageParserTest {
 		}*/
 		
 		return "Passed test: testGetColor.";
+	}
+	
+	public static String testGetFace() {
+		int[][] correct = { { Cube.RED, Cube.ORANGE, Cube.YELLOW },
+							{ Cube.BLUE, Cube.GREEN, Cube.WHITE },
+							{ Cube.BLUE, Cube.WHITE, Cube.GREEN } };
+		
+		int[][] observed = getFace("res/testCubeStraight.png");
+		
+		for (int row = 0; row < 3; ++row) {
+			for (int col = 0; col < 3; ++col) {
+				if (correct[row][col] != observed[row][col]) {
+					return "Failed test: testGetFace at (" + row + ", " + col + ")\n\tExpected: " + correct[row][col] + "\n\tActual: " + observed[row][col];
+				}
+			}
+		}
+		
+		return "Passed test: testGetFace.";
 	}
 }
