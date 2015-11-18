@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 public class Cube {
 	
-	public static int YELLOW = 1;
-	public static int GREEN = 2;
-	public static int WHITE = 3;
-	public static int BLUE = 4;
-	public static int RED = 5;
-	public static int ORANGE = 6;
+	public static final int YELLOW = 1;
+	public static final int GREEN = 2;
+	public static final int WHITE = 3;
+	public static final int BLUE = 4;
+	public static final int RED = 5;
+	public static final int ORANGE = 6;
 	
 	public static int FRONT = 1;
 	public static int BACK = 2;

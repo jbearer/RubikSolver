@@ -12,9 +12,11 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
-import mainPkg.Cube;
-
 public class ImageParser {
+	
+	///////////////////////////////////////////////////
+	// Constants
+	///////////////////////////////////////////////////
 	
 	// Kernels to use in edge finding
 	private final int[][] sobelKernelX = { { -1, 0, 1},
@@ -27,33 +29,18 @@ public class ImageParser {
 	
 	// Threshold over which a gradient value is considered an edge
 	private final double edgeThresh = 100;
-	
-	class FaceColor {
-		FaceColor(int r, int g, int b) {
-			red = r;
-			green = g;
-			blue = b;
-		}
-		int red;
-		int green;
-		int blue;
-		
-		
-	}
-	
-	// Color definitions (RGB)
-	private final FaceColor RED = new FaceColor(180, 30, 20);
-	private final FaceColor GREEN = new FaceColor(21, 108, 0);
-	private final FaceColor BLUE = new FaceColor(37, 115, 160);
-	private final FaceColor ORANGE = new FaceColor(200, 40, 15);
-	private final FaceColor WHITE = new FaceColor(175, 150, 100);
-	private final FaceColor YELLOW = new FaceColor(22, 150, 50);
 
 	// Square root of percentage of area of a square to look at when determining color
 	private final double bufferRatio = 0.75;
 	
+	///////////////////////////////////////////////////
+	// State variables
+	///////////////////////////////////////////////////
 	private BufferedImage image;
 	
+	///////////////////////////////////////////////////
+	// Constructors
+	///////////////////////////////////////////////////
 	public ImageParser() {
 		image = null;
 	}
@@ -64,29 +51,50 @@ public class ImageParser {
 		try {
 			fileImage = ImageIO.read(file);
 			image = fileImage;
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			System.out.println("Unable to read file: " + fileName + "!");
 			image = null;
 		}
 	}
 	
-	public int getRed(int x, int y) {
+	///////////////////////////////////////////////////
+	// Public Interface
+	///////////////////////////////////////////////////
+
+	// returns a 2D array containing the colors on each square
+	public FaceColor[][] getFace() {
+
+		int[][] corners = getCorners();
+
+		FaceColor[][] face = new FaceColor[3][3];
+		for (int row = 0; row < 3; row++) {
+			for (int col = 0; col < 3; col++) {
+				face[row][col] = getColor(corners, row, col);
+			}
+		}
+		return face;
+	}
+	
+	///////////////////////////////////////////////////
+	// Private member functions
+	///////////////////////////////////////////////////
+	
+	private int getRed(int x, int y) {
 		int value = image.getRGB(x, y);
 		return (value >> 16) & 0xff;
 	}
 	
-	public int getGreen(int x, int y) {
+	private int getGreen(int x, int y) {
 		int value = image.getRGB(x, y);
 		return (value >> 8) & 0xff;
 	}
 
-	public int getBlue(int x, int y) {
+	private int getBlue(int x, int y) {
 		int value = image.getRGB(x, y);
 		return value & 0xff;
 	}
 	
-	public int getLuminosity(BufferedImage image, int x, int y) {
+	private int getLuminosity(BufferedImage image, int x, int y) {
 		return (int)(0.21 * getRed(x, y) + 0.72 * getGreen(x, y) + 0.07 * getBlue(x, y));
 	}
 	
@@ -124,7 +132,7 @@ public class ImageParser {
 	}
 	
 	// Output is not necessarily between 0 and 255
-	public double getGradient(int x, int y) {
+	private double getGradient(int x, int y) {
 		int xGrad = convolution(x, y, sobelKernelX);
 		int yGrad = convolution(x, y, sobelKernelY);
 		
@@ -145,7 +153,7 @@ public class ImageParser {
 	//		bottom right corner
 	//
 	// Returns null if unable to find four corners
-	public int[][] getCorners() {
+	private int[][] getCorners() {
 		int[][] corners = new int[4][2];
 		
 		// Memoize computation of gradients; maps from (x, y) pairs to previously computed gradients
@@ -335,43 +343,13 @@ public class ImageParser {
 		return corners;
 	}
 	
-	// For a color with the given RGB components, determine the nearest Rubik's cube color
-	private int nearestColor(int red, int green, int blue) {
-		int redError = (int) (Math.pow(red - RED.red, 2) + Math.pow(green - RED.green, 2) + Math.pow(blue - RED.blue, 2));
-		int greenError = (int) (Math.pow(red - GREEN.red, 2) + Math.pow(green - GREEN.green, 2) + Math.pow(blue - GREEN.blue, 2));
-		int blueError = (int) (Math.pow(red - BLUE.red, 2) + Math.pow(green - BLUE.green, 2) + Math.pow(blue - BLUE.blue, 2));
-		int orangeError = (int) (Math.pow(red - ORANGE.red, 2) + Math.pow(green - ORANGE.green, 2) + Math.pow(blue - ORANGE.blue, 2));
-		int whiteError = (int) (Math.pow(red - WHITE.red, 2) + Math.pow(green - WHITE.green, 2) + Math.pow(blue - WHITE.blue, 2));
-		int yellowError = (int) (Math.pow(red - YELLOW.red, 2) + Math.pow(green - YELLOW.green, 2) + Math.pow(blue - YELLOW.blue, 2));
-		
-		if (redError < greenError && redError < blueError && redError < orangeError && redError < whiteError && redError < yellowError) {
-			return Cube.RED;
-		}
-		else if (greenError < blueError && greenError < orangeError && greenError < whiteError && greenError < yellowError) {
-			return Cube.GREEN;
-		}
-		else if (blueError < orangeError && blueError < whiteError && blueError < yellowError) {
-			return Cube.BLUE;
-		}
-		else if (orangeError < whiteError && orangeError < yellowError) {
-			return Cube.ORANGE;
-		}
-		else if (whiteError < yellowError) {
-			return Cube.WHITE;
-		}
-		else {
-			return Cube.YELLOW;
-		}
-		
-	}
-	
 	private double distance(int x1, int y1, int x2, int y2) {
 		return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 	}
 	
 	// Given an image of a Rubik's cube face, find the square at (row, col)
 	// and return the color of that square
-	public FaceColor getColor(int[][] corners, int row, int col) {
+	private FaceColor getColor(int[][] corners, int row, int col) {
 		double faceWidth = distance(corners[0][0], corners[0][1], corners[1][0], corners[1][1]);
 		double faceHeight = distance(corners[0][0], corners[0][1], corners[2][0], corners[2][1]);
 		
@@ -425,19 +403,5 @@ public class ImageParser {
 		}
 		
 		return new FaceColor(redAccum / pixelCount, greenAccum / pixelCount, blueAccum / pixelCount);
-	}
-	
-	// returns a 2D array containing the colors on each square
-	public FaceColor[][] getFace() {
-		
-		int[][] corners = getCorners();
-		
-		FaceColor[][] face = new FaceColor[3][3];
-		for (int row = 0; row < 3; row++) {
-			for (int col = 0; col < 3; col++) {
-				face[row][col] = getColor(corners, row, col);
-			}
-		}
-		return face;
 	}
 }
