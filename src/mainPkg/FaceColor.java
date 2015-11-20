@@ -12,7 +12,7 @@ public class FaceColor {
 	public static final int[] WHITE = {175, 150, 100};
 	public static final int[] YELLOW = {22, 150, 50};
 	
-	FaceColor(int r, int g, int b) {
+	public FaceColor(int r, int g, int b) {
 		red = r;
 		green = g;
 		blue = b;
@@ -91,14 +91,33 @@ public class FaceColor {
 	// of the resulting components, because two colors with the same ratio should give
 	// a constant result
 	private double ratioError(int[] testColor) {
-		double[] compRatios = { (double)red / testColor[0], (double) green / testColor[1], (double)blue / testColor[2]};
-		double mean = (compRatios[0] + compRatios[1] + compRatios[2]) / 3.0;
+		double[] compRatios = new double[3];
+		int[] myColors = {red, green, blue};
+		for (int i = 0; i < myColors.length; i++) {
+			// Avoid dividing by zero
+			if (testColor[i] == 0) {
+				testColor[i] = 1;
+				myColors[i] += 1;
+			}
+			compRatios[i] = (double)myColors[i] / (double)testColor[i];
+		}double mean = (compRatios[0] + compRatios[1] + compRatios[2]) / 3.0;
 		return Math.pow(compRatios[0] - mean, 2) + Math.pow(compRatios[1], 2) + Math.pow(compRatios[2], 2);
 	}
 	private double ratioError(FaceColor other) {
-		double[] compRatios = { (double)red / other.red, (double) green / other.green, (double)blue / other.blue};
+		int[] myColors = {red, green, blue};
+		int[] otherColors = {other.red, other.green, other.blue};
+		
+		double[] compRatios = new double[3];
+		for (int i = 0; i < myColors.length; i++) {
+			// Avoid dividing by zero
+			if (otherColors[i] == 0) {
+				otherColors[i] = 1;
+				myColors[i] += 1;
+			}
+			compRatios[i] = (double)myColors[i] / (double)otherColors[i];
+		}
 		double mean = (compRatios[0] + compRatios[1] + compRatios[2]) / 3.0;
-		return Math.pow(compRatios[0] - mean, 2) + Math.pow(compRatios[1], 2) + Math.pow(compRatios[2], 2);
+		return Math.pow(compRatios[0] - mean, 2) + Math.pow(compRatios[1] - mean, 2) + Math.pow(compRatios[2] - mean, 2);
 	}
 
 	/**
@@ -141,6 +160,10 @@ public class FaceColor {
 		default:
 			throw new IllegalArgumentException("Unrecognized Cube color: " + color);
 		}
+	}
+	
+	public String toString() {
+		return "(" + red + ", " + green + ", " + blue + ")";
 	}
 }
 

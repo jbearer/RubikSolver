@@ -9,6 +9,7 @@ public class CubeParser {
 	private ImageParser[] faceParsers;
 	
 	public CubeParser(String frontFile, String backFile, String leftFile, String rightFile, String upFile, String downFile) {
+		faceParsers = new ImageParser[6];
 		faceParsers[0] = new ImageParser(frontFile);
 		faceParsers[1] = new ImageParser(backFile);
 		faceParsers[2] = new ImageParser(leftFile);
@@ -101,7 +102,7 @@ public class CubeParser {
 							continue;
 						}
 						
-						if (curMembers.isEmpty()) {
+						if (protocolor == null) {
 							// Start a new group with elements similar to this one
 							prototype = coords;
 							protocolor = faces[coords.get(0)][coords.get(1)][coords.get(2)];
@@ -119,10 +120,10 @@ public class CubeParser {
 								if (curColor.difference(protocolor) > nextColor.difference(protocolor)) break;
 							}
 							i.add(coords);
-							if (curMembers.size() > 8) {
-								curMembers.removeLast();
-							}
 							usedCoords.add(coords);
+							if (curMembers.size() > 8) {
+								usedCoords.remove(curMembers.removeLast());
+							}
 						}
 					}
 				}
@@ -134,9 +135,10 @@ public class CubeParser {
 				for (int coord = 0; coord < coords.size(); coord++) {
 					groups[group][curMember][coord] = coords.get(coord);
 				}
+				curMember++;
 			}
 			for (int j = 0; j < prototype.size(); j++) {
-				groups[group][groups[group].length - 1][j] = prototype.get(j);
+				groups[group][curMember][j] = prototype.get(j);
 			}
 		}
 		

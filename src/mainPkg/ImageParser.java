@@ -75,6 +75,17 @@ public class ImageParser {
 		return face;
 	}
 	
+	public int[][] gradients() {
+		int[][] gradients = new int[image.getHeight()][image.getWidth()];
+		for (int x = 0; x < image.getWidth(); x++) {
+			for (int y = 0; y < image.getHeight(); y++) {
+				int gradient = (int)getGradient(x, y);
+				gradients[y][x] = gradient;
+			}
+		}
+		return gradients;
+	}
+	
 	///////////////////////////////////////////////////
 	// Private member functions
 	///////////////////////////////////////////////////
@@ -189,12 +200,21 @@ public class ImageParser {
 			if (coords.get(0) < 0 || coords.get(0) >= image.getWidth() || coords.get(1) < 0 || coords.get(1) >= image.getHeight()) {
 				// we've hit the edge of the picture, move the line away from the origin
 				iterations++;
-				coords.set(0, iterations);
-				coords.set(1, iterations);
+				if (iterations % 2 == 0) {
+					// The next row of pixels does not have an exact center
+					// Move just underneath and left of what would be the center
+					coords.set(0, iterations - 1);
+					coords.set(1, iterations);
+				}
+				else {
+					coords.set(0, iterations);
+					coords.set(1, iterations);
+				}
+				
 				
 				if (iterations >= image.getHeight() || iterations >= image.getWidth()) {
 					// We've searched the whole image, no luck
-					return null;
+					throw new RuntimeException("Unable to find top left corner");
 				}
 			}
 			gradient = computedGradients.get(coords);
@@ -203,7 +223,9 @@ public class ImageParser {
 				computedGradients.put(coords, gradient);
 			}
 		}
-		corners[0][0] = coords.get(0); corners[0][1] = coords.get(1);
+		
+		// Add 1 to each component so as to not take the pixel on the actual edge
+		corners[0][0] = coords.get(0) + 1; corners[0][1] = coords.get(1) + 1;
 		
 		// Find the top right corner
 		iterations = 0;
@@ -234,12 +256,20 @@ public class ImageParser {
 			if (coords.get(0) < 0 || coords.get(0) >= image.getWidth() || coords.get(1) < 0 || coords.get(1) >= image.getHeight()) {
 				// we've hit the edge of the picture, move the line away from the origin
 				iterations++;
-				coords.set(0, image.getWidth() - 1 - iterations);
-				coords.set(1, iterations);
+				if (iterations % 2 == 0) {
+					// The next row of pixels does not have an exact center
+					// Move just underneath and right of what would be the center
+					coords.set(0,  image.getWidth() - 1 - iterations + 1);
+					coords.set(1, iterations);
+				}
+				else {
+					coords.set(0, image.getWidth() - 1 - iterations);
+					coords.set(1, iterations);
+				}
 				
 				if (iterations >= image.getHeight() || iterations >= image.getWidth()) {
 					// We've searched the whole image, no luck
-					return null;
+					throw new RuntimeException("Unable to find top right corner");
 				}
 			}
 			gradient = computedGradients.get(coords);
@@ -248,7 +278,7 @@ public class ImageParser {
 				computedGradients.put(coords, gradient);
 			}
 		}
-		corners[1][0] = coords.get(0); corners[1][1] = coords.get(1);
+		corners[1][0] = coords.get(0) - 1; corners[1][1] = coords.get(1) + 1;
 		
 		// Find the bottom left corner
 		iterations = 0;
@@ -279,12 +309,20 @@ public class ImageParser {
 			if (coords.get(0) < 0 || coords.get(0) >= image.getWidth() || coords.get(1) < 0 || coords.get(1) >= image.getHeight()) {
 				// we've hit the edge of the picture, move the line away from the origin
 				iterations++;
-				coords.set(0, iterations);
-				coords.set(1, image.getHeight() - 1 - iterations);
+				if (iterations % 2 == 0) {
+					// The next row of pixels does not have an exact center
+					// Move just underneath and right of what would be the center
+					coords.set(0,  iterations);
+					coords.set(1, image.getHeight() - 1 - iterations + 1);
+				}
+				else {
+					coords.set(0, iterations);
+					coords.set(1, image.getHeight() - 1 - iterations);
+				}
 				
 				if (iterations >= image.getHeight() || iterations >= image.getWidth()) {
 					// We've searched the whole image, no luck
-					return null;
+					throw new RuntimeException("Unable to find bottom left corner");
 				}
 			}
 			gradient = computedGradients.get(coords);
@@ -293,7 +331,7 @@ public class ImageParser {
 				computedGradients.put(coords, gradient);
 			}
 		}
-		corners[2][0] = coords.get(0); corners[2][1] = coords.get(1);
+		corners[2][0] = coords.get(0) + 1; corners[2][1] = coords.get(1) - 1;
 		
 		// Find the bottom right corner
 		iterations = 0;
@@ -324,12 +362,20 @@ public class ImageParser {
 			if (coords.get(0) < 0 || coords.get(0) >= image.getWidth() || coords.get(1) < 0 || coords.get(1) >= image.getHeight()) {
 				// we've hit the edge of the picture, move the line away from the origin
 				iterations++;
-				coords.set(0, image.getWidth() - 1 - iterations);
-				coords.set(1, image.getHeight() - 1 - iterations);
+				if (iterations % 2 == 0) {
+					// The next row of pixels does not have an exact center
+					// Move just underneath and left of what would be the center
+					coords.set(0,  image.getWidth() - 1 - iterations);
+					coords.set(1, image.getHeight() - 1 - iterations + 1);
+				}
+				else {
+					coords.set(0, image.getWidth() - 1 - iterations);
+					coords.set(1, image.getHeight() - 1 - iterations);
+				}
 				
 				if (iterations >= image.getHeight() || iterations >= image.getWidth()) {
 					// We've searched the whole image, no luck
-					return null;
+					throw new RuntimeException("Unable to find bottom right corner");
 				}
 			}
 			gradient = computedGradients.get(coords);
@@ -338,7 +384,7 @@ public class ImageParser {
 				computedGradients.put(coords, gradient);
 			}
 		}
-		corners[3][0] = coords.get(0); corners[3][1] = coords.get(1);
+		corners[3][0] = coords.get(0) - 1; corners[3][1] = coords.get(1) - 1;
 		
 		return corners;
 	}
@@ -368,19 +414,18 @@ public class ImageParser {
 		int blueAccum = 0;
 		int pixelCount = 0;
 		
-		int xStartRow = (int) (xStart + leftOffset);
-		int yStartRow = (int) (yStart + topOffset);
+		int xStartRow = (int) (xStart + leftOffset + 0.5);
+		int yStartRow = (int) (yStart + topOffset + 0.5);
 		
-		System.out.println("Start");
 		// Move across a column of pixels following the slope of the edge
-		while (distance((int)(xStart + leftOffset), (int)(yStart + topOffset), xStartRow, yStartRow) < (faceHeight/3.0)*bufferRatio) {
+		while (distance((int)(xStart + leftOffset + 0.5), (int)(yStart + topOffset + 0.5), xStartRow, yStartRow) < (faceHeight/3.0)*bufferRatio) {
 		
 			
 			int x = xStartRow;
 			int y = yStartRow;
 			
 			// Move across a row of pixels following the slope of the edge
-			while (distance((int)xStartRow, (int)yStartRow, x, y) < (faceWidth/3.0)*bufferRatio) {
+			while (distance((int)(xStartRow + 0.5), (int)(yStartRow + 0.5), x, y) < (faceWidth/3.0)*bufferRatio) {
 				redAccum += getRed(x,y);
 				greenAccum += getGreen(x,y);
 				blueAccum += getBlue(x,y);
