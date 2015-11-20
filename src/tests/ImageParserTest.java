@@ -5,16 +5,17 @@ import mainPkg.ImageParser;
 
 public class ImageParserTest {
 	public static void main(String args[]) {
-		//testGradients();
+		System.out.println("Begin test: gradients");
+		testGradients();
 		System.out.println("Begin test: faceColorStraight");
 		System.out.println(testFaceColorStraight());
 		//System.out.println(testFaceColorSkewed());
 	}
 	
-	private static double epsilon = 0.0001;
+	private static double epsilon = 0.01;
 	
 	private static void testGradients() {
-		ImageParser test = new ImageParser("res/testCubeStraightSmall.png");
+		ImageParser test = new ImageParser("res/testCubeStraightCrop.png");
 		int[][] gradients = test.gradients();
 		for (int[] row : gradients) {
 			for (int grad : row) {
@@ -48,7 +49,7 @@ public class ImageParserTest {
 								  {new FaceColor(0, 0, 255), new FaceColor(34, 177, 76), new FaceColor(236, 234, 235) },
 								  {new FaceColor(0, 162, 232), new FaceColor(255, 255, 255), new FaceColor(55, 142, 55) } };
 		
-		return testFaceColor("res/testCubeStraight.png", "FaceColorStraight", correct);
+		return testFaceColor("res/testCubeStraightCrop.png", "FaceColorStraight", correct);
 		//return testFaceColor("res/gradientTestChecker.png", "FaceColorStraight", correct);
 	}
 	

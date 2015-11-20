@@ -30,7 +30,7 @@ public class ImageParser {
 									   { -1, -2, -1}};
 	
 	// Threshold over which a gradient value is considered an edge
-	private final double edgeThresh = 10;
+	private final double edgeThresh = 50;
 
 	// Square root of percentage of area of a square to look at when determining color
 	private final double bufferRatio = 0.75;
