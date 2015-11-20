@@ -12,6 +12,8 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import static shared.Shared.*;
+
 public class ImageParser {
 	
 	///////////////////////////////////////////////////
@@ -28,7 +30,7 @@ public class ImageParser {
 									   { -1, -2, -1}};
 	
 	// Threshold over which a gradient value is considered an edge
-	private final double edgeThresh = 100;
+	private final double edgeThresh = 10;
 
 	// Square root of percentage of area of a square to look at when determining color
 	private final double bufferRatio = 0.75;
@@ -165,6 +167,14 @@ public class ImageParser {
 	//
 	// Returns null if unable to find four corners
 	private int[][] getCorners() {
+		
+		// Debugging output showing the paths traced out and the gradients computed in the search for corners
+		BufferedImage lines, gradients = null;
+		if (DEBUG) {
+			lines = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+			gradients = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		}
+		
 		int[][] corners = new int[4][2];
 		
 		// Memoize computation of gradients; maps from (x, y) pairs to previously computed gradients
@@ -177,14 +187,19 @@ public class ImageParser {
 		Integer iterations = 0;
 		Double gradient = computedGradients.get(coords);
 		if (gradient == null) {
-			gradient = getGradient(coords.get(0).intValue(), coords.get(1).intValue());
+			gradient = getGradient(coords.get(0), coords.get(1));
 			computedGradients.put(coords, gradient);
 		}
 		while(!isEdge(gradient)) {
+			if (DEBUG) {
+				lines.setRGB(coords.get(0), coords.get(1), 255 - iterations << 16);
+				gradients.setRGB(coords.get(0), coords.get(1), gradient.intValue() << 24);
+			}
+			
 			// search from the line y=x out, moving parallel to the line y = -x
 			if (coords.get(0) > coords.get(1)) {
 				// we're above the line, move equidistant below it
-				Integer x = coords.get(0);
+				Integer x = coords.get(1);
 				Integer y = coords.get(0);
 				coords.set(0, x);
 				coords.set(1, y);
@@ -200,20 +215,32 @@ public class ImageParser {
 			if (coords.get(0) < 0 || coords.get(0) >= image.getWidth() || coords.get(1) < 0 || coords.get(1) >= image.getHeight()) {
 				// we've hit the edge of the picture, move the line away from the origin
 				iterations++;
+				
 				if (iterations % 2 == 0) {
-					// The next row of pixels does not have an exact center
-					// Move just underneath and left of what would be the center
-					coords.set(0, iterations - 1);
-					coords.set(1, iterations);
+					coords.set(0, iterations / 2);
+					coords.set(1, iterations / 2);	
 				}
 				else {
-					coords.set(0, iterations);
-					coords.set(1, iterations);
+					// The next row of pixels does not have an exact center
+					// Move just above and right of what would be the center
+					coords.set(0, iterations / 2 + 1);
+					coords.set(1, iterations / 2 );
 				}
 				
 				
-				if (iterations >= image.getHeight() || iterations >= image.getWidth()) {
-					// We've searched the whole image, no luck
+				if (iterations*2 >= image.getHeight() || iterations*2 >= image.getWidth()) {
+					// We've searched the whole image, no luck	
+					if (DEBUG) {
+						try {
+							File linesOut = new File("testOut/lineTrace.png");
+							ImageIO.write(lines, "png", linesOut);
+							
+							File gradientsOut = new File("testOut/gradients.png");
+							ImageIO.write(gradients, "png", gradientsOut);
+						} catch (IOException e) {
+							return null;
+						}
+					}
 					throw new RuntimeException("Unable to find top left corner");
 				}
 			}
@@ -237,6 +264,8 @@ public class ImageParser {
 			computedGradients.put(coords, gradient);
 		}
 		while(!isEdge(gradient)) {
+			if (DEBUG) lines.setRGB(coords.get(0), coords.get(1), (255 - iterations) << 8);
+			
 			// search from the line y=-x out, moving parallel to the line y = x
 			if (image.getWidth() - 1 - coords.get(0) > coords.get(1)) {
 				// we're above the line, move equidistant below it
@@ -257,18 +286,26 @@ public class ImageParser {
 				// we've hit the edge of the picture, move the line away from the origin
 				iterations++;
 				if (iterations % 2 == 0) {
-					// The next row of pixels does not have an exact center
-					// Move just underneath and right of what would be the center
-					coords.set(0,  image.getWidth() - 1 - iterations + 1);
-					coords.set(1, iterations);
+					coords.set(0, image.getWidth() - 1 - iterations/2);
+					coords.set(1, iterations/2);
 				}
 				else {
-					coords.set(0, image.getWidth() - 1 - iterations);
-					coords.set(1, iterations);
+					// The next row of pixels does not have an exact center
+					// Move just above and left of what would be the center
+					coords.set(0,  image.getWidth() - 1 - (iterations/2 + 1));
+					coords.set(1, iterations/2);	
 				}
 				
 				if (iterations >= image.getHeight() || iterations >= image.getWidth()) {
 					// We've searched the whole image, no luck
+					if (DEBUG) {
+						try {
+							File out = new File("testOut/lineTrace.png");
+							ImageIO.write(lines, "png", out);
+						} catch (IOException e) {
+							return null;
+						}
+					}
 					throw new RuntimeException("Unable to find top right corner");
 				}
 			}
@@ -290,6 +327,8 @@ public class ImageParser {
 			computedGradients.put(coords, gradient);
 		}
 		while(!isEdge(gradient)) {
+			if(DEBUG) lines.setRGB(coords.get(0), coords.get(1), 255 - iterations);
+			
 			// search from the line y=-x out, moving parallel to the line y = x
 			if (image.getWidth() - 1 - coords.get(0) > coords.get(1)) {
 				// we're above the line, move equidistant below it
@@ -310,18 +349,26 @@ public class ImageParser {
 				// we've hit the edge of the picture, move the line away from the origin
 				iterations++;
 				if (iterations % 2 == 0) {
-					// The next row of pixels does not have an exact center
-					// Move just underneath and right of what would be the center
-					coords.set(0,  iterations);
-					coords.set(1, image.getHeight() - 1 - iterations + 1);
+					coords.set(0, iterations/2);
+					coords.set(1, image.getHeight() - 1 - iterations/2);
 				}
 				else {
-					coords.set(0, iterations);
-					coords.set(1, image.getHeight() - 1 - iterations);
+					// The next row of pixels does not have an exact center
+					// Move just above and left of what would be the center
+					coords.set(0,  iterations/2);
+					coords.set(1, image.getHeight() - 1 - (iterations/2 + 1));
 				}
 				
 				if (iterations >= image.getHeight() || iterations >= image.getWidth()) {
 					// We've searched the whole image, no luck
+					if (DEBUG) {
+						try {
+							File out = new File("testOut/lineTrace.png");
+							ImageIO.write(lines, "png", out);
+						} catch (IOException e) {
+							return null;
+						}
+					}
 					throw new RuntimeException("Unable to find bottom left corner");
 				}
 			}
@@ -343,6 +390,8 @@ public class ImageParser {
 			computedGradients.put(coords, gradient);
 		}
 		while(!isEdge(gradient)) {
+			if(DEBUG) lines.setRGB(coords.get(0), coords.get(1), ((255 - iterations) << 16) | ((255 - iterations) << 8) | 255 - iterations);
+			
 			// search from the line y=x out, moving parallel to the line y = -x
 			if (coords.get(0) > coords.get(1)) {
 				// we're above the line, move equidistant below it
@@ -363,18 +412,26 @@ public class ImageParser {
 				// we've hit the edge of the picture, move the line away from the origin
 				iterations++;
 				if (iterations % 2 == 0) {
-					// The next row of pixels does not have an exact center
-					// Move just underneath and left of what would be the center
-					coords.set(0,  image.getWidth() - 1 - iterations);
-					coords.set(1, image.getHeight() - 1 - iterations + 1);
+					coords.set(0, image.getWidth() - 1 - iterations/2);
+					coords.set(1, image.getHeight() - 1 - iterations/2);
 				}
 				else {
-					coords.set(0, image.getWidth() - 1 - iterations);
-					coords.set(1, image.getHeight() - 1 - iterations);
+					// The next row of pixels does not have an exact center
+					// Move just above and right of what would be the center
+					coords.set(0,  image.getWidth() - 1 - iterations/2);
+					coords.set(1, image.getHeight() - 1 - (iterations/2 + 1));
 				}
 				
 				if (iterations >= image.getHeight() || iterations >= image.getWidth()) {
 					// We've searched the whole image, no luck
+					if (DEBUG) {
+						try {
+							File out = new File("testOut/lineTrace.png");
+							ImageIO.write(lines, "png", out);
+						} catch (IOException e) {
+							return null;
+						}
+					}
 					throw new RuntimeException("Unable to find bottom right corner");
 				}
 			}
@@ -386,6 +443,14 @@ public class ImageParser {
 		}
 		corners[3][0] = coords.get(0) - 1; corners[3][1] = coords.get(1) - 1;
 		
+		if (DEBUG) {
+			try {
+				File out = new File("testOut/lineTrace.png");
+				ImageIO.write(lines, "png", out);
+			} catch (IOException e) {
+				return null;
+			}
+		}
 		return corners;
 	}
 	
@@ -423,6 +488,8 @@ public class ImageParser {
 			
 			int x = xStartRow;
 			int y = yStartRow;
+			log(Integer.toString(row) + ", " + Integer.toString(col) + ":");
+			log(y);
 			
 			// Move across a row of pixels following the slope of the edge
 			while (distance((int)(xStartRow + 0.5), (int)(yStartRow + 0.5), x, y) < (faceWidth/3.0)*bufferRatio) {
