@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 public class CubeParser {
 	private ImageParser[] faceParsers;
@@ -121,17 +122,27 @@ public class CubeParser {
 						else {
 							// We need 8 members in addition to the prototype
 							
-							// Add elements in order of increasing difference from the prototype
+							// Add elements in order of decreasing difference from the prototype
 							ListIterator<ArrayList<Integer>> i = curMembers.listIterator();
 							while(i.hasNext()) {
 								ArrayList<Integer> nextCoords = i.next();
 								FaceColor nextColor = faces[nextCoords.get(0)][nextCoords.get(1)][nextCoords.get(2)];
 								FaceColor curColor = faces[coords.get(0)][coords.get(1)][coords.get(2)];
-								if (curColor.difference(protocolor) > nextColor.difference(protocolor)) break;
+								if (curColor.difference(protocolor) > nextColor.difference(protocolor)) {
+									// Insert before the element with a lesser difference
+									if (i.hasPrevious()) i.previous();
+									i.add(coords);
+									usedCoords.add(coords);
+									break;
+								}
 							}
-							if (i.hasPrevious()) i.previous();
-							i.add(coords);
-							usedCoords.add(coords);
+							try {i.next();}
+							catch (NoSuchElementException e) {
+								// If we made it all the way to the end of the list, insert at back
+								curMembers.addLast(coords);
+								usedCoords.add(coords);
+							}
+							
 							if (curMembers.size() > 8) {
 								usedCoords.remove(curMembers.removeFirst());
 							}
