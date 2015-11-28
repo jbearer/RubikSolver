@@ -18,6 +18,12 @@ public class FaceColor {
 		blue = b;
 	}
 	
+	public FaceColor(int[] colors) {
+		red = colors[0];
+		green = colors[1];
+		blue = colors[2];
+	}
+	
 	// Two implementations of nearest color
 	
 	// determine the nearest Rubik's cube color by minimizing the squared error for RGB components
@@ -82,7 +88,28 @@ public class FaceColor {
 	
 	public int nearestColor() {
 		// Change this line to use a different implementation of nearest color
-		return nearestColor_ratio();
+		return nearestColor_squaredError();
+	}
+	
+	// compute the deviation from the RGB values of a test color
+	// finds the total squared error between the componenet of this color and testColor
+	private double squaredError(int[] testColor) {
+		double error = 0;
+		int[] myColors = {red, green, blue};
+		for (int i = 0; i < myColors.length; i++) {
+			error += Math.pow(myColors[i] - testColor[i], 2);
+		}
+		return error;
+	}
+	
+	private double squaredError(FaceColor other) {
+		double error = 0;
+		int[] myColors = {red, green, blue};
+		int[] testColor = {other.red, other.green, other.blue};
+		for (int i = 0; i < myColors.length; i++) {
+			error += Math.pow(myColors[i] - testColor[i], 2);
+		}
+		return error;
 	}
 	
 	// compute the deviation from the RGB ratio of a test color
@@ -126,7 +153,7 @@ public class FaceColor {
 	 * @return The difference between the two colors, implemented as the squared error of the ratios
 	 */
 	public double difference(FaceColor other) {
-		return ratioError(other);
+		return squaredError(other);
 	}
 	
 	/**
@@ -135,7 +162,7 @@ public class FaceColor {
 	 * @return The difference between the two colors, implemented as the squared error of the ratios
 	 */
 	public double difference(int[] color) {
-		return ratioError(color);
+		return squaredError(color);
 	}
 	
 	/**

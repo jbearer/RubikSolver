@@ -18,13 +18,13 @@ public class CubeParser {
 		faceParsers[5] = new ImageParser(downFile);
 	}
 	
-	public Cube getCube() {
-		
-		FaceColor[][][] faces = new FaceColor[6][3][3];
-		for (int i = 0; i < faces.length; i++) {
-			faces[i] = faceParsers[i].getFace();
-		}
-		
+	// Default constructor, used for testing when a full CubeParse from image files is not needed
+	public CubeParser() {
+		faceParsers = null;
+	}
+	
+	// Testing convenience method
+	public Cube getCubeWithFaces(FaceColor[][][] faces) {
 		int[][][] groups = assignGroups(faces);
 		int[] groupColors = assignColors(groups, faces);
 		
@@ -33,12 +33,22 @@ public class CubeParser {
 		
 		for (int group : groupColors) {
 			for (int[] tiles : groups[group]) {
-				cubeFaces[tiles[0]][tiles[1]][tiles[2]] = group;
+				cubeFaces[tiles[0]][tiles[1]][tiles[2]] = groupColors[group];
 			}
 		}
 		
-		return new Cube(cubeFaces[0], cubeFaces[1], cubeFaces[2],
-						cubeFaces[3], cubeFaces[4], cubeFaces[5]);
+		return new Cube(cubeFaces[Cube.FRONT], cubeFaces[Cube.BACK], cubeFaces[Cube.LEFT],
+						cubeFaces[Cube.RIGHT], cubeFaces[Cube.UP], cubeFaces[Cube.DOWN]);
+	}
+	
+	public Cube getCube() {
+		
+		FaceColor[][][] faces = new FaceColor[6][3][3];
+		for (int i = 0; i < faces.length; i++) {
+			faces[i] = faceParsers[i].getFace();
+		}
+		
+		return getCubeWithFaces(faces);
 	}
 	
 	/**
@@ -119,10 +129,11 @@ public class CubeParser {
 								FaceColor curColor = faces[coords.get(0)][coords.get(1)][coords.get(2)];
 								if (curColor.difference(protocolor) > nextColor.difference(protocolor)) break;
 							}
+							if (i.hasPrevious()) i.previous();
 							i.add(coords);
 							usedCoords.add(coords);
 							if (curMembers.size() > 8) {
-								usedCoords.remove(curMembers.removeLast());
+								usedCoords.remove(curMembers.removeFirst());
 							}
 						}
 					}

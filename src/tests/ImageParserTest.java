@@ -5,11 +5,11 @@ import mainPkg.ImageParser;
 
 public class ImageParserTest {
 	public static void main(String args[]) {
-		System.out.println("Begin test: gradients");
-		testGradients();
+		//System.out.println("Begin test: gradients");
+		//testGradients();
 		System.out.println("Begin test: faceColorStraight");
 		System.out.println(testFaceColorStraight());
-		//System.out.println(testFaceColorSkewed());
+		System.out.println(testFaceColorSkewed());
 	}
 	
 	private static double epsilon = 0.01;
