@@ -88,11 +88,11 @@ public class FaceColor {
 	
 	public int nearestColor() {
 		// Change this line to use a different implementation of nearest color
-		return nearestColor_squaredError();
+		return nearestColor_ratio();
 	}
 	
 	// compute the deviation from the RGB values of a test color
-	// finds the total squared error between the componenet of this color and testColor
+	// finds the total squared error between the component of this color and testColor
 	private double squaredError(int[] testColor) {
 		double error = 0;
 		int[] myColors = {red, green, blue};
@@ -153,7 +153,7 @@ public class FaceColor {
 	 * @return The difference between the two colors, implemented as the squared error of the ratios
 	 */
 	public double difference(FaceColor other) {
-		return squaredError(other);
+		return ratioError(other);
 	}
 	
 	/**
@@ -162,7 +162,7 @@ public class FaceColor {
 	 * @return The difference between the two colors, implemented as the squared error of the ratios
 	 */
 	public double difference(int[] color) {
-		return squaredError(color);
+		return ratioError(color);
 	}
 	
 	/**
