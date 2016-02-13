@@ -48,6 +48,10 @@ const Cube::TurnVec Cube::OK_TURNS3({
 const Cube::TurnVec Cube::OK_TURNS4({
 	Cube::front2, Cube::right2, Cube::back2, Cube::left2, Cube::up2, Cube::down2 });
 
+// ok turns for the two-turn solve
+const Cube::TurnVec Cube::OK_TURNS_2FACE({ Cube::front, Cube::right, Cube::frontI, Cube::rightI });
+
+
 // Cube constructor
 // TODO: figure out how to get rid of edgeOrbits.  They're unnecessary
 Cube::Cube(char eColors[12], char eOrients[12], char eOrbits[12],
@@ -69,7 +73,7 @@ int Cube::fac(int n)
 	return n == 0 ? 1 : n*fac(n - 1);
 }
 
-void Cube::init()
+void Cube::initChoose()
 {
 	// Memoize values for FAC and CHOOSE tables
 	for (int n = 0; n < 12; ++n) {
@@ -81,6 +85,11 @@ void Cube::init()
 			CHOOSE[n][k] = FAC[n] / (FAC[k] * FAC[n - k]);
 		}
 	}
+}
+
+void Cube::init()
+{
+	initChoose();
 
 	// Create a solved cube, with corresponding empty TurnVec queue.
 	// These are the starting points for hashmaps in steps 1, 2, and 4
@@ -121,6 +130,25 @@ void Cube::init()
 
 	// MAX_SIZE: (4!)^3 / 2 * 96 = 663552
 	buildMap(cubeQueue, turnsQueue, STEP4MAP, &step4Code, OK_TURNS4, 663552);
+	cout << endl;
+}
+
+
+void Cube::init2()
+{
+	initChoose();
+
+	Cube cube = solvedCube();
+	queue<Cube> cubeQueue;
+	cubeQueue.push(cube);
+
+	queue<TurnVec> turnsQueue;
+	turnsQueue.push(TurnVec());
+
+	cout << "filling map 1/4";
+
+	// MAX_SIZE: 2^11 = 2048
+	buildMap(cubeQueue, turnsQueue, STEP2MAP, &code2, OK_TURNS_2FACE, 2048);
 	cout << endl;
 }
 
@@ -466,6 +494,42 @@ int Cube::step4Code()
 	return sum;
 }
 
+int Cube::code2()
+{
+	char edges[7] = { YO, YG, RG, OG, OB, WG, WO };
+	char corners[6] = { YOB, YRG, YOG, WOB, WRG, WOG };
+
+	int sum1 = 0;
+	for (int i = 0; i < 5; ++i) {
+		sum1 += cornerOrients_[corners[i]] * pow(3, i);
+	}
+
+	int sum2 = 0;
+	for (int i = 0; i < 5; ++i) {
+		int numGreater = 0;
+		for (int j = i + 1; j < 6; ++j) {
+
+			if (cornerColors_[corners[j]] < cornerColors_[corners[i]]) {
+				++numGreater;
+			}
+		}
+		sum2 += (numGreater * FAC[6 - i - 1]);
+	}
+
+	int sum3 = 0;
+	for (int i = 0; i < 6; ++i) {
+		int numGreater = 0;
+		for (int j = i + 1; j < 7; ++j) {
+
+			if (edgeColors_[edges[j]] < edgeColors_[edges[i]]) {
+				++numGreater;
+			}
+		}
+		sum3 += (numGreater * FAC[7 - i - 1]);
+	}
+	return sum1 + 243*sum2 + 2430000*sum3;
+}
+
 void Cube::solve(Cube cube)
 {
 	//cout << "step 1 1 1 1 1 1 1 1 1 1 1" << endl;
@@ -491,6 +555,19 @@ void Cube::solve(Cube cube)
 	printSteps(step3);
 	printSteps(step4);
 }
+
+void Cube::solve2(Cube cube)
+{
+
+	TurnVec step2 = doStep(cube, STEP2MAP, &code2, OK_TURNS_2FACE);
+	cout << endl;
+
+	cout << "SUCCESS!!!!" << endl;
+
+	printSteps(step2);
+
+}
+
 
 Cube::TurnVec Cube::doStep(Cube& cube, unordered_map<int, TurnVec>& stepTable, int (Cube::*code)(),
 	TurnVec okSteps)
@@ -644,6 +721,7 @@ void Cube::buildMap(queue<Cube> cubeQueue, queue<TurnVec> turnsQueue, unordered_
 	int (Cube::*code)(), TurnVec okTurns, int tableSize)
 {
 	while (stepList.size() < tableSize) {
+
 		Cube currCube = cubeQueue.front();
 		TurnVec currSteps = turnsQueue.front();
 
@@ -655,24 +733,25 @@ void Cube::buildMap(queue<Cube> cubeQueue, queue<TurnVec> turnsQueue, unordered_
 		currSteps.push_back(front);
 
 		for (auto turn : okTurns) {
-
+			
 			Cube turnedCube = turn(currCube);
 			int cubeCode = (turnedCube.*code)();
 
 			if (stepList.count(cubeCode) == 0) {
-
+				
 				currSteps.pop_back();
 				currSteps.push_back(turn);
-
+				
 				cubeQueue.push(turnedCube);
 				turnsQueue.push(currSteps);
-
+				
 				stepList[cubeCode] = currSteps;
 
-				if (stepList.size() % (tableSize / 20) == 0) {
+				if (stepList.size() % (tableSize / 10) == 0) {
 					cout << ".";
 				}
 			}
+			
 		}
 	}
 }
@@ -766,11 +845,14 @@ void Cube::test()
 	left2, frontI, upI, frontI });
 	*/
 
-	TurnVec maneuver({
-		up, left, down2, left, down, back, upI, left, rightI,
-		frontI,downI,back2,leftI,front,back,left,back2,
-		frontI,left2, back2, right
-	});
+	
+
+	TurnVec maneuver({ right });
+
+	for (int i = 0; i < 32; ++i) {
+		maneuver.push_back(front);
+		maneuver.push_back(right);
+	}
 	// test steps 1
 	for (auto turn : maneuver) {
 		cube = turn(cube);
@@ -779,12 +861,12 @@ void Cube::test()
 	//cube.print();
 	cout << "STARTING" << endl;
 
-	solve(cube);
+	solve2(cube);
 }
 
 int main()
 {
-	Cube::init();
+	Cube::init2();
 
 	clock_t t;
 	t = clock();
