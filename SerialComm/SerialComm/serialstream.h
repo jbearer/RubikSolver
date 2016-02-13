@@ -5,6 +5,8 @@
 namespace serialComm {
 
 	class serialstream;
+
+	typedef char* cstring;
 	typedef serialstream&(*manipulator)(serialstream&);
 
 	/// Custom stream manipulator, used like std::endl

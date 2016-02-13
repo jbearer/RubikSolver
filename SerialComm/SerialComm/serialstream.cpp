@@ -33,8 +33,16 @@ namespace serialComm {
 	/// Template specialization for std::string.
 	template <>
 	serialstream& operator<<(serialstream& stream, const string& data) {
-		stream.port_.writeData(data.c_str(), data.size());
+		stream.port_.writeData(data.c_str(), data.size() + 1);
 		return stream;
+	}
+
+	/// Template specialization for null-terminated cstring
+	template <>
+	serialstream& operator<<(serialstream& stream, const cstring& data) {
+		for (size_t i = 0; data[i] != '\0'; ++i) {
+			stream << data[i];
+		}
 	}
 
 	serialstream& operator<<(serialstream& stream, manipulator m) {
@@ -51,6 +59,26 @@ namespace serialComm {
 		stringstream sstream;
 		sstream << (string)buffer;
 		sstream >> in;
+		return in;
+	}
+
+	/// Template specialization for null-terminated cstring
+	template <>
+	cstring& operator>>(serialstream& stream, cstring& in) {
+		size_t i = 0;
+		do {
+			stream.port_.readData(in + i, 1);
+			++i;
+		} while (in[i] != '\0');
+		return in;
+	}
+
+	/// Template specialization for std::string
+	template <>
+	string& operator>>(serialstream& stream, string& in) {
+		cstring buffer;
+		stream >> buffer;
+		in = buffer;
 		return in;
 	}
 
