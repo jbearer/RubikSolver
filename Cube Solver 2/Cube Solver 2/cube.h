@@ -68,16 +68,16 @@ public:
 	Cube(const Cube& rhs) = default; ///< Default copy constructor
 
 
-									 /**
-									 * \brief Turning methods.  Each of the following static methods takes in a
-									 * copy of a cube.  It then applies the appropriate turn by rearranging the
-									 * relevant color and orientation vectors and by changing the orientations
-									 * properly.  The first six methods represent clockwise turns, the following
-									 * are CC (inverse) turns, then double turns.  All the methods require cycling the
-									 * arrays.  up and down require edge reorientation, and up down front and back
-									 * require corner orientation.
-									 *
-									 */
+	/**
+	* \brief Turning methods.  Each of the following static methods takes in a
+	* copy of a cube.  It then applies the appropriate turn by rearranging the
+	* relevant color and orientation vectors and by changing the orientations
+	* properly.  The first six methods represent clockwise turns, the following
+	* are CC (inverse) turns, then double turns.  All the methods require cycling the
+	* arrays.  up and down require edge reorientation, and up down front and back
+	* require corner orientation.
+	*
+	*/
 	static Cube front(Cube cube);
 	static Cube right(Cube cube);
 	static Cube back(Cube cube);
