@@ -19,7 +19,7 @@ public:
 	/**
 	 * \brief Initialize Serial communication with the given COM port.
 	 */
-	Serial(char *portName);
+	Serial(const char *portName);
 
 	/**
 	 * \brief Close the connection.

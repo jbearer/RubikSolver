@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <string>
 
-Serial::Serial(char *portName)
+Serial::Serial(const char *portName)
 	: connected_{ false },
 	hSerial_{ CreateFile(portName, GENERIC_READ | GENERIC_WRITE, 0, NULL,
 		OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL) } {
