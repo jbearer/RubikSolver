@@ -54,6 +54,10 @@ public:
 
 	/// Initializes constants and loads the hash tables
 	static void init();
+	static void initChoose();
+
+	/// for two-face solve
+	static void init2();
 
 	/// Scramble and solve a test cube
 	static void test();
@@ -112,6 +116,9 @@ public:
 	*/
 	static void solve(Cube cube);
 
+	/// for two-turn solve
+	static void solve2(Cube cube);
+
 	/// Creates an instance of a solved Cube
 	static Cube solvedCube();
 
@@ -159,6 +166,8 @@ private:
 	static const TurnVec OK_TURNS2;
 	static const TurnVec OK_TURNS3;
 	static const TurnVec OK_TURNS4;
+
+	static const TurnVec OK_TURNS_2FACE;
 
 	/**
 	* \fn		turn
@@ -244,6 +253,8 @@ private:
 	* \details	Cube have unique codes based only on edge colors
 	*/
 	int step4Code();
+
+	int code2();
 
 	/// Helper method to determine the code for cubies in a specific orbit
 	int step4Help(std::vector<char> orbit, char* cubies);
