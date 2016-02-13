@@ -42,3 +42,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 /bin/
+
+*.sln
+*.log
+SerialComm/SerialComm/readme.txt
+*.vcxproj
+SerialComm/SerialComm/SerialComm.vcxproj.filters
