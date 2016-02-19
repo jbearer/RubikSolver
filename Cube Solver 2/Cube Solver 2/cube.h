@@ -126,10 +126,14 @@ public:
 	/// Prints the cube in the form edgeColors, edgeOrients, cornerColors, cornerOrients
 	void print() const;
 
-
-
-
 private:
+
+	/// turn characters:
+	/*
+	enum Turn_t{ F, R, B, L, U, D, F2, R2, B2, L2, U2, D2,
+	Fi, Ri, Bi, Li, Ui, Di};
+	*/
+
 
 	/// Some useful constants
 	static const char NUM_EDGES = 12;
@@ -156,10 +160,12 @@ private:
 	static const std::vector<char> LR_SLICE;
 
 	/// Hash maps from cube codes to the required turns to solve
-	static std::unordered_map<int, TurnVec> STEP1MAP;
-	static std::unordered_map<int, TurnVec> STEP2MAP;
-	static std::unordered_map<int, TurnVec> STEP3MAP;
-	static std::unordered_map<int, TurnVec> STEP4MAP;
+	static std::unordered_map<int, std::vector<char>> STEP1MAP;
+	static std::unordered_map<int, std::vector<char>> STEP2MAP;
+	static std::unordered_map<int, std::vector<char>> STEP3MAP;
+	static std::unordered_map<int, std::vector<char>> STEP4MAP;
+
+	static std::unordered_map < int, std::vector<char>> TURNMAP2;
 
 	/// Vectors with function pointers to allowable turns
 	static const TurnVec OK_TURNS1;
@@ -269,7 +275,8 @@ private:
 	* \param	bool(Cube::*solved)()		the method to see if it's solved
 	* \param	TurnVec okSteps				the vector of allowable turns for this step
 	*/
-	static TurnVec doStep(Cube& cube, std::unordered_map<int, TurnVec>& stepTable, int (Cube::*hashFunction)(), TurnVec okSteps);
+	static std::vector<char> doStep(Cube& cube, const std::unordered_map<int, std::vector<char>>& stepTable,
+		int (Cube::*hashFunction)(), TurnVec okSteps);
 
 	/**
 	* \fn		findTurns
@@ -282,20 +289,24 @@ private:
 	* \param	bool (Cube::*solved)()		Method to check if the cube is done with step
 	* \param	TurnVec okSteps				A vector of allowable turns for this step
 	*/
-	TurnVec findTurns(std::unordered_map<int, TurnVec>& stepTable, int (Cube::*code)(), TurnVec okSteps);
+	std::vector<char> findTurns(const std::unordered_map<int, std::vector<char>>& stepTable, int (Cube::*code)(), TurnVec okSteps);
 
 	/**
 	* \fn		printSteps
 	* \brief	Given a vector of function pointers to turns, prints them in readable form
 	*/
-	static void printSteps(TurnVec steps);
+	static void printTurns(std::vector<char> steps);
 
 	/// Inverts the step in a TurnVec.  For example, F R U2 becomes U2 R' F'
 	static TurnVec invert(TurnVec steps);
+	static std::vector<char> invert(std::vector<char> turns);
+	static Cube doTurns(Cube cube, std::vector<char> turns);
+
+	static char turnToChar(Cube(*turn)(Cube));
 
 	/// Builds the hashmaps holding the cubes
-	static void buildMap(std::queue<Cube> cubeQueue, std::queue<TurnVec> turnsQueue,
-		std::unordered_map<int, TurnVec>& stepList, int (Cube::*hashFunction)(), TurnVec okTurns, int tableSize);
+	static void buildMap(std::queue<Cube> cubeQueue, std::queue<std::vector<char>> turnsQueue,
+		std::string fname, int (Cube::*hashFunction)(), TurnVec okTurns, int tableSize);
 
 	/// Helper method to hash the corners to a unique number.  Used to determine
 	/// The only 96 possible corner positions using double turns
@@ -304,6 +315,8 @@ private:
 	/// Generates a queue with all 96 possible corner positions before step 4.
 	/// Used as a starting point to build the step 3 tables
 	static std::queue<Cube> step4ValidCorners();
+
+	static void loadMap(std::unordered_map<int, std::vector<char>>& stepMap, std::string fname);
 
 	static int fac(int n);
 
@@ -314,6 +327,8 @@ private:
 	char cornerOrients_[8];	///< 0 is oriented, 1 is clockwise, 2 is counterclockwise
 
 	char edgeOrbits_[12];  ///< 0, 1, or 2 depending on whether the edge is at home
+
+
 
 };
 
