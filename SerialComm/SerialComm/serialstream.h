@@ -40,8 +40,10 @@ namespace serialComm {
 
 	private:
 
+		typedef Serial port_t;
+
 		/// The port we want to communicate with.
-		Serial port_;
+		port_t port_;
 
 		/**
 		 * \brief Write data to the serial port.
@@ -72,7 +74,7 @@ namespace serialComm {
 
 
 	serialstream::~serialstream() {
-		// Nothing to do.
+		// Nothing to do
 	}
 
 	///////////////////////////////////////////////////////////////////////////

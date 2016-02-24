@@ -11,6 +11,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * \class Serial
+ * \brief Facilitates communication with a serial COM port.
+ */
 class Serial
 {
 

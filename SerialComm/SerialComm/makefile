@@ -1,4 +1,6 @@
-CXXFLAGS = -g -std=c++11 -Wall -Wextra 
+INCL = 
+
+CXXFLAGS = -g -std=c++11 -Wall -Wextra $(INCL)
 CXX = g++
 
 TARGETS = ArduinoTest.exe
@@ -15,7 +17,7 @@ failed_read_error.o: failed_read_error.cpp failed_read_error.h
 serial.o: serial.cpp serial.h
 	$(CXX) -c $(CXXFLAGS) $<
 
-arduino-test.o: arduino-test.cpp test-constants.h serialstream.h
+arduino-test.o: arduino-test.cpp arduino-test/test-constants.h serialstream.h
 	$(CXX) -c $(CXXFLAGS) $<
 
 ArduinoTest.exe: $(TEST_OBJS)

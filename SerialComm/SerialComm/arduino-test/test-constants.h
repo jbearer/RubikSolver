@@ -9,7 +9,7 @@
 /// Constants used by both arduino sketch and serialstream to coordinate
 /// message passing
 namespace testConstants {
-	typedef int SerialMessage;
+	typedef char SerialMessage;
 
 	const SerialMessage BLINK = 1;
 
@@ -17,10 +17,16 @@ namespace testConstants {
 
 	const SerialMessage WAIT = 3;
 
+  const SerialMessage ERR = 4;
+
 	const char TEST_CHAR = 'a';
 
-	const float TEST_FLOAT = 3.141592653;
+  const int TEST_STRING_LEN = 6;
+ 
+	const char TEST_STRING[TEST_STRING_LEN] = { 'h', 'e', 'l', 'l', 'o', '\0' };
 
-	const char TEST_STRING[] = { 'h', 'e', 'l', 'l', 'o', '\0' };
+  const int NUM_BLINKS = 10;
+
+  const int INTERVAL = 500;
 
 }
