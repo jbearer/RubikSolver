@@ -1,3 +1,17 @@
+/**
+ *  Tests reading and writing to serial port in conjunction with arduino-test.cpp.
+ *  Expects an arduino with 3 LEDs:
+ *    RECEIVE_INDICATOR, illuminated when receiving a transmission from the serial port.
+ *    SEND_INDICATOR, illuminated when sending data to the port.
+ *    OUTPUT_PIN, used for miscillaneous output and as a status pin.
+ *   These LEDs default to pins 8, 9, 10, but these can bye changed by changing the constants
+ *   defined below.
+ *   
+ *   Throughout the sketch, a solid indicator pin means a transmission is in progress.
+ *   Two slow blinks on the status pin means an operation completed without error.
+ *   Five rapid blinks on any pin indicates an error was encountered.
+ */
+
 #include "test-constants.h"
 
 using namespace testConstants;
