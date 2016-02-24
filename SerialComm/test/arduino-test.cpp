@@ -1,4 +1,4 @@
-#include "serialstream.h"
+#include "../src/serialstream.h"
 #include "arduino-test/test-constants.h"
 #include <iostream>
 #include <stdexcept>
