@@ -5,21 +5,23 @@
  *  details such as the pins each motor is connected to.
  */
 
+#pragma once
+
 typedef int PinID;
 
 enum MotorID : char {
-    LEFT,
-    RIGHT,
-    UP,
-    DOWN,
-    FRONT,
-    BACK
-}
+    LEFT_MOTOR,
+    RIGHT_MOTOR,
+    UP_MOTOR,
+    DOWN_MOTOR,
+    FRONT_MOTOR,
+    BACK_MOTOR
+};
 
 enum MotorDirection : bool {
     CLOCKWISE,
     COUNTERCLOCKWISE
-}
+};
 
 class MotorDriver {
 public:
@@ -30,12 +32,12 @@ public:
      * \param stepPinX The pin for motor X indicating how many turns to make.
      * \param dirPinX The pin for motor X indicating which direction to rotate.
      */
-    MotorDriver(PinID stepPinL, PinID dirPinL,
-                PinID stepPinR, PinID dirPinR,
-                PinID stepPinU, PinID dirPinU,
-                PinID stepPinD, PinID dirPinD,
-                PinID stepPinF, PinID dirPinF,
-                PinID stepPinB, PinID dirPinB);
+    MotorDriver(const PinID stepPinL, const PinID dirPinL,
+                const PinID stepPinR, const PinID dirPinR,
+                const PinID stepPinU, const PinID dirPinU,
+                const PinID stepPinD, const PinID dirPinD,
+                const PinID stepPinF, const PinID dirPinF,
+                const PinID stepPinB, const PinID dirPinB);
 
     /**
      * \brief Turn a motor.
@@ -43,7 +45,8 @@ public:
      * \param turns The number of 90 degree turns to make.
      * \param dir The direction of the turns.
      */
-    void step(MotorID motor, int turns, MotorDirection dir);
+    void step(
+        const MotorID motor, const int turns, const MotorDirection dir) const;
 
 private:
 
@@ -68,4 +71,4 @@ private:
 
     PinID stepPinB_;
     PinID dirPinB_;
-}
+};

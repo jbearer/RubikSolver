@@ -5,7 +5,7 @@
 #include "serial.h"
 #include "failed_read_error.h"
 
-namespace serialComm {
+namespace SerialComm {
 
 	class serialstream;
 

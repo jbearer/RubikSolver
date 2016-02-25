@@ -4,11 +4,20 @@ CXXFLAGS = -g -std=c++11 -Wall -Wextra $(INCL)
 CXX = g++
 
 TARGETS = ArduinoTest.exe
+OBJS = serial.o failed_read_error.o
 TEST_OBJS = arduino-test.o serial.o failed_read_error.o
 SRC_PATH = src
 TEST_PATH = test
 
+# Build executables:
+#	ArduinoTest.exe: send some data via the serial port to the Arduino. Runs in
+#	conjunction with test/arduino-test/arduino-test.ino
 all: $(TARGETS)
+
+# Build objects necessary to link external code with code in this directory
+# Does not build an executable
+lib: $(OBJS)
+
 clean:
 	rm -rf *.o *.exe $(TARGETS)
 again: clean all

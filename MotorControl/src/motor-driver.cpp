@@ -8,12 +8,12 @@
 
 #include "motor-driver.h"
 
-MotorDriver::MotorDriver(PinID stepPinL, PinID dirPinL,
-                PinID stepPinR, PinID dirPinR,
-                PinID stepPinU, PinID dirPinU,
-                PinID stepPinD, PinID dirPinD,
-                PinID stepPinF, PinID dirPinF,
-                PinID stepPinB, PinID dirPinB)
+MotorDriver::MotorDriver(const PinID stepPinL, const PinID dirPinL,
+                const PinID stepPinR, const PinID dirPinR,
+                const PinID stepPinU, const PinID dirPinU,
+                const PinID stepPinD, const PinID dirPinD,
+                const PinID stepPinF, const PinID dirPinF,
+                const PinID stepPinB, const PinID dirPinB)
 : stepPinL_{stepPinL}, driPinL_{dirPinL},
   stepPinR_{stepPinR}, driPinR_{dirPinR},
   stepPinU_{stepPinU}, driPinU_{dirPinU},
@@ -24,33 +24,34 @@ MotorDriver::MotorDriver(PinID stepPinL, PinID dirPinL,
     // Nothing else to do.
 }
 
-void MotorDriver::step(MotorID motor, int turns, MotorDirection dir) {
+void MotorDriver::step(
+    const MotorID motor, const int turns, const MotorDirection dir) const {
     int stepPin = 0;
     int dirPin = 0;
 
     // Determine motor, and set step & dir pins to that motor.
     switch(motor) {
-        case RIGHT:
+        case RIGHT_MOTOR:
             stepPin = stepPinR_;
             dirPin = stepPinR_;
             break;
-        case LEFT:
+        case LEFT_MOTOR:
             stepPin = stepPinL_;
             dirPin = stepPinL_;
             break;
-        case UP:
+        case UP_MOTOR:
             stepPin = stepPinU_;
             dirPin = stepPinU_;
             break;
-        case DOWN:
+        case DOWN_MOTOR:
             stepPin = stepPinD_;
             dirPin = stepPinD_;
             break;
-        case FRONT:
+        case FRONT_MOTOR:
             stepPin = stepPinF_;
             dirPin = stepPinF_;
             break;
-        case BACK:
+        case BACK_MOTOR:
             stepPin = stepPinB_;
             dirPin = stepPinB_;
             break;

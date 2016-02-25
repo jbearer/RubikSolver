@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <time.h>
 
-using namespace serialComm;
+using namespace SerialComm;
 using namespace testConstants;
 
 void delay(int milliseconds)

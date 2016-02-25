@@ -5,7 +5,9 @@
  *  and a PC program.
  */
 
- #include "motor-driver.h"
+#pragma once
+
+#include "motor-driver.h"
 
 namespace MotorControl {
 
@@ -36,34 +38,35 @@ namespace MotorControl {
         DOWN_INVERTED,
         FRONT_INVERTED,
         BACK_INVERTED
-    }
+    };
 
-    typedef (void)(*FaceTurn)(MotorDriver);
+    typedef void(*FaceTurn)(MotorDriver);
 
     /// Functions that activate the motors.
-    const FaceTurn LEFT;
-    const FaceTurn RIGHT;
-    const FaceTurn UP;
-    const FaceTurn DOWN;
-    const FaceTurn FRONT;
-    const FaceTurn BACK;
+    void TURN_LEFT(MotorDriver);
+    void TURN_RIGHT(MotorDriver);
+    void TURN_UP(MotorDriver);
+    void TURN_DOWN(MotorDriver);
+    void TURN_FRONT(MotorDriver);
+    void TURN_BACK(MotorDriver);
 
-    const FaceTurn LEFT_2;
-    const FaceTurn RIGHT_2;
-    const FaceTurn UP_2;
-    const FaceTurn DOWN_2;
-    const FaceTurn FRONT_2;
-    const FaceTurn BACK_2;
+    void TURN_LEFT_2(MotorDriver);
+    void TURN_RIGHT_2(MotorDriver);
+    void TURN_UP_2(MotorDriver);
+    void TURN_DOWN_2(MotorDriver);
+    void TURN_FRONT_2(MotorDriver);
+    void TURN_BACK_2(MotorDriver);
 
-    const FaceTurn LEFT_INVERTED;
-    const FaceTurn RIGHT_INVERTED;
-    const FaceTurn UP_INVERTED;
-    const FaceTurn DOWN_INVERTED;
-    const FaceTurn FRONT_INVERTED;
-    const FaceTurn BACK_INVERTED;
+    void TURN_LEFT_INVERTED(MotorDriver);
+    void TURN_RIGHT_INVERTED(MotorDriver);
+    void TURN_UP_INVERTED(MotorDriver);
+    void TURN_DOWN_INVERTED(MotorDriver);
+    void TURN_FRONT_INVERTED(MotorDriver);
+    void TURN_BACK_INVERTED(MotorDriver);
 
     /**
      * \brief Get the function associated with a MoveInstruction code.
      */
     FaceTurn getAction(MoveInstruction);
+
 }
