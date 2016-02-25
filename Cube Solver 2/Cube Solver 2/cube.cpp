@@ -1,4 +1,6 @@
 #include "cube.h"
+
+
 #include <iostream>
 #include <algorithm>
 #include <queue>
@@ -9,41 +11,42 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <bitset>
 
 
 using namespace std;
-
+using MotorControl::MoveInstruction;
 
 // Hashmaps for each step
-unordered_map<int, vector<char>> Cube::STEP1MAP;
-unordered_map<int, vector<char>> Cube::STEP2MAP;
-unordered_map<int, vector<char>> Cube::STEP3MAP;
-unordered_map<int, vector<char>> Cube::STEP4MAP;
+unordered_map<int, vector<MoveInstruction>> Cube::STEP1MAP;
+unordered_map<int, vector<MoveInstruction>> Cube::STEP2MAP;
+unordered_map<int, vector<MoveInstruction>> Cube::STEP3MAP;
+unordered_map<int, vector<MoveInstruction>> Cube::STEP4MAP;
 
-unordered_map<int, vector<char>> Cube::TURNMAP2;
+unordered_map<int, vector<MoveInstruction>> Cube::TURNMAP2;
 
 // Vector of allowable turns for each step (easy to iterate through)
 const vector<Cube::Turn> Cube::OK_TURNS1({
-	Cube::Turn('F'), Cube::Turn('R'), Cube::Turn('B'), Cube::Turn('L'),
-	Cube::Turn('U'), Cube::Turn('D'), Cube::Turn('f'), Cube::Turn('r'),
-	Cube::Turn('b'), Cube::Turn('l'), Cube::Turn('u'), Cube::Turn('d') });
+	Cube::Turn(MoveInstruction::FRONT), Cube::Turn(MoveInstruction::RIGHT), Cube::Turn(MoveInstruction::BACK), Cube::Turn(MoveInstruction::LEFT),
+	Cube::Turn(MoveInstruction::UP), Cube::Turn(MoveInstruction::DOWN), Cube::Turn(MoveInstruction::FRONT_INVERTED), Cube::Turn(MoveInstruction::RIGHT_INVERTED),
+	Cube::Turn(MoveInstruction::BACK_INVERTED), Cube::Turn(MoveInstruction::LEFT_INVERTED), Cube::Turn(MoveInstruction::UP_INVERTED), Cube::Turn(MoveInstruction::DOWN_INVERTED) });
 
 const vector<Cube::Turn> Cube::OK_TURNS2({
-	Cube::Turn('F'), Cube::Turn('R'), Cube::Turn('B'), Cube::Turn('L'),
-	Cube::Turn('h'), Cube::Turn('i'),
-	Cube::Turn('f'), Cube::Turn('r'), Cube::Turn('b'), Cube::Turn('l') });
+	Cube::Turn(MoveInstruction::FRONT), Cube::Turn(MoveInstruction::RIGHT), Cube::Turn(MoveInstruction::BACK), Cube::Turn(MoveInstruction::LEFT),
+	Cube::Turn(MoveInstruction::UP_2), Cube::Turn(MoveInstruction::DOWN_2),
+	Cube::Turn(MoveInstruction::FRONT_INVERTED), Cube::Turn(MoveInstruction::RIGHT_INVERTED), Cube::Turn(MoveInstruction::BACK_INVERTED), Cube::Turn(MoveInstruction::LEFT_INVERTED) });
 
 const vector<Cube::Turn> Cube::OK_TURNS3({
-	Cube::Turn('a'), Cube::Turn('R'), Cube::Turn('e'), Cube::Turn('L'),
-	Cube::Turn('h'), Cube::Turn('i'), Cube::Turn('r'), Cube::Turn('l') });
+	Cube::Turn(MoveInstruction::FRONT_2), Cube::Turn(MoveInstruction::RIGHT), Cube::Turn(MoveInstruction::BACK_2), Cube::Turn(MoveInstruction::LEFT),
+	Cube::Turn(MoveInstruction::UP_2), Cube::Turn(MoveInstruction::DOWN_2), Cube::Turn(MoveInstruction::RIGHT_INVERTED), Cube::Turn(MoveInstruction::LEFT_INVERTED) });
 
 const vector<Cube::Turn> Cube::OK_TURNS4({
-	Cube::Turn('a'), Cube::Turn('c'), Cube::Turn('e'), Cube::Turn('g'),
-	Cube::Turn('h'), Cube::Turn('i') });
+	Cube::Turn(MoveInstruction::FRONT_2), Cube::Turn(MoveInstruction::RIGHT_2), Cube::Turn(MoveInstruction::BACK_2), Cube::Turn(MoveInstruction::LEFT_2),
+	Cube::Turn(MoveInstruction::UP_2), Cube::Turn(MoveInstruction::DOWN_2) });
 
 // ok turns for the two-turn solve
 const vector<Cube::Turn> Cube::OK_TURNS_2FACE({
-	Cube::Turn('F'), Cube::Turn('R'), Cube::Turn('f'), Cube::Turn('r') });
+	Cube::Turn(MoveInstruction::FRONT), Cube::Turn(MoveInstruction::RIGHT), Cube::Turn(MoveInstruction::FRONT_INVERTED), Cube::Turn(MoveInstruction::RIGHT_INVERTED) });
 
 
 // Cube constructor
@@ -61,6 +64,8 @@ Cube::Cube(char eColors[12], char eOrients[12], char eOrbits[12],
 		cornerOrients_[i] = cOrients[i];
 	}
 }
+
+//////////////////// INITIALIZING //////////////////////
 
 int Cube::fac(int n)
 {
@@ -81,6 +86,7 @@ void Cube::initChoose()
 	}
 }
 
+// Fills the maps for a normal solve
 void Cube::init()
 {
 	initChoose();
@@ -91,8 +97,8 @@ void Cube::init()
 	queue<Cube> cubeQueue;
 	cubeQueue.push(cube);
 
-	queue<vector<char>> turnsQueue;
-	turnsQueue.push(vector<char>());
+	queue<vector<MoveInstruction>> turnsQueue;
+	turnsQueue.push(vector<MoveInstruction>());
 
 	std::cout << "filling map 1/4";
 
@@ -110,9 +116,9 @@ void Cube::init()
 
 	// Build the 96 unique starting points and corresponding queue for step 3
 	queue<Cube> endPoints = step4ValidCorners();
-	queue<vector<char>> step3TurnsQueue;
+	queue<vector<MoveInstruction>> step3TurnsQueue;
 	for (int i = 0; i < endPoints.size(); ++i) {
-		step3TurnsQueue.push(vector<char>());
+		step3TurnsQueue.push(vector<MoveInstruction>());
 	}
 
 	// MAX_SIZE: 8c4 * 8c4 * 6 * 96 = 2822400
@@ -127,17 +133,15 @@ void Cube::init()
 	std::cout << endl;
 }
 
-
+// Fills the maps for a 2-face solve
 void Cube::init2()
 {
-	
-
 	Cube cube = solvedCube();
 	queue<Cube> cubeQueue;
 	cubeQueue.push(cube);
 
-	queue<vector<char>> turnsQueue;
-	turnsQueue.push(vector<char>());
+	queue<vector<MoveInstruction>> turnsQueue;
+	turnsQueue.push(vector<MoveInstruction>());
 
 	std::cout << "filling map 1/4";
 
@@ -246,7 +250,7 @@ int Cube::step3Code()
 	return sum1 * 40320 + sum2;
 }
 
-int Cube::step4Help(vector<Edge_t> orbit, char cubies[12])
+int Cube::step4Help(const Edge_t orbit[4], char cubies[12])
 {
 	// Creates a unique code for the cubies of an orbit
 	// essentially, 0,1,2,3 => 0, 0,1,3,2 => 1, ... 3,2,1,0 => 23
@@ -294,6 +298,7 @@ int Cube::step4Code()
 	return sum;
 }
 
+// Code for a 2-face solve (for debugging only)
 int Cube::code2()
 {
 	char edges[7] = { YO, YG, RG, OG, OB, WG, WO };
@@ -332,23 +337,23 @@ int Cube::code2()
 
 void Cube::solve(Cube cube)
 {
-	//std::cout << "step 1 1 1 1 1 1 1 1 1 1 1" << endl;
-	vector<char> step1 = doStep(cube, STEP1MAP, &step1Code, OK_TURNS1);
+	// Retrieve the Turns to solve each step
+
+	vector<Turn> step1 = doStep(cube, STEP1MAP, &step1Code, OK_TURNS1);
 	std::cout << endl;
 
-	//std::cout << "step 2 2 2 2 2 2 2 2 2 2 2" << endl;
-	vector<char> step2 = doStep(cube, STEP2MAP, &step2Code, OK_TURNS2);
+	vector<Turn> step2 = doStep(cube, STEP2MAP, &step2Code, OK_TURNS2);
 	std::cout << endl;
 
-	//std::cout << "step 3 3 3 3 3 3 3 3 3 3 3" << endl;
-	vector<char> step3 = doStep(cube, STEP3MAP, &step3Code, OK_TURNS3);
+	vector<Turn> step3 = doStep(cube, STEP3MAP, &step3Code, OK_TURNS3);
 	std::cout << endl;
 
-	//std::cout << "step 4 4 4 4 4 4 4 4 4 4 4" << endl;
-	vector<char> step4 = doStep(cube, STEP4MAP, &step4Code, OK_TURNS4);
+	vector<Turn> step4 = doStep(cube, STEP4MAP, &step4Code, OK_TURNS4);
 	std::cout << endl;
 
 	std::cout << "SUCCESS!!!!" << endl;
+
+	// Print out all the steps
 
 	printTurns(step1);
 	printTurns(step2);
@@ -356,10 +361,11 @@ void Cube::solve(Cube cube)
 	printTurns(step4);
 }
 
+// Solve for 2-face (debugging only)
 void Cube::solve2(Cube cube)
 {
 
-	vector<char> step2 = doStep(cube, TURNMAP2, &code2, OK_TURNS_2FACE);
+	vector<Turn> step2 = doStep(cube, TURNMAP2, &code2, OK_TURNS_2FACE);
 	std::cout << endl;
 
 	std::cout << "SUCCESS!!!!" << endl;
@@ -369,39 +375,41 @@ void Cube::solve2(Cube cube)
 }
 
 
-vector<char> Cube::doStep(Cube& cube, const unordered_map<int, vector<char>>& stepTable, int (Cube::*code)(),
+vector<Cube::Turn> Cube::doStep(Cube& cube, const unordered_map<int, vector<MoveInstruction>>& stepTable, int (Cube::*code)(),
 	vector<Turn> okSteps)
 {
-	vector<char> turns = cube.findTurns(stepTable, code, okSteps);
+	// Time how long it takes to do the step
+	clock_t t2;
+	t2 = clock();
+
+	// Find turns to complete the step
+	vector<Turn> turns = cube.findTurns(stepTable, code, okSteps);
+	
+	t2 = clock() - t2;
+	std::cout << "time: " << (float)t2 / CLOCKS_PER_SEC << endl;
+	
+	// Apply the turns to the cube
 	cube = doTurns(cube, turns);
-
-	//printSteps(turns);
-
-	//cube.print();
 
 	return turns;
 }
 
-vector<char> Cube::findTurns(const unordered_map<int, vector<char>>& stepTable, int (Cube::*code)(), vector<Turn> okSteps)
+vector<Cube::Turn> Cube::findTurns(const unordered_map<int, vector<MoveInstruction>>& stepTable, int (Cube::*code)(), vector<Turn> okSteps)
 {
-
-
-	clock_t t2;
-	t2 = clock();
-
 	// keep a set of the cubes seen so far, so no duplicates
 	unordered_set<int> seenCubes;
 
 	// check to see if the first cube matches
 	int firstHash = (this->*code)();
-
 	seenCubes.insert(firstHash);
 
 	// if the cube can already has a value in the table
-	// use the corresponding turns
 	if (stepTable.count(firstHash) > 0) {
-		vector<char> lastSteps = (stepTable.find(firstHash))->second;
-		vector<char> flipped = invert(lastSteps);
+		vector<MoveInstruction> lastMoves = (stepTable.find(firstHash))->second;
+		vector<Turn> lastTurns = Turn::movesToTurns(lastMoves);
+		
+		// invert the last moves
+		vector<Turn> flipped = invert(lastTurns);
 
 		return flipped;
 	}
@@ -410,11 +418,13 @@ vector<char> Cube::findTurns(const unordered_map<int, vector<char>>& stepTable, 
 	queue<Cube> cubeQueue;
 	cubeQueue.push(*this);
 
-	queue<vector<char>> turnsQueue;
-	turnsQueue.push(vector<char>());
+	queue<vector<Turn>> turnsQueue;
+	turnsQueue.push(vector<Turn>());
 
 	int i = 0;
 	while (true) {
+		
+		// to keep track of how long it is taking...
 		if (i % 100 == 0) {
 			std::cout << ".";
 		}
@@ -423,41 +433,49 @@ vector<char> Cube::findTurns(const unordered_map<int, vector<char>>& stepTable, 
 		Cube currCube = cubeQueue.front();
 		cubeQueue.pop();
 
-		vector<char> currSteps = turnsQueue.front();
+		vector<Turn> currTurns = turnsQueue.front();
 		turnsQueue.pop();
 
 		// push back a dummy turn that will immediately be popped
 		// (to simplify the loop)
-		currSteps.push_back('F');
+		currTurns.push_back(Turn(MoveInstruction::FRONT));
 
 		for (auto turn : okSteps) {
 
-			// apply a turn to the cube.  Check if it matches
+			// apply a turn to the cube.
 			Cube turnedCube = turn.turnFunc(currCube);
+
+			// Calculate the code, and check if it matches
 			int cubeCode = (turnedCube.*code)();
 
-			// only use this cube if we've never seen it before
 			if (seenCubes.count(cubeCode) == 0) {
+
+				// If we've never seen the cube before, insert it.  Otherwise, ignore it
 				seenCubes.insert(cubeCode);
 
-				currSteps.pop_back();
-				currSteps.push_back(turn.repr);
+				currTurns.pop_back();
+				currTurns.push_back(turn.repr);
 
-				// if this cube is in the step table, combine these
-				// steps with the inverted steps from the step table
+				// if this cube is in the step table, then we have found a shortest path
+				// from the solved cube to the current state.
 				if (stepTable.count(cubeCode) > 0) {
-					vector<char> lastSteps = stepTable.find(cubeCode)->second;
-					vector<char> flipped = invert(lastSteps);
 
-					currSteps.insert(currSteps.end(), flipped.begin(), flipped.end());
-					t2 = clock() - t2;
-					std::cout << "time: " << (float)t2 / CLOCKS_PER_SEC << endl;
-					return currSteps;
+					vector<MoveInstruction> lastMoves = stepTable.find(cubeCode)->second;
+					vector<Turn> lastTurns = Turn::movesToTurns(lastMoves);
+
+					// invert the path from the solved cube to the current cube
+					vector<Turn> flipped = invert(lastTurns);
+
+					// concatenate the two paths
+					currTurns.insert(currTurns.end(), flipped.begin(), flipped.end());
+
+					return currTurns;
 				}
+
 				// otherwise, push onto the queue and keep searching
 				else {
 					cubeQueue.push(turnedCube);
-					turnsQueue.push(currSteps);
+					turnsQueue.push(currTurns);
 				}
 			}
 		}
@@ -521,38 +539,45 @@ int Cube::step4CornerCode()
 	return sum;
 }
 
-void Cube::buildMap(queue<Cube> cubeQueue, queue<vector<char>> turnsQueue, string fname,
+void Cube::buildMap(queue<Cube> cubeQueue, queue<vector<MoveInstruction>> turnsQueue, string fname,
 	int (Cube::*code)(), vector<Turn> okTurns, int tableSize)
 {
-	unordered_map<int, vector<char>> stepList;
+	// Initialize stepList, which is the hashmap to be serialized
+	unordered_map<int, vector<MoveInstruction>> stepList;
+
+	// Seed the first value of the stepList
 	stepList[(cubeQueue.front().*code)()] = turnsQueue.front();
 
 	while (stepList.size() < tableSize) {
 
+		// Retrieve the first cube and its corresponding moves
 		Cube currCube = cubeQueue.front();
-		vector<char> currSteps = turnsQueue.front();
+		vector<MoveInstruction> currMoves = turnsQueue.front();
 
 		cubeQueue.pop();
 		turnsQueue.pop();
 
-		// push back a dummy turn that will immediately be popped
-		// (to simplify the loop)
-		currSteps.push_back('F');
+		// push back a dummy turn that will immediately be popped (to simplify the loop)
+		currMoves.push_back(MoveInstruction::FRONT);
 
+		// Loop through all the allowable turns in this step to use a breadth
+		// first search to generate all possible cubes
 		for (auto turn : okTurns) {
 			
 			Cube turnedCube = turn.turnFunc(currCube);
 			int cubeCode = (turnedCube.*code)();
 
+			// Only add to the queue if this cube is not on the stepList already
 			if (stepList.count(cubeCode) == 0) {
 				
-				currSteps.pop_back();
-				currSteps.push_back(turn.repr);
+				currMoves.pop_back();
+				currMoves.push_back(turn.repr);
 				
 				cubeQueue.push(turnedCube);
-				turnsQueue.push(currSteps);
+				turnsQueue.push(currMoves);
 
-				stepList[cubeCode] = currSteps;
+				// Add this list of moves to the hash maps
+				stepList[cubeCode] = currMoves;
 
 				if (stepList.size() % (tableSize / 10) == 0) {
 					std::cout << ".";
@@ -561,6 +586,8 @@ void Cube::buildMap(queue<Cube> cubeQueue, queue<vector<char>> turnsQueue, strin
 			
 		}
 	}
+
+	// Serealize the hash table
 	ofstream os(fname, ios::binary);
 	boost::archive::binary_oarchive oarch(os);
 	oarch << stepList;
@@ -585,25 +612,32 @@ Cube Cube::solvedCube()
 }
 
 
+void Cube::printTurns(vector<Turn> turns) {
+	for (auto turn : turns) {
+		cout << turn.toString << " ";
+	}
+	cout << endl;
+}
 
+/*
 void Cube::printTurns(vector<char> turns)
 {
 	for (auto turn : turns) {
 		switch (turn) {
 
-		case 'a': std::cout << "F2"; break;
-		case 'c': std::cout << "R2"; break;
-		case 'e': std::cout << "B2"; break;
-		case 'g': std::cout << "L2"; break;
-		case 'h': std::cout << "U2"; break;
-		case 'i': std::cout << "D2"; break;
+		case FRONT_2: std::cout << "F2"; break;
+		case RIGHT_2: std::cout << "R2"; break;
+		case BACK_2: std::cout << "B2"; break;
+		case LEFT_2: std::cout << "L2"; break;
+		case UP_2: std::cout << "U2"; break;
+		case DOWN_2: std::cout << "D2"; break;
 
-		case 'f': std::cout << "F'"; break;
-		case 'r': std::cout << "R'"; break;
-		case 'b': std::cout << "B'"; break;
-		case 'l': std::cout << "L'"; break;
-		case 'u': std::cout << "U'"; break;
-		case 'd': std::cout << "D'"; break;
+		case FRONT_INVERTED: std::cout << "F'"; break;
+		case RIGHT_INVERTED: std::cout << "R'"; break;
+		case BACK_INVERTED: std::cout << "B'"; break;
+		case LEFT_INVERTED: std::cout << "L'"; break;
+		case UP_INVERTED: std::cout << "U'"; break;
+		case DOWN_INVERTED: std::cout << "D'"; break;
 
 		default: std::cout << turn;
 		}
@@ -611,56 +645,42 @@ void Cube::printTurns(vector<char> turns)
 	}
 	std::cout << endl;
 }
+*/
 
-vector<Cube::Turn> Cube::invert(vector<Turn> steps)
+vector<Cube::Turn> Cube::invert(vector<Turn> turns)
 {
-	reverse(steps.begin(), steps.end());
+	reverse(turns.begin(), turns.end());
 
 	vector<Turn> flipped;
 
-
-	for (auto turn : steps) {
-		Cube(*step)(Cube) = turn.turnFunc;
-		if (step == front) step = frontI;
-		else if (step == right) step = rightI;
-		else if (step == back) step = backI;
-		else if (step == left) step = leftI;
-		else if (step == up) step = upI;
-		else if (step == down) step = downI;
-
-		else if (step == frontI) step = front;
-		else if (step == rightI) step = right;
-		else if (step == backI) step = back;
-		else if (step == leftI) step = left;
-		else if (step == upI) step = up;
-		else if (step == downI) step = down;
-
-		//flipped.push_back(step);
+	for (auto turn : turns) {
+		Turn opposite = Turn(turn.oppTurn);
+		flipped.push_back(opposite);
 	}
 
 	return flipped;
 }
-
-vector<char> Cube::invert(vector<char> turns)
+/*
+vector<MoveInstruction> Cube::invert(vector<MoveInstruction> turns)
 {
 	reverse(turns.begin(), turns.end());
 	vector<char> flipped;
 
 	for (auto step : turns) {
 		switch (step) {
-		case 'F': step = 'f'; break;
-		case 'R': step = 'r'; break;
-		case 'B': step = 'b'; break;
-		case 'L': step = 'l'; break;
-		case 'U': step = 'u'; break;
-		case 'D': step = 'd'; break;
+		case FRONT: step = FRONT_INVERTED; break;
+		case RIGHT: step = RIGHT_INVERTED; break;
+		case BACK: step = BACK_INVERTED; break;
+		case LEFT: step = LEFT_INVERTED; break;
+		case UP: step = UP_INVERTED; break;
+		case DOWN: step = DOWN_INVERTED; break;
 
-		case 'f': step = 'F'; break;
-		case 'r': step = 'R'; break;
-		case 'b': step = 'B'; break;
-		case 'l': step = 'L'; break;
-		case 'u': step = 'U'; break;
-		case 'd': step = 'D'; break;
+		case FRONT_INVERTED: step = FRONT; break;
+		case RIGHT_INVERTED: step = RIGHT; break;
+		case BACK_INVERTED: step = BACK; break;
+		case LEFT_INVERTED: step = LEFT; break;
+		case UP_INVERTED: step = UP; break;
+		case DOWN_INVERTED: step = DOWN; break;
 		}
 
 		flipped.push_back(step);
@@ -668,63 +688,44 @@ vector<char> Cube::invert(vector<char> turns)
 
 	return flipped;
 }
-
-char Cube::turnToChar(Cube(*turn)(Cube))
+*/
+/*
+MoveInstruction Cube::turnToChar(Cube(*turn)(Cube))
 {
-	if (turn == front) return 'F';
-	else if (turn == right) return 'R';
-	else if (turn == back) return 'B';
-	else if (turn == left) return 'L';
-	else if (turn == up) return 'U';
-	else if (turn == down) return 'D';
+	if (turn == front) return FRONT;
+	else if (turn == right) return RIGHT;
+	else if (turn == back) return BACK;
+	else if (turn == left) return LEFT;
+	else if (turn == up) return UP;
+	else if (turn == down) return DOWN;
 
-	// return random numbers chars
-	else if (turn == front2) return 'a';
-	else if (turn == right2) return 'c';
-	else if (turn == back2) return 'e';
-	else if (turn == left2) return 'g';
-	else if (turn == up2) return 'h';
-	else if (turn == down2) return 'i';
+	// return random numbers MoveInstructions
+	else if (turn == front2) return FRONT_2;
+	else if (turn == right2) return RIGHT_2;
+	else if (turn == back2) return BACK_2;
+	else if (turn == left2) return LEFT_2;
+	else if (turn == up2) return UP_2;
+	else if (turn == down2) return DOWN_2;
 
-	else if (turn == frontI) return 'f';
-	else if (turn == rightI) return 'r';
-	else if (turn == backI) return 'b';
-	else if (turn == leftI) return 'l';
-	else if (turn == upI) return 'u';
-	else if (turn == downI) return 'd';
+	else if (turn == frontI) return FRONT_INVERTED;
+	else if (turn == rightI) return RIGHT_INVERTED;
+	else if (turn == backI) return BACK_INVERTED;
+	else if (turn == leftI) return LEFT_INVERTED;
+	else if (turn == upI) return UP_INVERTED;
+	else if (turn == downI) return DOWN_INVERTED;
 }
-
-Cube Cube::doTurns(Cube cube, vector<char> turns)
+*/
+Cube Cube::doTurns(Cube cube, vector<Turn> turns)
 {
-	for (char turn : turns) {
-		switch (turn) {
-
-		case 'F': cube = front(cube); break;
-		case 'R': cube = right(cube); break;
-		case 'B': cube = back(cube); break;
-		case 'L': cube = left(cube); break;
-		case 'U': cube = up(cube); break;
-		case 'D': cube = down(cube); break;
-
-		case 'a': cube = front2(cube); break;
-		case 'c': cube = right2(cube); break;
-		case 'e' : cube = back2(cube); break;
-		case 'g': cube = left2(cube); break;
-		case 'h': cube = up2(cube); break;
-		case 'i': cube = down2(cube); break;
-
-		case 'f': cube = frontI(cube); break;
-		case 'r': cube = rightI(cube); break;
-		case 'b': cube = backI(cube); break;
-		case 'l': cube = rightI(cube); break;
-		case 'u': cube = upI(cube); break;
-		case 'd': cube = downI(cube); break;
-		}
+	for (Turn turn : turns) {
+		Cube(*currTurn)(Cube) = turn.turnFunc;
+		cube = currTurn(cube);
 	}
+
 	return cube;
 }
 
-void Cube::loadMap(unordered_map<int, vector<char>>& stepTable, string fname)
+void Cube::loadMap(unordered_map<int, vector<MoveInstruction>>& stepTable, string fname)
 {
 	std::cout << "loading map from " << fname << endl;
 
@@ -737,6 +738,31 @@ void Cube::loadMap(unordered_map<int, vector<char>>& stepTable, string fname)
 
 }
 
+/////// building turn tables //////////
+/*
+void Cube::buildTurnTable1()
+{
+	int TURN_TABLE_1[2048][12];
+
+	bitset<11> bits;
+
+	Cube cube = solvedCube();
+	for (int i = 0; i < 2048; ++i) {
+
+		bits = bitset<11>(i);
+		for (int bit = 0, int n = bits.size(); bit < n; ++bit) {
+			cube.edgeOrients_[i] = bit;
+		}
+		
+		int code = cube.step1Code();
+
+		for (auto turn : OK_TURNS1) {
+
+		}
+	}
+
+}
+*/
 void Cube::test()
 {
 	loadMap(TURNMAP2, "CubeMap2Face.ser");
@@ -746,12 +772,12 @@ void Cube::test()
 		std::cout << "enter maneuver (followed by a \".\")" << endl;
 		
 		char move;
-		vector<char> maneuver;
+		vector<Turn> maneuver;
 
 		cin >> move;
 
 		while (move != '.') {
-			maneuver.push_back(move);
+			maneuver.push_back(Turn((MoveInstruction) move));
 			cin >> move;
 		}
 		std::cout << "done entering" << endl;
@@ -797,15 +823,11 @@ int main()
 /*
 To do:
 
-INTEGRATE TURN STRUCTS
-Serialize hash tables
-Simplify cube codes for steps 3 and 4
-Do coset math to decrease step 3 table by a factor of 96
-Account for symmetries to decrease step 2 table by a factor of 48
-Get rid of edge orbits to decrease size by 1/3
-If we're doing really well, combine steps 1 and 2
-Move combo stuff to different file
-Turn vectors into char arrays, if you want
+1) Build move tables
+2) Shorten to two-phase
+3) Serialize 6-face solve hash tables
+4) Create different executables for building maps and solving cube
+5) Account for symmetries
 
 
 

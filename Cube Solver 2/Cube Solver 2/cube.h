@@ -3,17 +3,13 @@
 * \file cube.h
 * \brief interface for Cube class
 */
+#include "motor-control.h"
 
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
 #include <functional>
 #include <queue>
-
-/// Cube colors
-
-
-
 
 /// Memoized the necessary factorials and combinations
 static int FAC[12];
@@ -28,15 +24,16 @@ static int CHOOSE[12][12];
 *		   in the space that is home to cubie i.
 */
 class Cube {
+
+	/// forward declare Turn struct
 	struct Turn;
 public:
 
-	/// Typedefs to make code easier to read
-	//typedef std::vector<Cube(*)(Cube)> std::vector<Turn>;
+	/// Memoizes combinatorial values for calculating Cube codes
+	static void initChoose();
 
 	/// Initializes constants and loads the hash tables
 	static void init();
-	static void initChoose();
 
 	/// for two-face solve
 	static void init2();
@@ -44,9 +41,10 @@ public:
 	/// Scramble and solve a test cube
 	static void test();
 
+	////// Constructors ///////
 	Cube() = delete;
 
-	/// Four-argument parameterized constructor.  Constructs a cube
+	/// Five-argument parameterized constructor.  Constructs a cube
 	/// out of edgeColors, edgeOrients, cornerColors, and cornerOrients
 	Cube(char eColors[12], char eOrients[12], char eOrbits[12],
 		char cColors[8], char cOrients[8]);
@@ -56,9 +54,8 @@ public:
 
 	/**
 	* \brief Turning methods.  Each of the following static methods takes in a
-	* copy of a cube.  It then applies the appropriate turn by rearranging the
-	* relevant color and orientation vectors and by changing the orientations
-	* properly.  The first six methods represent clockwise turns, the following
+	* copy of a cube.  It then applies the appropriate turn by cycling the edges and corners
+	* and fixing orients.  The first six methods represent clockwise turns, the following
 	* are CC (inverse) turns, then double turns.  All the methods require cycling the
 	* arrays.  up and down require edge reorientation, and up down front and back
 	* require corner orientation.
@@ -104,7 +101,6 @@ public:
 	/// Creates an instance of a solved Cube
 	static Cube solvedCube();
 
-
 	/// Prints the cube in the form edgeColors, edgeOrients, cornerColors, cornerOrients
 	void print() const;
 
@@ -114,53 +110,53 @@ private:
 	struct Turn {
 		/// Constructors
 		Turn() = delete;
-		Turn(char c);
+		Turn(MotorControl::MoveInstruction c);
 
 		/// Data members
 		Cube(*turnFunc)(Cube);
 		std::string toString;
-		char repr;
-		Cube(*oppTurn)(Cube);
+		MotorControl::MoveInstruction repr;
+		MotorControl::MoveInstruction oppTurn;
+
+		/// Construct a vector of Turns from a vector of MoveInstructions
+		static std::vector<Turn> movesToTurns(std::vector<MotorControl::MoveInstruction> moves);
 	};
 
 	/// Some useful constants
 	static const char NUM_EDGES = 12;
 	static const char NUM_CORNERS = 8;
 	
-	enum Edge_t {
-		YB, YR, YO, YG, RB, OB, RG, OG,
-		WB, WR, WO, WG
-	};
-
+	/// Define enums referring to specific edge and corner pieces
+	enum Edge_t { YB, YR, YO, YG, RB, OB, RG, OG, WB, WR, WO, WG};
 	enum Corner_t { YRB, YOB, YRG, YOG, WRB, WOB, WRG, WOG };
 
 	/// vectors containing numbers that correspond to faces
-	static const std::vector<Edge_t> FRONT_EDGES;
-	static const std::vector<Edge_t> RIGHT_EDGES;
-	static const std::vector<Edge_t> LEFT_EDGES;
-	static const std::vector<Edge_t> BACK_EDGES;
-	static const std::vector<Edge_t> UP_EDGES;
-	static const std::vector<Edge_t> DOWN_EDGES;
+	static const Edge_t FRONT_EDGES[4];
+	static const Edge_t RIGHT_EDGES[4];
+	static const Edge_t LEFT_EDGES[4];
+	static const Edge_t BACK_EDGES[4];
+	static const Edge_t UP_EDGES[4];
+	static const Edge_t DOWN_EDGES[4];
 
-	static const std::vector<Corner_t> FRONT_CORNERS;
-	static const std::vector<Corner_t> RIGHT_CORNERS;
-	static const std::vector<Corner_t> LEFT_CORNERS;
-	static const std::vector<Corner_t> BACK_CORNERS;
-	static const std::vector<Corner_t> UP_CORNERS;
-	static const std::vector<Corner_t> DOWN_CORNERS;
+	static const Corner_t FRONT_CORNERS[4];
+	static const Corner_t RIGHT_CORNERS[4];
+	static const Corner_t LEFT_CORNERS[4];
+	static const Corner_t BACK_CORNERS[4];
+	static const Corner_t UP_CORNERS[4];
+	static const Corner_t DOWN_CORNERS[4];
 
 	/// Vectors corresponding to specific edge orbits
-	static const std::vector<Edge_t> UD_SLICE;
-	static const std::vector<Edge_t> FB_SLICE;
-	static const std::vector<Edge_t> LR_SLICE;
+	static const Edge_t UD_SLICE[4];
+	static const Edge_t FB_SLICE[4];
+	static const Edge_t LR_SLICE[4];
 
 	/// Hash maps from cube codes to the required turns to solve
-	static std::unordered_map<int, std::vector<char>> STEP1MAP;
-	static std::unordered_map<int, std::vector<char>> STEP2MAP;
-	static std::unordered_map<int, std::vector<char>> STEP3MAP;
-	static std::unordered_map<int, std::vector<char>> STEP4MAP;
+	static std::unordered_map<int, std::vector<MotorControl::MoveInstruction>> STEP1MAP;
+	static std::unordered_map<int, std::vector<MotorControl::MoveInstruction>> STEP2MAP;
+	static std::unordered_map<int, std::vector<MotorControl::MoveInstruction>> STEP3MAP;
+	static std::unordered_map<int, std::vector<MotorControl::MoveInstruction>> STEP4MAP;
 
-	static std::unordered_map < int, std::vector<char>> TURNMAP2;
+	static std::unordered_map < int, std::vector<MotorControl::MoveInstruction>> TURNMAP2;
 
 	/// Vectors with function pointers to allowable turns
 	static const std::vector<Turn> OK_TURNS1;
@@ -170,25 +166,28 @@ private:
 
 	static const std::vector<Turn> OK_TURNS_2FACE;
 
+
+	/////////////////// TURN METHODS ////////////////
+
 	/**
 	* \fn		turn
 	* \brief	Calls forwardCycle on the data members of Cube.
 	*/
-	void turn(const std::vector<Edge_t>& edges, const std::vector<Corner_t>& corners);
+	void turn(const Edge_t edges[4], const Corner_t corners[4]);
 
 	/**
 	* \fn		turnI
 	* \brief	Calls backwardCycle on the data members of Cube.
 	*/
-	void turnI(const std::vector<Edge_t>& edges, const std::vector<Corner_t>& corners);
+	void turnI(const Edge_t edges[4], const Corner_t corners[4]);
 
 	/**
 	* \fn		forwardCycle
 	* \brief	Cycles the numbers at the given indices forward (i.e. clockwise on the cube)
 	* \details	For example, then numbers at indices {1,3,5,6} will now be at {6,1,3,5}
 	*/
-	template <typename T>
-	void forwardCycle(const std::vector<T>& positions, char* cubies);
+	template <typename Cubie>
+	void forwardCycle(const Cubie positions[4], char* cubies);
 
 	/**
 	* \fn		forwardCycle
@@ -196,7 +195,7 @@ private:
 	* \details	For example, then numbers at indices {1,3,5,6} will now be at {3,5,6,1}
 	*/
 	template <typename Cubie>
-	void backwardCycle(const std::vector<Cubie>& positions, char* cubies);
+	void backwardCycle(const Cubie positions[4], char* cubies);
 
 
 	/**
@@ -204,7 +203,7 @@ private:
 	* \brief	Inverts the orientation of the edges at a given face.
 	* \details	Used in the turning methods up and down.
 	*/
-	void orientEdges(const std::vector<Edge_t>& edges);
+	void orientEdges(const Edge_t edges[4]);
 
 	/**
 	* \fn		orientCorners
@@ -213,7 +212,7 @@ private:
 	*			the orientations for respective pieces changes in the same way for
 	*			each of these turns.
 	*/
-	void orientCorners(const std::vector<Corner_t>& corners);
+	void orientCorners(const Corner_t corners[4]);
 
 	/**
 	* \fn		turn2
@@ -221,7 +220,10 @@ private:
 	*			turn on a Cube.
 	* \details	Helper method for front2, right2, etc.
 	*/
-	void turn2(const std::vector<Edge_t>& edges, const std::vector<Corner_t>& corners);
+	void turn2(const Edge_t edges[4], const Corner_t corners[4]);
+
+
+	//////////////////////// CUBE CODES /////////////////////
 
 	/**
 	* \fn		step1Code
@@ -257,10 +259,16 @@ private:
 	*/
 	int step4Code();
 
+	/// Helper method to hash the corners to a unique number.  Used to determine
+	/// The only 96 possible corner positions using double turns
+	int step4CornerCode();
+
+
+	/// Code for the 2-face solver
 	int code2();
 
 	/// Helper method to determine the code for cubies in a specific orbit
-	int step4Help(std::vector<Edge_t> orbit, char cubies[12]);
+	int step4Help(const Edge_t orbit[4], char cubies[12]);
 
 	/**
 	* \fn		doStep
@@ -272,7 +280,7 @@ private:
 	* \param	bool(Cube::*solved)()		the method to see if it's solved
 	* \param	std::vector<Turn> okSteps				the vector of allowable turns for this step
 	*/
-	static std::vector<char> doStep(Cube& cube, const std::unordered_map<int, std::vector<char>>& stepTable,
+	static std::vector<Turn> doStep(Cube& cube, const std::unordered_map<int, std::vector<MotorControl::MoveInstruction>>& stepTable,
 		int (Cube::*hashFunction)(), std::vector<Turn> okSteps);
 
 	/**
@@ -286,36 +294,39 @@ private:
 	* \param	bool (Cube::*solved)()		Method to check if the cube is done with step
 	* \param	std::vector<Turn> okSteps				A vector of allowable turns for this step
 	*/
-	std::vector<char> findTurns(const std::unordered_map<int, std::vector<char>>& stepTable, int (Cube::*code)(), std::vector<Turn> okSteps);
+	std::vector<Turn> findTurns(const std::unordered_map<int, std::vector<MotorControl::MoveInstruction>>& stepTable, int (Cube::*code)(), std::vector<Turn> okSteps);
 
 	/**
 	* \fn		printSteps
 	* \brief	Given a vector of function pointers to turns, prints them in readable form
 	*/
-	static void printTurns(std::vector<char> steps);
+	static void printTurns(std::vector<Turn> steps);
 
 	/// Inverts the step in a std::vector<Turn>.  For example, F R U2 becomes U2 R' F'
 	static std::vector<Turn> invert(std::vector<Turn> steps);
-	static std::vector<char> invert(std::vector<char> turns);
-	static Cube doTurns(Cube cube, std::vector<char> turns);
+	//static std::vector<char> invert(std::vector<char> turns);
+	static Cube doTurns(Cube cube, std::vector<Turn> turns);
 
-	static char turnToChar(Cube(*turn)(Cube));
+	//static MoveInstruction turnToChar(Cube(*turn)(Cube));
+
 
 	/// Builds the hashmaps holding the cubes
-	static void buildMap(std::queue<Cube> cubeQueue, std::queue<std::vector<char>> turnsQueue,
+	static void buildMap(std::queue<Cube> cubeQueue, std::queue<std::vector<MotorControl::MoveInstruction>> turnsQueue,
 		std::string fname, int (Cube::*hashFunction)(), std::vector<Turn> okTurns, int tableSize);
 
-	/// Helper method to hash the corners to a unique number.  Used to determine
-	/// The only 96 possible corner positions using double turns
-	int step4CornerCode();
+
 
 	/// Generates a queue with all 96 possible corner positions before step 4.
 	/// Used as a starting point to build the step 3 tables
 	static std::queue<Cube> step4ValidCorners();
 
-	static void loadMap(std::unordered_map<int, std::vector<char>>& stepMap, std::string fname);
+	/// Loads a map from a filename to a hash map
+	static void loadMap(std::unordered_map<int, std::vector<MotorControl::MoveInstruction>>& stepMap, std::string fname);
 
 	static int fac(int n);
+
+	/// builds a turn table for the edge orientations
+	//static void buildTurnTable1();
 
 	/// data members that define a cube.  For the following, indices represent positions
 	char edgeColors_[12];	///< Numbers represent colors (see table of consts above)
