@@ -6,9 +6,10 @@
 
 #include "motor-control.h"
 #include "motor-driver.h"
+#include "comm-protocol.h"
 #include <stdexcept>
 
-using MotorControl::MoveInstruction;
+using CommProtocol::MoveInstruction;
 using MotorControl::FaceTurn;
 
 void MotorControl::TURN_LEFT(MotorDriver driver) {
@@ -127,4 +128,24 @@ FaceTurn MotorControl::getAction(MoveInstruction code) {
         default:
             throw std::runtime_error("Unknown move instruction.");
     }
+
+    FaceTurn MotorControl::getNextAction() {
+
+        // Wait until there are enough bytes on the serial
+        while (Serial.available < sizeof(MoveInstruction)) {}
+
+        // Convert incoming bytes to a MoveInstruction
+        union {
+            char[sizeof(MoveInstruction)] bytes;
+            MoveInstruction inst;
+        } instBytes;
+
+        for (int i = 0; i < sizeof(MoveInstruction); ++i) {
+            instBytes.bytes[i] = Serial.read();
+        }
+
+        return getAction(instBytes.MoveInstruction);
+
+    }
+
 }

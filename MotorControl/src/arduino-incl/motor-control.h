@@ -1,44 +1,17 @@
 /**
  * \file motor-control.h
  * \brief Defines constants and functions used by Arduino sketches that operate
- *  the motor. Defines a protocol for serial communication between such a sketch
- *  and a PC program.
+ *  the motor. Should be included by an Arduino program. The associated
+ *  definitions use Arduino library functions, and so the code should only be
+ *  compiled in the Arduino environment.
  */
 
 #pragma once
 
 #include "motor-driver.h"
+#include "comm-protocol.h"
 
 namespace MotorControl {
-
-    typedef char SerialMessage;
-
-    /**
-     * \enum MoveInstruction
-     * \brief Constants representing a single cube action.
-     */
-    enum MoveInstruction : SerialMessage {
-        LEFT,
-        RIGHT,
-        UP,
-        DOWN,
-        FRONT,
-        BACK,
-
-        LEFT_2,
-        RIGHT_2,
-        UP_2,
-        DOWN_2,
-        FRONT_2,
-        BACK_2,
-
-        LEFT_INVERTED,
-        RIGHT_INVERTED,
-        UP_INVERTED,
-        DOWN_INVERTED,
-        FRONT_INVERTED,
-        BACK_INVERTED
-    };
 
     typedef void(*FaceTurn)(MotorDriver);
 
@@ -67,6 +40,12 @@ namespace MotorControl {
     /**
      * \brief Get the function associated with a MoveInstruction code.
      */
-    FaceTurn getAction(MoveInstruction);
+    FaceTurn getAction(CommProtocol::MoveInstruction);
+
+    /**
+     * \brief Read the next instruction from the serial part, and return the
+     *  associated function.
+     */
+    FaceTurn getNextAction();
 
 }
