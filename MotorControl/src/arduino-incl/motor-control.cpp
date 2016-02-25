@@ -7,7 +7,6 @@
 #include "motor-control.h"
 #include "motor-driver.h"
 #include "comm-protocol.h"
-#include <stdexcept>
 
 using CommProtocol::MoveInstruction;
 using MotorControl::FaceTurn;
@@ -126,7 +125,8 @@ FaceTurn MotorControl::getAction(MoveInstruction code) {
             return TURN_BACK_INVERTED;
 
         default:
-            throw std::runtime_error("Unknown move instruction.");
+            Serial.println("Unexpected MoveInstruction code.");
+            return 0;
     }
 
     FaceTurn MotorControl::getNextAction() {
