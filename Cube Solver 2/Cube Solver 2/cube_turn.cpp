@@ -6,91 +6,101 @@
 using namespace std;
 
 // Vectors containing numbers that correspond to faces
-const vector<Cube::Edge_t> Cube::FRONT_EDGES({ YG, OG, WG, RG });
-const vector<Cube::Edge_t> Cube::RIGHT_EDGES({ YO, OB, WO, OG });
-const vector<Cube::Edge_t> Cube::BACK_EDGES({ YB, RB, WB, OB });
-const vector<Cube::Edge_t> Cube::LEFT_EDGES({ YR, RG, WR, RB });
-const vector<Cube::Edge_t> Cube::UP_EDGES({ YB, YO, YG, YR });
-const vector<Cube::Edge_t> Cube::DOWN_EDGES({ WG, WO, WB, WR });
+const Cube::Edge_t Cube::FRONT_EDGES[4] = { YG, OG, WG, RG };
+const Cube::Edge_t Cube::RIGHT_EDGES[4] = { YO, OB, WO, OG };
+const Cube::Edge_t Cube::BACK_EDGES[4] = { YB, RB, WB, OB };
+const Cube::Edge_t Cube::LEFT_EDGES[4] = { YR, RG, WR, RB };
+const Cube::Edge_t Cube::UP_EDGES[4] = { YB, YO, YG, YR };
+const Cube::Edge_t Cube::DOWN_EDGES[4] = { WG, WO, WB, WR };
 
-const vector<Cube::Corner_t> Cube::FRONT_CORNERS({ YRG, YOG, WOG, WRG });
-const vector<Cube::Corner_t> Cube::RIGHT_CORNERS({ YOG, YOB, WOB, WOG });
-const vector<Cube::Corner_t> Cube::BACK_CORNERS({ YOB, YRB, WRB, WOB });
-const vector<Cube::Corner_t> Cube::LEFT_CORNERS({ YRB, YRG, WRG, WRB });
-const vector<Cube::Corner_t> Cube::UP_CORNERS({ YRB, YOB, YOG, YRG });
-const vector<Cube::Corner_t> Cube::DOWN_CORNERS({ WRG, WOG, WOB, WRB });
+const Cube::Corner_t Cube::FRONT_CORNERS[4] = { YRG, YOG, WOG, WRG };
+const Cube::Corner_t Cube::RIGHT_CORNERS[4] = { YOG, YOB, WOB, WOG };
+const Cube::Corner_t Cube::BACK_CORNERS[4] = { YOB, YRB, WRB, WOB };
+const Cube::Corner_t Cube::LEFT_CORNERS[4] = { YRB, YRG, WRG, WRB };
+const Cube::Corner_t Cube::UP_CORNERS[4] = { YRB, YOB, YOG, YRG };
+const Cube::Corner_t Cube::DOWN_CORNERS[4] = { WRG, WOG, WOB, WRB };
 
 // Corresponding edges in the slices
-const vector<Cube::Edge_t> Cube::LR_SLICE({ YB, YG, WB, WG });
-const vector<Cube::Edge_t> Cube::FB_SLICE({ YR, YO, WR, WO });
-const vector<Cube::Edge_t> Cube::UD_SLICE({ RB, OB, RG, OG });
+const Cube::Edge_t Cube::LR_SLICE[4] = { YB, YG, WB, WG };
+const Cube::Edge_t Cube::FB_SLICE[4] = { YR, YO, WR, WO };
+const Cube::Edge_t Cube::UD_SLICE[4] = { RB, OB, RG, OG };
 
+using MotorControl::MoveInstruction;
 
-Cube::Turn::Turn(char c) : repr{ c }
+Cube::Turn::Turn(MotorControl::MoveInstruction c) : repr{ c }
 {
 
 	switch (c) {
 
-	case 'F':
-		turnFunc = front; toString = "F"; oppTurn = frontI;
+	case FRONT:
+		turnFunc = front; toString = "F"; oppTurn = MotorControl::MoveInstruction::FRONT_INVERTED;
 		break;
-	case 'R':
-		turnFunc = right; toString = "R"; oppTurn = rightI;
+	case RIGHT:
+		turnFunc = right; toString = "R"; oppTurn = RIGHT_INVERTED;
 		break;
-	case 'B':
-		turnFunc = back; toString = "B"; oppTurn = backI;
+	case BACK:
+		turnFunc = back; toString = "B"; oppTurn = BACK_INVERTED;
 		break;
-	case 'L':
-		turnFunc = left; toString = "L"; oppTurn = leftI;
+	case LEFT:
+		turnFunc = left; toString = "L"; oppTurn = LEFT_INVERTED;
 		break;
-	case 'U':
-		turnFunc = up; toString = "U"; oppTurn = upI;
+	case UP:
+		turnFunc = up; toString = "U"; oppTurn = UP_INVERTED;
 		break;
-	case 'D':
-		turnFunc = down; toString = "D"; oppTurn = downI;
+	case DOWN:
+		turnFunc = down; toString = "D"; oppTurn = DOWN_INVERTED;
 		break;
 
-	case 'a':
-		turnFunc = front2; toString = "F2"; oppTurn = front2;
+	case FRONT_2:
+		turnFunc = front2; toString = "F2"; oppTurn = FRONT_2;
 		break;
-	case 'c':
-		turnFunc = right2; toString = "R2"; oppTurn = right2;
+	case RIGHT_2:
+		turnFunc = right2; toString = "R2"; oppTurn = RIGHT_2;
 		break;
-	case 'e':
-		turnFunc = back2; toString = "B2"; oppTurn = back2;
+	case BACK_2:
+		turnFunc = back2; toString = "B2"; oppTurn = BACK_2;
 		break;
-	case 'g':
-		turnFunc = left2; toString = "L2"; oppTurn = left2;
+	case LEFT_2:
+		turnFunc = left2; toString = "L2"; oppTurn = LEFT_2;
 		break;
-	case 'h':
-		turnFunc = up2; toString = "U2"; oppTurn = up2;
+	case UP_2:
+		turnFunc = up2; toString = "U2"; oppTurn = UP_2;
 		break;
-	case 'i':
-		turnFunc = down2; toString = "D2"; oppTurn = down2;
+	case DOWN_2:
+		turnFunc = down2; toString = "D2"; oppTurn = DOWN_2;
 		break;
-	case 'f':
-		turnFunc = frontI; toString = "F'"; oppTurn = front;
+
+	case FRONT_INVERTED:
+		turnFunc = frontI; toString = "F'"; oppTurn = FRONT;
 		break;
-	case 'r':
-		turnFunc = rightI; toString = "R'"; oppTurn = right;
+	case RIGHT_INVERTED:
+		turnFunc = rightI; toString = "R'"; oppTurn = RIGHT;
 		break;
-	case 'b':
-		turnFunc = backI; toString = "B'"; oppTurn = back;
+	case BACK_INVERTED:
+		turnFunc = backI; toString = "B'"; oppTurn = BACK;
 		break;
-	case 'l':
-		turnFunc = leftI; toString = "L'"; oppTurn = left;
+	case LEFT_INVERTED:
+		turnFunc = leftI; toString = "L'"; oppTurn = LEFT;
 		break;
-	case 'u':
-		turnFunc = upI; toString = "U'"; oppTurn = up;
+	case UP_INVERTED:
+		turnFunc = upI; toString = "U'"; oppTurn = UP;
 		break;
-	case 'd':
-		turnFunc = downI; toString = "D'"; oppTurn = down;
+	case DOWN_INVERTED:
+		turnFunc = downI; toString = "D'"; oppTurn = DOWN;
 		break;
 
 	default: cout << "error: not a valid char" << endl;
 	}
 }
 
+vector<Cube::Turn> Cube::Turn::movesToTurns(std::vector<MoveInstruction> moves)
+{
+	vector<Turn> turns;
+	for (MoveInstruction m : moves) {
+		turns.push_back(Turn(m));
+	}
+	return turns;
+}
 
 
 Cube Cube::front(Cube cube)
@@ -135,8 +145,7 @@ Cube Cube::down(Cube cube)
 	return cube;
 }
 
-void Cube::turn(const vector<Edge_t>& faceEdges,
-	const vector<Corner_t>& faceCorners)
+void Cube::turn(const Edge_t faceEdges[4], const Corner_t faceCorners[4])
 {
 	forwardCycle(faceEdges, edgeColors_);
 	forwardCycle(faceEdges, edgeOrients_);
@@ -147,7 +156,7 @@ void Cube::turn(const vector<Edge_t>& faceEdges,
 }
 
 template <typename Cubie>
-void Cube::forwardCycle(const vector<Cubie>& positions, char* cubies)
+void Cube::forwardCycle(const Cubie positions[4], char* cubies)
 {
 	char temp = cubies[positions[3]];
 	for (size_t i = 3; i > 0; --i) {
@@ -198,8 +207,9 @@ Cube Cube::downI(Cube cube)
 	return cube;
 }
 
-void Cube::turnI(const vector<Edge_t>& faceEdges,
-	const vector<Corner_t>& faceCorners)
+
+void Cube::turnI(const Edge_t faceEdges[4],
+	const Corner_t faceCorners[4])
 {
 	backwardCycle(faceEdges, edgeColors_);
 	backwardCycle(faceEdges, edgeOrients_);
@@ -210,7 +220,7 @@ void Cube::turnI(const vector<Edge_t>& faceEdges,
 }
 
 template <typename Cubie>
-void Cube::backwardCycle(const vector<Cubie>& positions, char* cubies)
+void Cube::backwardCycle(const Cubie positions[4], char* cubies)
 {
 	char temp = cubies[positions[0]];
 	for (size_t i = 0; i < 3; ++i) {
@@ -257,7 +267,7 @@ Cube Cube::down2(Cube cube)
 	return cube;
 }
 
-void Cube::turn2(const vector<Edge_t>& faceEdges, const vector<Corner_t>& faceCorners)
+void Cube::turn2(const Edge_t faceEdges[4], const Corner_t faceCorners[4])
 {
 	// do double turn by swapping pairs of cubies.  No change in orientation.
 	swap(edgeColors_[faceEdges[0]], edgeColors_[faceEdges[2]]);
@@ -274,15 +284,15 @@ void Cube::turn2(const vector<Edge_t>& faceEdges, const vector<Corner_t>& faceCo
 }
 
 
-void Cube::orientEdges(const vector<Edge_t>& edges)
+void Cube::orientEdges(const Edge_t edges[4])
 {
 	// edge orientations are changed identically (wrt the face) for U,D,U',D'
-	for (char pos : edges) {
-		edgeOrients_[pos] = !edgeOrients_[pos];
+	for (int i = 0; i < 4; ++i) {
+		edgeOrients_[edges[i]] = !edgeOrients_[edges[i]];
 	}
 }
 
-void Cube::orientCorners(const vector<Corner_t>& pos)
+void Cube::orientCorners(const Corner_t pos[4])
 {
 	// corner orientations also change the same for U,D,U',D',L,R,L',R'
 	cornerOrients_[pos[0]] = (cornerOrients_[pos[0]] + 1) % 3;
