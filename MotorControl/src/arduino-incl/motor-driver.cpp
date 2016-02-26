@@ -6,6 +6,8 @@
  *  Arduino editor.
  */
 
+#include "Arduino.h"
+#include "HardwareSerial.h"
 #include "motor-driver.h"
 
 MotorDriver::MotorDriver(const PinID stepPinL, const PinID dirPinL,
@@ -14,18 +16,18 @@ MotorDriver::MotorDriver(const PinID stepPinL, const PinID dirPinL,
                 const PinID stepPinD, const PinID dirPinD,
                 const PinID stepPinF, const PinID dirPinF,
                 const PinID stepPinB, const PinID dirPinB)
-: stepPinL_{stepPinL}, driPinL_{dirPinL},
-  stepPinR_{stepPinR}, driPinR_{dirPinR},
-  stepPinU_{stepPinU}, driPinU_{dirPinU},
-  stepPinD_{stepPinD}, driPinD_{dirPinD},
-  stepPinF_{stepPinF}, driPinF_{dirPinF},
-  stepPinB_{stepPinB}, driPinB_{dirPinB} {
+: stepPinL_{stepPinL}, dirPinL_{dirPinL},
+  stepPinR_{stepPinR}, dirPinR_{dirPinR},
+  stepPinU_{stepPinU}, dirPinU_{dirPinU},
+  stepPinD_{stepPinD}, dirPinD_{dirPinD},
+  stepPinF_{stepPinF}, dirPinF_{dirPinF},
+  stepPinB_{stepPinB}, dirPinB_{dirPinB} {
 
     // Nothing else to do.
 }
 
 void MotorDriver::step(
-    const MotorID motor, const int turns, const MotorDirection dir) const {
+    const MotorID motor, const int turns, const MotorDirection dir) {
     int stepPin = 0;
     int dirPin = 0;
 
@@ -55,7 +57,8 @@ void MotorDriver::step(
             stepPin = stepPinB_;
             dirPin = stepPinB_;
             break;
-        case Serial.println("ERROR: Unexpected motor ID.");
+        default:
+            Serial.println("ERROR: Unexpected motor ID.");
     }
 
     // Step the motor.

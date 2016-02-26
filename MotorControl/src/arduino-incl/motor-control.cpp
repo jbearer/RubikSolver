@@ -7,8 +7,9 @@
 #include "motor-control.h"
 #include "motor-driver.h"
 #include "comm-protocol.h"
+#include "HardwareSerial.h"
 
-using CommProtocol::MoveInstruction;
+using namespace CommProtocol;
 using MotorControl::FaceTurn;
 
 void MotorControl::TURN_LEFT(MotorDriver driver) {
@@ -128,24 +129,22 @@ FaceTurn MotorControl::getAction(MoveInstruction code) {
             Serial.println("Unexpected MoveInstruction code.");
             return 0;
     }
+}
 
-    FaceTurn MotorControl::getNextAction() {
+FaceTurn MotorControl::getNextAction() {
 
-        // Wait until there are enough bytes on the serial
-        while (Serial.available < sizeof(MoveInstruction)) {}
+    // Wait until there are enough bytes on the serial
+    while (Serial.available() < sizeof(MoveInstruction)) {}
 
-        // Convert incoming bytes to a MoveInstruction
-        union {
-            char[sizeof(MoveInstruction)] bytes;
-            MoveInstruction inst;
-        } instBytes;
+    // Convert incoming bytes to a MoveInstruction
+    union {
+        char bytes[sizeof(MoveInstruction)];
+        MoveInstruction inst;
+    } instBytes;
 
-        for (int i = 0; i < sizeof(MoveInstruction); ++i) {
-            instBytes.bytes[i] = Serial.read();
-        }
-
-        return getAction(instBytes.MoveInstruction);
-
+    for (int i = 0; i < sizeof(MoveInstruction); ++i) {
+        instBytes.bytes[i] = Serial.read();
     }
 
+    return getAction(instBytes.inst);
 }

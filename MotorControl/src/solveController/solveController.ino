@@ -14,12 +14,12 @@ const int stepPinD = 7; const int dirPinD = 8;
 const int stepPinF = 9; const int dirPinF = 10;
 const int stepPinB = 11; const int dirPinB = 12;
 
-MotorDriver driver(stepPinL, driPinL,
-                    stepPinR, driPinR,
-                    stepPinU, driPinU,
-                    stepPinD, driPinD,
-                    stepPinF, driPinF,
-                    stepPinB, driPinB);
+MotorDriver driver(stepPinL, dirPinL,
+                    stepPinR, dirPinR,
+                    stepPinU, dirPinU,
+                    stepPinD, dirPinD,
+                    stepPinF, dirPinF,
+                    stepPinB, dirPinB);
 
 void setup() {
   pinMode(stepPinR,OUTPUT); pinMode(dirPinR,OUTPUT);
@@ -33,6 +33,6 @@ void setup() {
 }
 
 void loop() {
-  FaceTurn next = MotorControl::getNextInstruction();
+  MotorControl::FaceTurn next = MotorControl::getNextAction();
   next(driver);
 }

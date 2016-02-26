@@ -1,3 +1,7 @@
+# TODO have clean delete the copies of the Arduino include files
+# TODO make each Arduino include target dependent not only on the original files
+#	but on the existence of the copies in each sketch folder
+
 INCL = 
 CXXFLAGS = -g -std=c++11 -Wall -Wextra $(INCL)
 CXX = g++

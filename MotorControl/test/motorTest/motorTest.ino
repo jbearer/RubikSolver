@@ -3,6 +3,9 @@
   */
 
 #include "motor-driver.h"
+#include "motor-control.h"
+
+using namespace MotorControl;
 
 // initializes motor pins
 const int stepPinR = 1; const int dirPinR = 2;
@@ -12,49 +15,31 @@ const int stepPinD = 7; const int dirPinD = 8;
 const int stepPinF = 9; const int dirPinF = 10;
 const int stepPinB = 11; const int dirPinB = 12;
 
-MotorDriver driver(stepPinL, driPinL,
-                    stepPinR, driPinR,
-                    stepPinU, driPinU,
-                    stepPinD, driPinD,
-                    stepPinF, driPinF,
-                    stepPinB, driPinB);
+MotorDriver driver(stepPinL, dirPinL,
+                    stepPinR, dirPinR,
+                    stepPinU, dirPinU,
+                    stepPinD, dirPinD,
+                    stepPinF, dirPinF,
+                    stepPinB, dirPinB);
 
-// takes in solution
-char moves[] = "rludfbRLUDFB2r2L2B";
-const int numberOfSteps = 15;
+// a test sequence of actions to perform on the cube
+const int NUM_STEPS = 18;
+FaceTurn moves[NUM_STEPS] = {
+        TURN_LEFT, TURN_RIGHT, TURN_UP, TURN_DOWN, TURN_FRONT, TURN_BACK,
 
-/* solve
- *  solves the cube given a list of moves
- *  rotates the corresponding motor based on 
- *  solution list
- */
-void solve( char moves[]){
+        TURN_LEFT_INVERTED, TURN_RIGHT_INVERTED, TURN_UP_INVERTED, 
+        TURN_DOWN_INVERTED, TURN_FRONT_INVERTED, TURN_BACK_INVERTED,
+
+        TURN_LEFT_2, TURN_RIGHT_2, TURN_UP_2, TURN_DOWN_2, TURN_FRONT_2, 
+        TURN_BACK_2
+    };
+
+
+// Perform a sequence of actions on the cube
+void act( MotorControl::FaceTurn moves[], const int steps){
   // loop through list of steps
-  int i = 0;
-  while (i<numberOfSteps){
-    // Deals with clockwise turns
-    if      (moves[i]=='r'){driver.step('R',1,HIGH); i++;}
-    else if (moves[i]=='l'){driver.step('L',1,HIGH); i++;}
-    else if (moves[i]=='u'){driver.step('U',1,HIGH); i++;}
-    else if (moves[i]=='d'){driver.step('D',1,HIGH); i++;}
-    else if (moves[i]=='f'){driver.step('F',1,HIGH); i++;}
-    else if (moves[i]=='b'){driver.step('B',1,HIGH); i++;}
-    // Deals with ccw turns
-    else if (moves[i]=='R'){driver.step('R',1,LOW); i++;}
-    else if (moves[i]=='L'){driver.step('L',1,LOW); i++;}
-    else if (moves[i]=='U'){driver.step('U',1,LOW); i++;}
-    else if (moves[i]=='D'){driver.step('D',1,LOW); i++;}
-    else if (moves[i]=='F'){driver.step('F',1,LOW); i++;}
-    else if (moves[i]=='B'){driver.step('B',1,LOW); i++;}
-    // Deals with 180 deg turns
-    else if (moves[i]=='2'){
-      if      (moves[i+1]=='r'){driver.step('R',2,HIGH); i+=2;}
-      else if (moves[i+1]=='l'){driver.step('L',2,HIGH); i+=2;}
-      else if (moves[i+1]=='u'){driver.step('U',2,HIGH); i+=2;}
-      else if (moves[i+1]=='d'){driver.step('D',2,HIGH); i+=2;}
-      else if (moves[i+1]=='f'){driver.step('F',2,HIGH); i+=2;}
-      else if (moves[i+1]=='b'){driver.step('B',2,HIGH); i+=2;}
-    } 
+  for (int i = 0; i < steps; ++i) {
+   moves[i](driver);
   }
 }
 
@@ -76,5 +61,5 @@ void setup() {
  */
 void loop() {
   delay(3000);
-  solve(moves);
+  act(moves, NUM_STEPS);
 }

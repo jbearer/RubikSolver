@@ -46,7 +46,7 @@ public:
      * \param dir The direction of the turns.
      */
     void step(
-        const MotorID motor, const int turns, const MotorDirection dir) const;
+        const MotorID motor, const int turns, const MotorDirection dir);
 
 private:
 
