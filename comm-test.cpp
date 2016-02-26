@@ -25,11 +25,11 @@ int main() {
 
         LEFT_2, RIGHT_2, UP_2, DOWN_2, FRONT_2, 
         BACK_2
-    }
+    };
 
     serialstream serial(PORT);
     for (auto turn : sequence) {
-        stream << turn;
+        serial << turn;
     }
 
     return 0;

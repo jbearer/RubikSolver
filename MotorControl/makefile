@@ -32,7 +32,7 @@ all: $(SKETCHES) $(OBJS)
 
 # Copy arduino files into sketch directories, but do not compile anything;
 # no compiler output
-silent: $(SKETCHES)
+lib: $(SKETCHES)
 
 clean:
 	rm -rf *.o *.exe $(OBJS) $(TEST_PATH)/motorTest/motor-control.h \
