@@ -32,61 +32,61 @@ Cube::Turn::Turn(MotorControl::MoveInstruction c) : repr{ c }
 
 	switch (c) {
 
-	case FRONT:
+	case MoveInstruction::FRONT:
 		turnFunc = front; toString = "F"; oppTurn = MotorControl::MoveInstruction::FRONT_INVERTED;
 		break;
-	case RIGHT:
-		turnFunc = right; toString = "R"; oppTurn = RIGHT_INVERTED;
+	case MoveInstruction::RIGHT:
+		turnFunc = right; toString = "R"; oppTurn = MoveInstruction::RIGHT_INVERTED;
 		break;
-	case BACK:
-		turnFunc = back; toString = "B"; oppTurn = BACK_INVERTED;
+	case MoveInstruction::BACK:
+		turnFunc = back; toString = "B"; oppTurn = MoveInstruction::BACK_INVERTED;
 		break;
-	case LEFT:
-		turnFunc = left; toString = "L"; oppTurn = LEFT_INVERTED;
+	case MoveInstruction::LEFT:
+		turnFunc = left; toString = "L"; oppTurn = MoveInstruction::LEFT_INVERTED;
 		break;
-	case UP:
-		turnFunc = up; toString = "U"; oppTurn = UP_INVERTED;
+	case MoveInstruction::UP:
+		turnFunc = up; toString = "U"; oppTurn = MoveInstruction::UP_INVERTED;
 		break;
-	case DOWN:
-		turnFunc = down; toString = "D"; oppTurn = DOWN_INVERTED;
-		break;
-
-	case FRONT_2:
-		turnFunc = front2; toString = "F2"; oppTurn = FRONT_2;
-		break;
-	case RIGHT_2:
-		turnFunc = right2; toString = "R2"; oppTurn = RIGHT_2;
-		break;
-	case BACK_2:
-		turnFunc = back2; toString = "B2"; oppTurn = BACK_2;
-		break;
-	case LEFT_2:
-		turnFunc = left2; toString = "L2"; oppTurn = LEFT_2;
-		break;
-	case UP_2:
-		turnFunc = up2; toString = "U2"; oppTurn = UP_2;
-		break;
-	case DOWN_2:
-		turnFunc = down2; toString = "D2"; oppTurn = DOWN_2;
+	case MoveInstruction::DOWN:
+		turnFunc = down; toString = "D"; oppTurn = MoveInstruction::DOWN_INVERTED;
 		break;
 
-	case FRONT_INVERTED:
-		turnFunc = frontI; toString = "F'"; oppTurn = FRONT;
+	case MoveInstruction::FRONT_2:
+		turnFunc = front2; toString = "F2"; oppTurn = MoveInstruction::FRONT_2;
 		break;
-	case RIGHT_INVERTED:
-		turnFunc = rightI; toString = "R'"; oppTurn = RIGHT;
+	case MoveInstruction::RIGHT_2:
+		turnFunc = right2; toString = "R2"; oppTurn = MoveInstruction::RIGHT_2;
 		break;
-	case BACK_INVERTED:
-		turnFunc = backI; toString = "B'"; oppTurn = BACK;
+	case MoveInstruction::BACK_2:
+		turnFunc = back2; toString = "B2"; oppTurn = MoveInstruction::BACK_2;
 		break;
-	case LEFT_INVERTED:
-		turnFunc = leftI; toString = "L'"; oppTurn = LEFT;
+	case MoveInstruction::LEFT_2:
+		turnFunc = left2; toString = "L2"; oppTurn = MoveInstruction::LEFT_2;
 		break;
-	case UP_INVERTED:
-		turnFunc = upI; toString = "U'"; oppTurn = UP;
+	case MoveInstruction::UP_2:
+		turnFunc = up2; toString = "U2"; oppTurn = MoveInstruction::UP_2;
 		break;
-	case DOWN_INVERTED:
-		turnFunc = downI; toString = "D'"; oppTurn = DOWN;
+	case MoveInstruction::DOWN_2:
+		turnFunc = down2; toString = "D2"; oppTurn = MoveInstruction::DOWN_2;
+		break;
+
+	case MoveInstruction::FRONT_INVERTED:
+		turnFunc = frontI; toString = "F'"; oppTurn = MoveInstruction::FRONT;
+		break;
+	case MoveInstruction::RIGHT_INVERTED:
+		turnFunc = rightI; toString = "R'"; oppTurn = MoveInstruction::RIGHT;
+		break;
+	case MoveInstruction::BACK_INVERTED:
+		turnFunc = backI; toString = "B'"; oppTurn = MoveInstruction::BACK;
+		break;
+	case MoveInstruction::LEFT_INVERTED:
+		turnFunc = leftI; toString = "L'"; oppTurn = MoveInstruction::LEFT;
+		break;
+	case MoveInstruction::UP_INVERTED:
+		turnFunc = upI; toString = "U'"; oppTurn = MoveInstruction::UP;
+		break;
+	case MoveInstruction::DOWN_INVERTED:
+		turnFunc = downI; toString = "D'"; oppTurn = MoveInstruction::DOWN;
 		break;
 
 	default: cout << "error: not a valid char" << endl;
