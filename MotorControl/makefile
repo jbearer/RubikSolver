@@ -1,3 +1,12 @@
+# makefile
+# use make or make all to
+#	1. Copy include files into the proper Arduino sketch folders.
+#	2. Build a binary for Arduino using AVR, and show compiler output without
+#		having to build in Arduino IDE
+#
+# use make silent to do 1. but not 2.
+#	make silent prepares sketches to be run from Arduino IDE
+
 # External dependencies (optional - used for viewing compiler output without
 # building in Arduino IDE):
 #	Arduino cores: path depends on local PC configuration
