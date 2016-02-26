@@ -142,7 +142,7 @@ FaceTurn MotorControl::getNextAction() {
         MoveInstruction inst;
     } instBytes;
 
-    for (int i = 0; i < sizeof(MoveInstruction); ++i) {
+    for (size_t i = 0; i < sizeof(MoveInstruction); ++i) {
         instBytes.bytes[i] = Serial.read();
     }
 

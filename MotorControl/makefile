@@ -1,11 +1,24 @@
-
-# External dependencies:
+# External dependencies (optional - used for viewing compiler output without
+# building in Arduino IDE):
 #	Arduino cores: path depends on local PC configuration
+#	winAVR
 
-INCL = -I/C:/Program_Files_x86/Arduino/hardware/arduino/avr/cores/arduino
+# Path to arduino libraries. Specific to local PC
+AVR_PATH = C:/Program_Files_x86/Arduino/hardware/arduino/avr
 
-CXXFLAGS = -g -std=c++11 -Wall -Wextra $(INCL)
-CXX = g++
+# Pin layout (standard = Arduino Uno)
+PIN_LAYOUT = standard
+
+INCL = -I$(AVR_PATH)/cores/arduino -I$(AVR_PATH)/variants/standard
+
+# Arduino Uno architecture
+MCU = atmega328p
+
+# Arduino processor frequency
+F_CPU = 16000000UL
+
+CXXFLAGS = -Wall -Wextra -pedantic -Os -DF_CPU=$(F_CPU) -std=c++11 -mmcu=$(MCU) $(INCL)
+CXX = avr-g++
 
 # Path to source files
 SRC_PATH = src
