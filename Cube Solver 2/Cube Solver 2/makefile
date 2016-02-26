@@ -1,12 +1,10 @@
+include ../../config.mk
 
-# Path to boost root directory on local PC
-BOOST_PATH = C:/Program_Files/boost_1_60_0
+INCL += -I../../MotorControl/src/arduino-incl
+ARDINCL += 
 
-INCL = -I$(dir $(lastword $(MAKEFILE_LIST)))../../MotorControl/src/arduino-incl \
--I/$(BOOST_PATH)
-
-CXXFLAGS = -g -std=c++11 -Wall -Wextra $(INCL)
-CXX = g++
+CXXFLAGS += $(INCL)
+ARDCXXFLAGS += $(ARDINCL)
 
 TARGETS = CubeTest.exe
 OBJS = cube-test.o cube.o cube_turn.o
