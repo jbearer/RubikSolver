@@ -3,7 +3,7 @@
 * \file cube.h
 * \brief interface for Cube class
 */
-#include "motor-control.h"
+#include "comm-protocol.h"
 
 #include <vector>
 #include <unordered_map>

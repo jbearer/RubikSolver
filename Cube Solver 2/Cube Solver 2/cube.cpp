@@ -15,7 +15,7 @@
 
 
 using namespace std;
-using MotorControl::MoveInstruction;
+using CommProtocol::MoveInstruction;
 
 // Hashmaps for each step
 unordered_map<int, vector<MoveInstruction>> Cube::STEP1MAP;
