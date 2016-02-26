@@ -1,8 +1,9 @@
-# TODO have clean delete the copies of the Arduino include files
-# TODO make each Arduino include target dependent not only on the original files
-#	but on the existence of the copies in each sketch folder
 
-INCL = 
+# External dependencies:
+#	Arduino cores: path depends on local PC configuration
+
+INCL = -I/C:/Program_Files_x86/Arduino/hardware/arduino/avr/cores/arduino
+
 CXXFLAGS = -g -std=c++11 -Wall -Wextra $(INCL)
 CXX = g++
 
@@ -15,35 +16,89 @@ TEST_PATH = test
 # Path to files included by arduino
 ARD_INCL_PATH = $(SRC_PATH)/arduino-incl
 
-ARD_INCLUDES = motor-control motor-driver comm-protocol
+SKETCHES = $(TEST_PATH)/motorTest $(SRC_PATH)/solveController
 
 # Objects which need to be built for linking with external sources
 # The library is currently header only. No objects need to be built.
 # (Non-header files are meant only for use by Arduino, and thus are compiled
 # separately in the Arduino environmnet.)
-OBJS = 
+OBJS = motor-control.o motor-driver.o 
 
-# Build objects necessary to link external code with code in this directory.
 # Copy arduino include files into each sketch directory, so that the sketches
-# are ready to compile.
+# are ready to compile. Compiles but does not link all .cpp files included by
+# arduino, so that compiler errors can be known simply by running make
 # Does not build an executable
-all: $(OBJS) $(ARD_INCLUDES)
+all: $(SKETCHES) $(OBJS)
+
+# Copy arduino files into sketch directories, but do not compile anything;
+# no compiler output
+silent: $(SKETCHES)
+
 clean:
-	rm -rf *.o *.exe $(OBJS)
+	rm -rf *.o *.exe $(OBJS) $(TEST_PATH)/motorTest/motor-control.h \
+	$(TEST_PATH)/motorTest/motor-control.cpp \
+	$(TEST_PATH)/motorTest/motor-driver.h \
+	$(TEST_PATH)/motorTest/motor-driver.cpp \
+	$(TEST_PATH)/motorTest/comm-protocol.h \
+	$(SRC_PATH)/solveController/motor-control.h \
+	$(SRC_PATH)/solveController/motor-control.cpp \
+	$(SRC_PATH)/solveController/motor-driver.h \
+	$(SRC_PATH)/solveController/motor-driver.cpp \
+	$(SRC_PATH)/solveController/comm-protocol.h
 again: clean all
 
-motor-control: $(ARD_INCL_PATH)/motor-control.cpp $(ARD_INCL_PATH)/motor-control.h
-	cp $(ARD_INCL_PATH)/$@.h $(SRC_PATH)/solveController;\
-	cp $(ARD_INCL_PATH)/$@.cpp $(SRC_PATH)/solveController;\
-	cp $(ARD_INCL_PATH)/$@.h $(TEST_PATH)/motorTest;\
-	cp $(ARD_INCL_PATH)/$@.cpp $(TEST_PATH)/motorTest;\
+# Object targets
 
-motor-driver: $(ARD_INCL_PATH)/motor-driver.cpp $(ARD_INCL_PATH)/motor-driver.h
-	cp $(ARD_INCL_PATH)/$@.h $(SRC_PATH)/solveController;\
-	cp $(ARD_INCL_PATH)/$@.cpp $(SRC_PATH)/solveController;\
-	cp $(ARD_INCL_PATH)/$@.h $(TEST_PATH)/motorTest;\
-	cp $(ARD_INCL_PATH)/$@.cpp $(TEST_PATH)/motorTest;\
+motor-control.o: $(ARD_INCL_PATH)/motor-control.cpp \
+$(ARD_INCL_PATH)/motor-control.h $(ARD_INCL_PATH)/motor-driver.h \
+$(ARD_INCL_PATH)/comm-protocol.h
+	$(CXX) -c $(CXXFLAGS) $<
 
-comm-protocol: $(ARD_INCL_PATH)/comm-protocol.h
-	cp $(ARD_INCL_PATH)/$@.h $(SRC_PATH)/solveController;\
-	cp $(ARD_INCL_PATH)/$@.h $(TEST_PATH)/motorTest;\
+motor-driver.o: $(ARD_INCL_PATH)/motor-driver.cpp $(ARD_INCL_PATH)/motor-driver.h
+	$(CXX) -c $(CXXFLAGS) $<
+
+# Rules for motorTest sketch:
+
+$(TEST_PATH)/motorTest/motor-control.h: $(ARD_INCL_PATH)/motor-control.h
+	cp $< $(TEST_PATH)/motorTest
+
+$(TEST_PATH)/motorTest/motor-control.cpp: $(ARD_INCL_PATH)/motor-control.cpp
+	cp $< $(TEST_PATH)/motorTest
+
+$(TEST_PATH)/motorTest/motor-driver.h: $(ARD_INCL_PATH)/motor-driver.h
+	cp $< $(TEST_PATH)/motorTest
+
+$(TEST_PATH)/motorTest/motor-driver.cpp: $(ARD_INCL_PATH)/motor-driver.cpp
+	cp $< $(TEST_PATH)/motorTest
+
+$(TEST_PATH)/motorTest/comm-protocol.h: $(ARD_INCL_PATH)/comm-protocol.h
+	cp $< $(TEST_PATH)/motorTest
+
+$(TEST_PATH)/motorTest: $(TEST_PATH)/motorTest/motor-control.h \
+$(TEST_PATH)/motorTest/motor-control.cpp \
+$(TEST_PATH)/motorTest/motor-driver.h \
+$(TEST_PATH)/motorTest/motor-driver.cpp \
+$(TEST_PATH)/motorTest/comm-protocol.h
+
+# Rules for solveController sketch:
+
+$(SRC_PATH)/solveController/motor-control.h: $(ARD_INCL_PATH)/motor-control.h
+	cp $< $(SRC_PATH)/solveController
+
+$(SRC_PATH)/solveController/motor-control.cpp: $(ARD_INCL_PATH)/motor-control.cpp
+	cp $< $(SRC_PATH)/solveController
+
+$(SRC_PATH)/solveController/motor-driver.h: $(ARD_INCL_PATH)/motor-driver.h
+	cp $< $(SRC_PATH)/solveController
+
+$(SRC_PATH)/solveController/motor-driver.cpp: $(ARD_INCL_PATH)/motor-driver.cpp
+	cp $< $(SRC_PATH)/solveController
+
+$(SRC_PATH)/solveController/comm-protocol.h: $(ARD_INCL_PATH)/comm-protocol.h
+	cp $< $(SRC_PATH)/solveController
+
+$(SRC_PATH)/solveController: $(SRC_PATH)/solveController/motor-control.h \
+$(SRC_PATH)/solveController/motor-control.cpp \
+$(SRC_PATH)/solveController/motor-driver.h \
+$(SRC_PATH)/solveController/motor-driver.cpp \
+$(SRC_PATH)/solveController/comm-protocol.h
