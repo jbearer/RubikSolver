@@ -15,7 +15,7 @@ using namespace SerialComm;
 
 int main() {
 
-    const char* PORT = "COM4";
+    const char* PORT = "COM8";
 
     std::vector<MoveInstruction> sequence = {
         LEFT, RIGHT, UP, DOWN, FRONT, BACK,
