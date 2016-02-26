@@ -772,19 +772,23 @@ void Cube::test()
 		std::cout << "enter maneuver (followed by a \".\")" << endl;
 		
 		char move;
-		vector<Turn> maneuver;
+
+		Cube cube = solvedCube();
 
 		cin >> move;
 
 		while (move != '.') {
-			maneuver.push_back(Turn((MoveInstruction) move));
+			if (move == 'F') cube = front(cube);
+			else if (move == 'f') cube = frontI(cube);
+			else if (move == 'R') cube = right(cube);
+			else if (move == 'r') cube = rightI(cube);
+
+			else { cout << "invalid turn" << endl; }
+
 			cin >> move;
 		}
 		std::cout << "done entering" << endl;
 
-		Cube cube = solvedCube();
-		
-		cube = doTurns(cube, maneuver);
 
 		std::cout << "STARTING" << endl;
 
@@ -801,7 +805,7 @@ int main()
 {
 	Cube::initChoose();
 	//Cube::init2();
-
+	
 	
 	clock_t t;
 	t = clock();
