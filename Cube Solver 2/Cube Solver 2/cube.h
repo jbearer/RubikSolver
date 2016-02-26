@@ -110,16 +110,16 @@ private:
 	struct Turn {
 		/// Constructors
 		Turn() = delete;
-		Turn(MotorControl::MoveInstruction c);
+		Turn(CommProtocol::MoveInstruction c);
 
 		/// Data members
 		Cube(*turnFunc)(Cube);
 		std::string toString;
-		MotorControl::MoveInstruction repr;
-		MotorControl::MoveInstruction oppTurn;
+		CommProtocol::MoveInstruction repr;
+		CommProtocol::MoveInstruction oppTurn;
 
 		/// Construct a vector of Turns from a vector of MoveInstructions
-		static std::vector<Turn> movesToTurns(std::vector<MotorControl::MoveInstruction> moves);
+		static std::vector<Turn> movesToTurns(std::vector<CommProtocol::MoveInstruction> moves);
 	};
 
 	/// Some useful constants
@@ -151,12 +151,12 @@ private:
 	static const Edge_t LR_SLICE[4];
 
 	/// Hash maps from cube codes to the required turns to solve
-	static std::unordered_map<int, std::vector<MotorControl::MoveInstruction>> STEP1MAP;
-	static std::unordered_map<int, std::vector<MotorControl::MoveInstruction>> STEP2MAP;
-	static std::unordered_map<int, std::vector<MotorControl::MoveInstruction>> STEP3MAP;
-	static std::unordered_map<int, std::vector<MotorControl::MoveInstruction>> STEP4MAP;
+	static std::unordered_map<int, std::vector<CommProtocol::MoveInstruction>> STEP1MAP;
+	static std::unordered_map<int, std::vector<CommProtocol::MoveInstruction>> STEP2MAP;
+	static std::unordered_map<int, std::vector<CommProtocol::MoveInstruction>> STEP3MAP;
+	static std::unordered_map<int, std::vector<CommProtocol::MoveInstruction>> STEP4MAP;
 
-	static std::unordered_map < int, std::vector<MotorControl::MoveInstruction>> TURNMAP2;
+	static std::unordered_map < int, std::vector<CommProtocol::MoveInstruction>> TURNMAP2;
 
 	/// Vectors with function pointers to allowable turns
 	static const std::vector<Turn> OK_TURNS1;
@@ -280,7 +280,7 @@ private:
 	* \param	bool(Cube::*solved)()		the method to see if it's solved
 	* \param	std::vector<Turn> okSteps				the vector of allowable turns for this step
 	*/
-	static std::vector<Turn> doStep(Cube& cube, const std::unordered_map<int, std::vector<MotorControl::MoveInstruction>>& stepTable,
+	static std::vector<Turn> doStep(Cube& cube, const std::unordered_map<int, std::vector<CommProtocol::MoveInstruction>>& stepTable,
 		int (Cube::*hashFunction)(), std::vector<Turn> okSteps);
 
 	/**
@@ -294,7 +294,7 @@ private:
 	* \param	bool (Cube::*solved)()		Method to check if the cube is done with step
 	* \param	std::vector<Turn> okSteps				A vector of allowable turns for this step
 	*/
-	std::vector<Turn> findTurns(const std::unordered_map<int, std::vector<MotorControl::MoveInstruction>>& stepTable, int (Cube::*code)(), std::vector<Turn> okSteps);
+	std::vector<Turn> findTurns(const std::unordered_map<int, std::vector<CommProtocol::MoveInstruction>>& stepTable, int (Cube::*code)(), std::vector<Turn> okSteps);
 
 	/**
 	* \fn		printSteps
@@ -311,7 +311,7 @@ private:
 
 
 	/// Builds the hashmaps holding the cubes
-	static void buildMap(std::queue<Cube> cubeQueue, std::queue<std::vector<MotorControl::MoveInstruction>> turnsQueue,
+	static void buildMap(std::queue<Cube> cubeQueue, std::queue<std::vector<CommProtocol::MoveInstruction>> turnsQueue,
 		std::string fname, int (Cube::*hashFunction)(), std::vector<Turn> okTurns, int tableSize);
 
 
@@ -321,7 +321,7 @@ private:
 	static std::queue<Cube> step4ValidCorners();
 
 	/// Loads a map from a filename to a hash map
-	static void loadMap(std::unordered_map<int, std::vector<MotorControl::MoveInstruction>>& stepMap, std::string fname);
+	static void loadMap(std::unordered_map<int, std::vector<CommProtocol::MoveInstruction>>& stepMap, std::string fname);
 
 	static int fac(int n);
 

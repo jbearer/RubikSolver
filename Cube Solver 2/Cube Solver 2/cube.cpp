@@ -801,29 +801,6 @@ void Cube::test()
 }
 
 
-int main()
-{
-	Cube::initChoose();
-	//Cube::init2();
-	
-	
-	clock_t t;
-	t = clock();
-
-	Cube::test();
-
-	std::cout << endl << endl;
-
-	t = clock() - t;
-	std::cout << "time: " << (float)t / CLOCKS_PER_SEC << endl;
-
-	std::cout << endl << endl;
-	
-	system("pause");
-	
-	return 0;
-}
-
 /*
 To do:
 
