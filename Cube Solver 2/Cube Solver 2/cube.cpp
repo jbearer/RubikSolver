@@ -103,13 +103,13 @@ void Cube::init()
 	std::cout << "filling map 1/4";
 
 	// MAX_SIZE: 2^11 = 2048
-	buildMap(cubeQueue, turnsQueue, "cubeMap1.ser", &step1Code, OK_TURNS1, 2048);
+	buildMap(cubeQueue, turnsQueue, "cubeMap1.ser", &Cube::step1Code, OK_TURNS1, 2048);
 	std::cout << endl;
 
 	std::cout << "filling map 2/4";
 
 	// MAX_SIZE: 3^7 * (12 choose 4) = 1082565
-	buildMap(cubeQueue, turnsQueue, "cubeMaps.ser", &step2Code, OK_TURNS2, 1082565);
+	buildMap(cubeQueue, turnsQueue, "cubeMaps.ser", &Cube::step2Code, OK_TURNS2, 1082565);
 	std::cout << endl;
 
 	std::cout << "filling map 3/4";
@@ -123,13 +123,13 @@ void Cube::init()
 
 	// MAX_SIZE: 8c4 * 8c4 * 6 * 96 = 2822400
 	// (could be 8c4*8c4*6 = 29400 if we have only one starting point
-	buildMap(endPoints, step3TurnsQueue, "cubeMap3.ser", &step3Code, OK_TURNS3, 2822400);
+	buildMap(endPoints, step3TurnsQueue, "cubeMap3.ser", &Cube::step3Code, OK_TURNS3, 2822400);
 	std::cout << endl;
 
 	std::cout << "filling map 4/4";
 
 	// MAX_SIZE: (4!)^3 / 2 * 96 = 663552
-	buildMap(cubeQueue, turnsQueue, "cubeMap4.ser", &step4Code, OK_TURNS4, 663552);
+	buildMap(cubeQueue, turnsQueue, "cubeMap4.ser", &Cube::step4Code, OK_TURNS4, 663552);
 	std::cout << endl;
 }
 
@@ -146,7 +146,7 @@ void Cube::init2()
 	std::cout << "filling map 1/4";
 
 	// MAX_SIZE: 2^11 = 2048
-	buildMap(cubeQueue, turnsQueue, "CubeMap2Face.ser", &code2, OK_TURNS_2FACE, 500000);
+	buildMap(cubeQueue, turnsQueue, "CubeMap2Face.ser", &Cube::code2, OK_TURNS_2FACE, 500000);
 	std::cout << endl;
 }
 
@@ -339,16 +339,16 @@ void Cube::solve(Cube cube)
 {
 	// Retrieve the Turns to solve each step
 
-	vector<Turn> step1 = doStep(cube, STEP1MAP, &step1Code, OK_TURNS1);
+	vector<Turn> step1 = doStep(cube, STEP1MAP, &Cube::step1Code, OK_TURNS1);
 	std::cout << endl;
 
-	vector<Turn> step2 = doStep(cube, STEP2MAP, &step2Code, OK_TURNS2);
+	vector<Turn> step2 = doStep(cube, STEP2MAP, &Cube::step2Code, OK_TURNS2);
 	std::cout << endl;
 
-	vector<Turn> step3 = doStep(cube, STEP3MAP, &step3Code, OK_TURNS3);
+	vector<Turn> step3 = doStep(cube, STEP3MAP, &Cube::step3Code, OK_TURNS3);
 	std::cout << endl;
 
-	vector<Turn> step4 = doStep(cube, STEP4MAP, &step4Code, OK_TURNS4);
+	vector<Turn> step4 = doStep(cube, STEP4MAP, &Cube::step4Code, OK_TURNS4);
 	std::cout << endl;
 
 	std::cout << "SUCCESS!!!!" << endl;
@@ -365,7 +365,7 @@ void Cube::solve(Cube cube)
 void Cube::solve2(Cube cube)
 {
 
-	vector<Turn> step2 = doStep(cube, TURNMAP2, &code2, OK_TURNS_2FACE);
+	vector<Turn> step2 = doStep(cube, TURNMAP2, &Cube::code2, OK_TURNS_2FACE);
 	std::cout << endl;
 
 	std::cout << "SUCCESS!!!!" << endl;
