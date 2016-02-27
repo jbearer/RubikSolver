@@ -1,3 +1,7 @@
+# usage:
+# make: build executables
+# make doc: build doxygen
+
 include config.mk
 
 # Local includes
@@ -21,6 +25,7 @@ clean:
 	cd SerialComm; make clean
 	cd MotorControl; make clean
 	cd "Cube Solver 2/Cube Solver 2"; make clean
+	rm -rf doc
 	rm -rf *.o *.exe $(TARGETS)
 again: clean all
 
@@ -35,3 +40,10 @@ comm-test.o: comm-test.cpp
 
 CommTest.exe: $(COMM_TEST_OBJS)
 	$(CXX) -o $@ $(CXXFLAGS) $^ $(EXTERNAL_OBJS)
+
+doc: FORCE
+	doxygen doxygen.config; cd doc/latex; make
+	cp doc/latex/refman.pdf ./doc
+	mv doc/refman.pdf doc/doc.pdf
+
+FORCE:
