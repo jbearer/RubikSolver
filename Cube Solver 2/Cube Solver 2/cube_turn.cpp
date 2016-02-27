@@ -1,11 +1,9 @@
 #include "cube.h"
-#include "comm-protocol.h"
 #include <algorithm>
 #include <vector>
 #include <iostream>
 
 using namespace std;
-using CommProtocol::MoveInstruction;
 
 // Vectors containing numbers that correspond to faces
 const Cube::Edge_t Cube::FRONT_EDGES[4] = { YG, OG, WG, RG };
@@ -27,15 +25,15 @@ const Cube::Edge_t Cube::LR_SLICE[4] = { YB, YG, WB, WG };
 const Cube::Edge_t Cube::FB_SLICE[4] = { YR, YO, WR, WO };
 const Cube::Edge_t Cube::UD_SLICE[4] = { RB, OB, RG, OG };
 
+using MotorControl::MoveInstruction;
 
-
-Cube::Turn::Turn(MoveInstruction c) : repr{ c }
+Cube::Turn::Turn(MotorControl::MoveInstruction c) : repr{ c }
 {
 
 	switch (c) {
 
 	case MoveInstruction::FRONT:
-		turnFunc = front; toString = "F"; oppTurn = MoveInstruction::FRONT_INVERTED;
+		turnFunc = front; toString = "F"; oppTurn = MotorControl::MoveInstruction::FRONT_INVERTED;
 		break;
 	case MoveInstruction::RIGHT:
 		turnFunc = right; toString = "R"; oppTurn = MoveInstruction::RIGHT_INVERTED;

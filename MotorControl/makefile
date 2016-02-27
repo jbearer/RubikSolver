@@ -7,11 +7,27 @@
 # use make silent to do 1. but not 2.
 #	make silent prepares sketches to be run from Arduino IDE
 
-include ../config.mk
+# External dependencies (optional - used for viewing compiler output without
+# building in Arduino IDE):
+#	Arduino cores: path depends on local PC configuration
+#	winAVR
 
-# Local includes
-INCL +=
-ARDINCL +=
+# Path to arduino libraries. Specific to local PC
+AVR_PATH = C:/Program_Files_x86/Arduino/hardware/arduino/avr
+
+# Pin layout (standard = Arduino Uno)
+PIN_LAYOUT = standard
+
+INCL = -I$(AVR_PATH)/cores/arduino -I$(AVR_PATH)/variants/standard
+
+# Arduino Uno architecture
+MCU = atmega328p
+
+# Arduino processor frequency
+F_CPU = 16000000UL
+
+CXXFLAGS = -Wall -Wextra -pedantic -Os -DF_CPU=$(F_CPU) -std=c++11 -mmcu=$(MCU) $(INCL)
+CXX = avr-g++
 
 # Path to source files
 SRC_PATH = src
@@ -58,10 +74,10 @@ again: clean all
 motor-control.o: $(ARD_INCL_PATH)/motor-control.cpp \
 $(ARD_INCL_PATH)/motor-control.h $(ARD_INCL_PATH)/motor-driver.h \
 $(ARD_INCL_PATH)/comm-protocol.h
-	$(ARDCXX) -c $(ARDCXXFLAGS) $(ARDINCL) $<
+	$(CXX) -c $(CXXFLAGS) $<
 
 motor-driver.o: $(ARD_INCL_PATH)/motor-driver.cpp $(ARD_INCL_PATH)/motor-driver.h
-	$(ARDCXX) -c $(ARDCXXFLAGS) $(ARDINCL) $<
+	$(CXX) -c $(CXXFLAGS) $<
 
 # Rules for motorTest sketch:
 

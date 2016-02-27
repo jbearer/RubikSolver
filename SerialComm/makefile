@@ -1,11 +1,7 @@
-include ../config.mk
+INCL = 
 
-# Local includes
-INCL +=
-ARDINCL +=
-
-CXXFLAGS += $(INCL)
-ARDCXXFLAGS += $(ARDINCL)
+CXXFLAGS = -g -std=c++11 -Wall -Wextra $(INCL)
+CXX = g++
 
 TARGETS = ArduinoTest.exe
 OBJS = serial.o failed_read_error.o
