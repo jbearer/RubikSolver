@@ -93,7 +93,7 @@ public:
 	*			Finally, uses F2,R2,B2,L2,U2,D2 to solve the rest.
 	*			In the end, it prints out the steps taken to solve the cube
 	*/
-	static void solve(Cube cube);
+	static std::vector<CommProtocol::MoveInstruction> solve(Cube cube);
 
 	/// for two-turn solve
 	static void solve2(Cube cube);

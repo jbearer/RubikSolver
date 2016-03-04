@@ -15,7 +15,8 @@ using namespace SerialComm;
 
 int main() {
 
-    const char* PORT = "COM8";
+    #define stringize(x) #x
+    const char* PORT = stringize(COM_PORT);
 
     std::vector<MoveInstruction> sequence = {
         LEFT, RIGHT, UP, DOWN, FRONT, BACK,

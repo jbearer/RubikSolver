@@ -12,6 +12,8 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <bitset>
+#include <vector>
+#include "comm-protocol.h"
 
 
 using namespace std;
@@ -335,7 +337,7 @@ int Cube::code2()
 	return sum1 + 243*sum2 + 243000*sum3;
 }
 
-void Cube::solve(Cube cube)
+std::vector<CommProtocol::MoveInstruction> Cube::solve(Cube cube)
 {
 	// Retrieve the Turns to solve each step
 
@@ -359,6 +361,13 @@ void Cube::solve(Cube cube)
 	printTurns(step2);
 	printTurns(step3);
 	printTurns(step4);
+
+	vector<CommProtocol::MoveInstruction> solution;
+	for (auto turn : step1) solution.push_back(turn.repr);
+	for (auto turn : step2) solution.push_back(turn.repr);
+	for (auto turn : step3) solution.push_back(turn.repr);
+	for (auto turn : step4) solution.push_back(turn.repr);
+	return solution;
 }
 
 // Solve for 2-face (debugging only)

@@ -15,6 +15,12 @@ AVR_PATH = C:/Program_Files_x86/Arduino/hardware/arduino/avr
 BOOST_PATH = C:/Program_Files/boost_1_60_0
 
 ################################################################################
+# Hardware settings
+################################################################################
+
+COM_PORT = COM4
+
+################################################################################
 # Arduino compiler settings
 ################################################################################
 
@@ -68,4 +74,5 @@ DEBUG_FLAG =
 endif
 
 ARDCXXFLAGS = $(ARDWARNINGS) -O$(ARDOPT) -DF_CPU=$(F_CPU) -std=$(ARDSTD) -mmcu=$(MCU)
-CXXFLAGS = $(DEBUG_FLAG) -O$(OPTIMIZATION) -std=$(STD) $(WARNINGS)
+CXXFLAGS = $(DEBUG_FLAG) -O$(OPTIMIZATION) -std=$(STD) $(WARNINGS) \
+-DCOM_PORT=$(COM_PORT)
