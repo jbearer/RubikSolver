@@ -29,10 +29,16 @@ void setup() {
   pinMode(stepPinF,OUTPUT); pinMode(dirPinF,OUTPUT);
   pinMode(stepPinB,OUTPUT); pinMode(dirPinB,OUTPUT);
 
+  pinMode(CommProtocol::LED_INDICATOR, OUTPUT);
+
   Serial.begin(9600);
 }
 
 void loop() {
   MotorControl::FaceTurn next = MotorControl::getNextAction();
-  next(driver);
+  CommProtocol::blinkIndicator();
+
+  if (!next) CommProtocol::indicateError();
+  else next(driver);
+  delay(1000);
 }

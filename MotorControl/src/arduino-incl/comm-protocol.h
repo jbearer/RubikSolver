@@ -14,7 +14,11 @@
 
 #pragma once
 
+#define DEBUG true
+
 namespace CommProtocol {
+
+  const int LED_INDICATOR = 10;
 
 	typedef char SerialMessage;
 
@@ -23,26 +27,30 @@ namespace CommProtocol {
 	 * \brief Constants representing a single cube action.
 	 */
 	enum MoveInstruction : SerialMessage {
-	    LEFT,
-	    RIGHT,
-	    UP,
-	    DOWN,
-	    FRONT,
-	    BACK,
+	    LEFT = 0,
+	    RIGHT = 1,
+	    UP = 2,
+	    DOWN = 3,
+	    FRONT = 4,
+	    BACK = 5,
 
-	    LEFT_2,
-	    RIGHT_2,
-	    UP_2,
-	    DOWN_2,
-	    FRONT_2,
-	    BACK_2,
+	    LEFT_2 = 6,
+	    RIGHT_2 = 7,
+	    UP_2 = 8,
+	    DOWN_2 = 9,
+	    FRONT_2 = 10,
+	    BACK_2 = 11,
 
-	    LEFT_INVERTED,
-	    RIGHT_INVERTED,
-	    UP_INVERTED,
-	    DOWN_INVERTED,
-	    FRONT_INVERTED,
-	    BACK_INVERTED
+	    LEFT_INVERTED = 12,
+	    RIGHT_INVERTED = 13,
+	    UP_INVERTED = 14,
+	    DOWN_INVERTED = 15,
+	    FRONT_INVERTED = 16,
+	    BACK_INVERTED = 17
 	};
+
+  void blinkIndicator();
+  
+  void indicateError();
 
 }

@@ -1,3 +1,5 @@
+/// DEPRECATED
+
 #include "../src/serialstream.h"
 #include "arduino-test/test-constants.h"
 #include <iostream>
@@ -43,7 +45,7 @@ void waitForResponse(serialstream& stream) {
 
 int main() {
 
-	const char* PORT = "COM8";
+	const char* PORT = "\\\\.\\COM10";
 
 	serialstream stream(PORT);
 

@@ -126,7 +126,6 @@ FaceTurn MotorControl::getAction(MoveInstruction code) {
             return TURN_BACK_INVERTED;
 
         default:
-            Serial.println("Unexpected MoveInstruction code.");
             return 0;
     }
 }
@@ -143,8 +142,11 @@ FaceTurn MotorControl::getNextAction() {
     } instBytes;
 
     for (size_t i = 0; i < sizeof(MoveInstruction); ++i) {
-        instBytes.bytes[i] = Serial.read();
+    	// Convert from ASCII to byte encoding
+        instBytes.bytes[i] = Serial.read() - 48;
     }
 
-    return getAction(instBytes.inst);
+    MoveInstruction inst = (MoveInstruction)(instBytes.inst);
+
+    return getAction(inst);
 }

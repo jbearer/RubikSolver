@@ -1,6 +1,6 @@
-include ../../config.mk
+include ../config.mk
 
-INCL += -I../../MotorControl/src/arduino-incl
+INCL += -I../MotorControl/src/arduino-incl
 ARDINCL += 
 
 CXXFLAGS += $(INCL)
@@ -32,4 +32,4 @@ cube_turn.o: cube_turn.cpp cube.h
 	$(CXX) -c $(CXXFLAGS) $<
 
 CubeTest.exe: $(OBJS)
-	$(CXX) -o $@ $(CXXFLAGS) $^
+	$(CXX) -o $@ $^ $(LINKERFLAGS)

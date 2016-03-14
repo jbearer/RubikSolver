@@ -1,6 +1,6 @@
-const char RECEIVE_INDICATOR = 8;
-const char SEND_INDICATOR = 9;
-const char OUTPUT_PIN = 10;
+const char RECEIVE_INDICATOR = 10;
+const char SEND_INDICATOR = 11;
+const char OUTPUT_PIN = 12;
 
 void setup() {
   pinMode(RECEIVE_INDICATOR, OUTPUT);

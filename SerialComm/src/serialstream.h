@@ -4,6 +4,7 @@
 #include <string>
 #include "serial.h"
 #include "failed_read_error.h"
+#include <iostream>
 
 namespace SerialComm {
 
@@ -83,6 +84,7 @@ namespace SerialComm {
 
 	template <class T>
 	serialstream& operator<<(serialstream& stream, const T& data) {
+		std::cout << "Outputting: " << data << std::endl;
 		std::stringstream sstream;
 		sstream << data;
 		std::string dataString = sstream.str();

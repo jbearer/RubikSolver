@@ -51,7 +51,10 @@ public:
 private:
 
     /// Determines the speed of the motor.
-    static const int DELAY = 500; 
+    static const int DELAY = 40; 
+
+    /// Voltage pulses per step.
+    static const int MICROSTEPS = 16;
 
     /// Hardware connections.
     PinID stepPinL_;

@@ -9,6 +9,7 @@
 #include "MotorControl/src/arduino-incl/comm-protocol.h"
 #include "SerialComm/src/serialstream.h"
 #include <vector>
+#include <iostream>
 
 using namespace CommProtocol;
 using namespace SerialComm;
@@ -16,7 +17,9 @@ using namespace SerialComm;
 int main() {
 
     #define stringize(x) #x
-    const char* PORT = stringize(COM_PORT);
+    #define xstr(x) stringize(x)
+    const char* PORT = "\\\\.\\COM10";
+    std::cout << "Using port: "<< PORT << std::endl;
 
     std::vector<MoveInstruction> sequence = {
         LEFT, RIGHT, UP, DOWN, FRONT, BACK,

@@ -18,7 +18,7 @@ BOOST_PATH = C:/Program_Files/boost_1_60_0
 # Hardware settings
 ################################################################################
 
-COM_PORT = COM4
+COM_PORT = \\.\\COM10
 
 ################################################################################
 # Arduino compiler settings
@@ -64,6 +64,14 @@ CXX = g++
 INCL = -I$(BOOST_PATH)
 
 ################################################################################
+# C++ linker settings
+################################################################################
+
+LIB_FLAG = -L$(BOOST_PATH)/lib64-msvc-14.0
+
+LIBS = -lboost_serialization-vc140-mt-1_60
+
+################################################################################
 # DO NOT CHANGE THE FOLLOWING - Generates variables based on above settings
 ################################################################################
 
@@ -75,4 +83,6 @@ endif
 
 ARDCXXFLAGS = $(ARDWARNINGS) -O$(ARDOPT) -DF_CPU=$(F_CPU) -std=$(ARDSTD) -mmcu=$(MCU)
 CXXFLAGS = $(DEBUG_FLAG) -O$(OPTIMIZATION) -std=$(STD) $(WARNINGS) \
--DCOM_PORT=$(COM_PORT)
+-DCOM_PORT=$(COM_PORT) -DPC_BUILD=1
+
+LINKERFLAGS = $(LIB_FLAG) $(LIBS)

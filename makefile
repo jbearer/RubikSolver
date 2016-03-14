@@ -5,15 +5,17 @@
 include config.mk
 
 # Local includes
-INCL += -IMotorControl/src/arduino-incl
+INCL += -IMotorControl/src/arduino-incl -ISerialComm/src -ISerialComm/test
 ARDINCL +=
 
 CXXFLAGS += $(INCL)
 ARDCXXFLAGS += $(ARDINCL)
 
-TARGETS = CommTest.exe #main.exe
+TARGETS = CommProtocolTest.exe SerialTest.exe #main.exe
 
-COMM_TEST_OBJS = comm-test.o
+COMM_PROTOCOL_TEST_OBJS = comm-protocol-test.o
+
+SERIAL_TEST_OBJS = serial-test.o
 
 MAIN_OBJS = main.o
 
@@ -26,7 +28,7 @@ all: subdirectories $(TARGETS)
 clean:
 	cd SerialComm; make clean
 	cd MotorControl; make clean
-	cd "Cube Solver 2/Cube Solver 2"; make clean
+	cd CubeSolver; make clean
 	rm -rf doc
 	rm -rf *.o *.exe $(TARGETS)
 again: clean all
@@ -35,12 +37,18 @@ again: clean all
 subdirectories:
 	cd SerialComm; make lib
 	cd MotorControl; make lib
-	cd "Cube Solver 2/Cube Solver 2"; make lib
+	#cd CubeSolver; make lib
 
 comm-test.o: comm-test.cpp
 	$(CXX) -c $(CXXFLAGS) $<
 
-CommTest.exe: $(COMM_TEST_OBJS)
+serial-test.o: serial-test.cpp
+	$(CXX) -c $(CXXFLAGS) $<
+
+CommProtocolTest.exe: $(COMM_PROTOCOL_TEST_OBJS)
+	$(CXX) -o $@ $(CXXFLAGS) $^ $(EXTERNAL_OBJS)
+
+SerialTest.exe: $(SERIAL_TEST_OBJS)
 	$(CXX) -o $@ $(CXXFLAGS) $^ $(EXTERNAL_OBJS)
 
 main.o: main.cpp
