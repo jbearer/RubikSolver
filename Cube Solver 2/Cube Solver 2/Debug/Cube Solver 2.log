@@ -1,0 +1,6 @@
+﻿  cube-test.cpp
+c:\users\daniel zhang\documents\github\rubiksolver\cube solver 2\cube solver 2\cube-test.cpp(175): warning C4018: '<': signed/unsigned mismatch
+c:\users\daniel zhang\documents\github\rubiksolver\cube solver 2\cube solver 2\cube-test.cpp(197): warning C4018: '<': signed/unsigned mismatch
+     Creating library C:\Users\Daniel Zhang\Documents\GitHub\RubikSolver\Cube Solver 2\Debug\Cube Solver 2.lib and object C:\Users\Daniel Zhang\Documents\GitHub\RubikSolver\Cube Solver 2\Debug\Cube Solver 2.exp
+  Cube Solver 2.vcxproj -> C:\Users\Daniel Zhang\Documents\GitHub\RubikSolver\Cube Solver 2\Debug\Cube Solver 2.exe
+  Cube Solver 2.vcxproj -> C:\Users\Daniel Zhang\Documents\GitHub\RubikSolver\Cube Solver 2\Debug\Cube Solver 2.pdb (Partial PDB)
