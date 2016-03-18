@@ -95,6 +95,11 @@ Cube::Turn::Turn(MoveInstruction c) : repr{ c }
 	}
 }
 
+Cube Cube::turnWith(Turn inputTurn)
+{
+	return (inputTurn.turnFunc)(*this);
+}
+
 vector<Cube::Turn> Cube::Turn::movesToTurns(std::vector<MoveInstruction> moves)
 {
 	vector<Turn> turns;
@@ -157,10 +162,10 @@ void Cube::turn(const Edge_t faceEdges[4], const Corner_t faceCorners[4])
 	forwardCycle(faceCorners, cornerOrients_);
 }
 
-template <typename Cubie>
-void Cube::forwardCycle(const Cubie positions[4], char* cubies)
+template <typename Index_t, typename Cubie_t>
+void Cube::forwardCycle(const Index_t positions[4], Cubie_t* cubies)
 {
-	char temp = cubies[positions[3]];
+	Cubie_t temp = cubies[positions[3]];
 	for (size_t i = 3; i > 0; --i) {
 		cubies[positions[i]] = cubies[positions[i - 1]];
 	}
@@ -221,10 +226,10 @@ void Cube::turnI(const Edge_t faceEdges[4],
 	backwardCycle(faceCorners, cornerOrients_);
 }
 
-template <typename Cubie>
-void Cube::backwardCycle(const Cubie positions[4], char* cubies)
+template <typename Index_t, typename Cubie_t>
+void Cube::backwardCycle(const Index_t positions[4], Cubie_t* cubies)
 {
-	char temp = cubies[positions[0]];
+	Cubie_t temp = cubies[positions[0]];
 	for (size_t i = 0; i < 3; ++i) {
 		cubies[positions[i]] = cubies[positions[i + 1]];
 	}

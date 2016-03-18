@@ -1,6 +1,6 @@
 #include "cube.h"
 
-
+#include <assert.h>
 #include <iostream>
 #include <algorithm>
 #include <queue>
@@ -17,12 +17,6 @@
 using namespace std;
 using CommProtocol::MoveInstruction;
 
-// Hashmaps for each step
-unordered_map<int, vector<MoveInstruction>> Cube::STEP1MAP;
-unordered_map<int, vector<MoveInstruction>> Cube::STEP2MAP;
-unordered_map<int, vector<MoveInstruction>> Cube::STEP3MAP;
-unordered_map<int, vector<MoveInstruction>> Cube::STEP4MAP;
-
 unordered_map<int, vector<MoveInstruction>> Cube::TURNMAP2;
 
 // Vector of allowable turns for each step (easy to iterate through)
@@ -32,36 +26,28 @@ const vector<Cube::Turn> Cube::OK_TURNS1({
 	Cube::Turn(MoveInstruction::BACK_INVERTED), Cube::Turn(MoveInstruction::LEFT_INVERTED), Cube::Turn(MoveInstruction::UP_INVERTED), Cube::Turn(MoveInstruction::DOWN_INVERTED) });
 
 const vector<Cube::Turn> Cube::OK_TURNS2({
-	Cube::Turn(MoveInstruction::FRONT), Cube::Turn(MoveInstruction::RIGHT), Cube::Turn(MoveInstruction::BACK), Cube::Turn(MoveInstruction::LEFT),
-	Cube::Turn(MoveInstruction::UP_2), Cube::Turn(MoveInstruction::DOWN_2),
-	Cube::Turn(MoveInstruction::FRONT_INVERTED), Cube::Turn(MoveInstruction::RIGHT_INVERTED), Cube::Turn(MoveInstruction::BACK_INVERTED), Cube::Turn(MoveInstruction::LEFT_INVERTED) });
-
-const vector<Cube::Turn> Cube::OK_TURNS3({
 	Cube::Turn(MoveInstruction::FRONT_2), Cube::Turn(MoveInstruction::RIGHT), Cube::Turn(MoveInstruction::BACK_2), Cube::Turn(MoveInstruction::LEFT),
 	Cube::Turn(MoveInstruction::UP_2), Cube::Turn(MoveInstruction::DOWN_2), Cube::Turn(MoveInstruction::RIGHT_INVERTED), Cube::Turn(MoveInstruction::LEFT_INVERTED) });
-
-const vector<Cube::Turn> Cube::OK_TURNS4({
-	Cube::Turn(MoveInstruction::FRONT_2), Cube::Turn(MoveInstruction::RIGHT_2), Cube::Turn(MoveInstruction::BACK_2), Cube::Turn(MoveInstruction::LEFT_2),
-	Cube::Turn(MoveInstruction::UP_2), Cube::Turn(MoveInstruction::DOWN_2) });
 
 // ok turns for the two-turn solve
 const vector<Cube::Turn> Cube::OK_TURNS_2FACE({
 	Cube::Turn(MoveInstruction::FRONT), Cube::Turn(MoveInstruction::RIGHT), Cube::Turn(MoveInstruction::FRONT_INVERTED), Cube::Turn(MoveInstruction::RIGHT_INVERTED) });
 
+int Cube::FAC[12];
+int Cube::CHOOSE[12][12];
 
 // Cube constructor
-// TODO: figure out how to get rid of edgeOrbits.  They're unnecessary
-Cube::Cube(char eColors[12], char eOrients[12], char eOrbits[12],
-	char cColors[8], char cOrients[8])
+Cube::Cube(Edge_t edgeColors[12], char edgeOrients[12], char edgeOrbits[12],
+	Corner_t cornerColors[8], char cornerOrients[8])
 {
 	for (int i = 0; i < NUM_EDGES; ++i) {
-		edgeColors_[i] = eColors[i];
-		edgeOrients_[i] = eOrients[i];
-		edgeOrbits_[i] = eOrbits[i];
+		edgeColors_[i] = edgeColors[i];
+		edgeOrients_[i] = edgeOrients[i];
+		edgeOrbits_[i] = edgeOrbits[i];
 	}
 	for (int i = 0; i < NUM_CORNERS; ++i) {
-		cornerColors_[i] = cColors[i];
-		cornerOrients_[i] = cOrients[i];
+		cornerColors_[i] = cornerColors[i];
+		cornerOrients_[i] = cornerOrients[i];
 	}
 }
 
@@ -93,7 +79,7 @@ void Cube::init()
 
 	// Create a solved cube, with corresponding empty vector<Turn> queue.
 	// These are the starting points for hashmaps in steps 1, 2, and 4
-	Cube cube = solvedCube();
+	Cube cube;
 	queue<Cube> cubeQueue;
 	cubeQueue.push(cube);
 
@@ -103,40 +89,40 @@ void Cube::init()
 	std::cout << "filling map 1/4";
 
 	// MAX_SIZE: 2^11 = 2048
-	buildMap(cubeQueue, turnsQueue, "cubeMap1.ser", &Cube::step1Code, OK_TURNS1, 2048);
+	buildMap(cubeQueue, turnsQueue, "cubeMap1.ser", &Cube::edgeOrientsCode, OK_TURNS1, 2048);
 	std::cout << endl;
 
 	std::cout << "filling map 2/4";
 
 	// MAX_SIZE: 3^7 * (12 choose 4) = 1082565
-	buildMap(cubeQueue, turnsQueue, "cubeMaps.ser", &Cube::step2Code, OK_TURNS2, 1082565);
+	//buildMap(cubeQueue, turnsQueue, "cubeMaps.ser", &Cube::step2Code, OK_TURNS2, 50000);
 	std::cout << endl;
 
 	std::cout << "filling map 3/4";
-
+	/*
 	// Build the 96 unique starting points and corresponding queue for step 3
-	queue<Cube> endPoints = step4ValidCorners();
+	//queue<Cube> endPoints = step4ValidCorners();
 	queue<vector<MoveInstruction>> step3TurnsQueue;
 	for (int i = 0; i < endPoints.size(); ++i) {
 		step3TurnsQueue.push(vector<MoveInstruction>());
 	}
-
+	*/
 	// MAX_SIZE: 8c4 * 8c4 * 6 * 96 = 2822400
 	// (could be 8c4*8c4*6 = 29400 if we have only one starting point
-	buildMap(endPoints, step3TurnsQueue, "cubeMap3.ser", &Cube::step3Code, OK_TURNS3, 2822400);
+	//buildMap(endPoints, step3TurnsQueue, "cubeMap3.ser", &Cube::step3Code, OK_TURNS3, 50000);
 	std::cout << endl;
 
 	std::cout << "filling map 4/4";
 
 	// MAX_SIZE: (4!)^3 / 2 * 96 = 663552
-	buildMap(cubeQueue, turnsQueue, "cubeMap4.ser", &Cube::step4Code, OK_TURNS4, 663552);
+	//buildMap(cubeQueue, turnsQueue, "cubeMap4.ser", &Cube::step4Code, OK_TURNS4, 50000);
 	std::cout << endl;
 }
 
 // Fills the maps for a 2-face solve
 void Cube::init2()
 {
-	Cube cube = solvedCube();
+	Cube cube;
 	queue<Cube> cubeQueue;
 	cubeQueue.push(cube);
 
@@ -174,164 +160,175 @@ void Cube::print() const
 }
 
 
-int Cube::step1Code() {
+int Cube::edgeOrientsCode() {
 
 	// Two codes have the same code if the edge orientations are the same
 	// Essentially creates a unique base 2 number
 	int sum = 0;
-	for (int i = 0; i < NUM_EDGES - 1; ++i) {
+	for (int i = 0; i < NUM_EDGES; ++i) {
 		sum += edgeOrients_[i] * pow(2, i);
 	}
 	return sum;
 }
 
-int Cube::step2Code() {
-
-	// Two codes have the same code if the corner orientations are the same
-	// and if the UD_SLICE edges are in the same place
-
-	// Essentially creates a unique base 3 number for corner orients
-	int sum1 = 0;
-	for (int i = 0; i < NUM_CORNERS - 1; ++i) {
-		sum1 += cornerOrients_[i] * pow(3, i);
+int Cube::cornerOrientsCode()
+{
+	int sum = 0;
+	// NUM_CORNERS - 1 because the last corner is defined by the previous 7
+	for (int i = 0; i < NUM_CORNERS; ++i) {
+		sum += cornerOrients_[i] * pow(3, i);
 	}
+	return sum;
+}
 
+
+
+int Cube::cornerColorsCode()
+{
+	initChoose();
+
+	int sum = 0;
+	for (int i = 0; i < NUM_CORNERS - 1; ++i) {
+
+		int numGreater = 0;
+		for (int j = i + 1; j < NUM_CORNERS; ++j) {
+
+			if (cornerColors_[j] < cornerColors_[i]) {
+				++numGreater;
+			}
+		}
+		sum += (numGreater * FAC[8 - i - 1]);
+	}
+	return sum;
+}
+
+int Cube::edgeOrbitsCode()
+{
 	// Hashes {0,0,0,0,_,_...} to 0, {0,0,0,_,0,_...} to 1,
 	// ... and {...,_,0,0,0,0} to 494 = (12 choose 4) - 1.
-	int sum2 = 0;
-	int offset = 3;
-	for (int i = 0; offset >= 0; ++i) {
-		if (edgeOrbits_[i] == 0) {
-			--offset;
-		}
-		else {
-			sum2 += CHOOSE[12 - i - 1][offset];
-		}
-	}
-	return sum1 * 495 + sum2;
-}
-
-int Cube::step3Code()
-{
-	// TODO: simplify code for step 3
-
-	// certain edge orbit spots are known to be filled with 0's
-	int openSpots[8] = { 1,2,4,5,6,7,9,10 };
-
-	// creates a code for the edges of the FB_ORBIT
-	// similar to second part of step2Code
-	int sum1 = 0;
-	int offset = 3;
-	for (int i = 0; offset >= 0; ++i) {
-
-		if (edgeOrbits_[openSpots[i]] == 1) {
-			--offset;
-		}
-		else {
-			sum1 += CHOOSE[8 - i - 1][offset];
-		}
-	}
-
-	// creates a code for all the corners, similar to step4Help
-	int sum2 = 0;
-	for (int i = 0; i < 7; ++i) {
-
-		int numGreater = 0;
-		for (int j = i + 1; j < 8; ++j) {
-
-			if (cornerColors_[j] < cornerColors_[i]) {
-				++numGreater;
-			}
-		}
-		sum2 += (numGreater * FAC[8 - i - 1]);
-	}
-
-	// some multiplication to ensure unique codes for different cubes
-	return sum1 * 40320 + sum2;
-}
-
-int Cube::step4Help(const Edge_t orbit[4], char cubies[12])
-{
-	// Creates a unique code for the cubies of an orbit
-	// essentially, 0,1,2,3 => 0, 0,1,3,2 => 1, ... 3,2,1,0 => 23
 	int sum = 0;
-	for (int i = 0; i < 3; ++i) {
-
-		int numGreater = 0;
-		for (int j = i + 1; j < 4; ++j) {
-
-			if (cubies[orbit[j]] < cubies[orbit[i]]) {
-				++numGreater;
-			}
+	int offset = 3;
+	for (int i = 0; offset >= 0; ++i) {
+		Edge_t currEdge = edgeColors_[i];
+		if (edgeColors_[i] == YB || edgeColors_[i] == YG ||
+			edgeColors_[i] == WB || edgeColors_[i] == WG) {
+			--offset;
 		}
-		sum += (numGreater * FAC[4 - i - 1]);
+		else {
+			sum += CHOOSE[12 - i - 1][offset];
+		}
 	}
 	return sum;
 }
 
-int Cube::step4Code()
+int Cube::edgeColorsCode1()
 {
-	// TODO: simplify code for step 4
-
-	// creates a unique code based on the positions of the edges within
-	// their orbits
 	int sum = 0;
-	sum += step4Help(UD_SLICE, edgeColors_);
-	sum += step4Help(LR_SLICE, edgeColors_) * 24;
-	sum += step4Help(FB_SLICE, edgeColors_)*pow(24, 2);
+	int ORBIT_SIZE = 4;
 
-	// takes into the account the overall position of the corners
-	int sum2 = 0;
-	for (int i = 0; i < 7; ++i) {
+	for (int i = 0; i < ORBIT_SIZE - 1; ++i) {
 
 		int numGreater = 0;
-		for (int j = i + 1; j < 8; ++j) {
+		for (int j = i + 1; j < ORBIT_SIZE; ++j) {
 
-			if (cornerColors_[j] < cornerColors_[i]) {
+			if (edgeColors_[LR_SLICE[j]] < edgeColors_[LR_SLICE[i]]) {
 				++numGreater;
 			}
 		}
-		sum2 += (numGreater * FAC[8 - i - 1]);
+		sum += (numGreater * FAC[ORBIT_SIZE - i - 1]);
 	}
-	sum += sum2*pow(24, 3);
-
 	return sum;
+}
+
+int Cube::edgeColorsCode2()
+{
+	int sum = 0;
+	int ORBIT_SIZE = 8;
+
+	// combined LR_SLICE and FB_SLICE
+	Edge_t permArray[8] = { YR, YO, RB, OB, RG, OG, WR, WO };
+
+	for (int i = 0; i < ORBIT_SIZE - 1; ++i) {
+
+		int numGreater = 0;
+		for (int j = i + 1; j < ORBIT_SIZE; ++j) {
+
+			if (edgeColors_[permArray[j]] < edgeColors_[permArray[i]]) {
+				++numGreater;
+			}
+		}
+		sum += (numGreater * FAC[ORBIT_SIZE - i - 1]);
+	}
+	return sum;
+}
+
+int Cube::step1Code()
+{
+	return step1Code(edgeOrientsCode(), cornerOrientsCode(), edgeOrbitsCode());
+
+}
+
+int Cube::step1Code(int edgeOrients, int cornerOrients, int edgeOrbits)
+{
+	return NUM_EDGE_ORIENTS * NUM_CORNER_ORIENTS * edgeOrbits +
+		NUM_EDGE_ORIENTS * cornerOrients +
+		edgeOrients;
+}
+
+long Cube::step2Code()
+{
+	return step2Code(cornerColorsCode(), edgeColorsCode1(), edgeColorsCode2());
+}
+
+long Cube::step2Code(int cornerColors, int edgeColors1, int edgeColors2)
+{
+	return NUM_CORNER_COLORS * NUM_EDGE_COLORS2 * edgeColors1 +
+		NUM_CORNER_COLORS * edgeColors2 +
+		cornerColors;
 }
 
 // Code for a 2-face solve (for debugging only)
 int Cube::code2()
 {
-	char edges[7] = { YO, YG, RG, OG, OB, WG, WO };
-	char corners[6] = { YOB, YRG, YOG, WOB, WRG, WOG };
+	const int NUM_EDGES_2 = 7;		//only 7 relevant edges in 2-face
+	const int NUM_CORNERS_2 = 6;		//only 6 relevant corners in 2-face
+
+	char edges[NUM_EDGES_2] = { YO, YG, RG, OG, OB, WG, WO };
+	char corners[NUM_CORNERS_2] = { YOB, YRG, YOG, WOB, WRG, WOG };
+
+	// edge orients don't change because only F and R for 2-face
 
 	int sum1 = 0;
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < NUM_CORNERS_2 - 1; ++i) {
 		sum1 += cornerOrients_[corners[i]] * pow(3, i);
 	}
 
+	//cout << "sum1: " << sum1 << endl;
+
 	int sum2 = 0;
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < NUM_CORNERS_2 - 1; ++i) {
 		int numGreater = 0;
-		for (int j = i + 1; j < 6; ++j) {
+		for (int j = i + 1; j < NUM_CORNERS_2; ++j) {
 
 			if (cornerColors_[corners[j]] < cornerColors_[corners[i]]) {
 				++numGreater;
 			}
 		}
-		sum2 += (numGreater * FAC[6 - i - 1]);
+		sum2 += (numGreater * FAC[NUM_CORNERS_2 - i - 1]);
 	}
 
 	int sum3 = 0;
-	for (int i = 0; i < 6; ++i) {
+	for (int i = 0; i < NUM_EDGES_2 - 1; ++i) {
 		int numGreater = 0;
-		for (int j = i + 1; j < 7; ++j) {
+		for (int j = i + 1; j < NUM_EDGES_2; ++j) {
 
 			if (edgeColors_[edges[j]] < edgeColors_[edges[i]]) {
 				++numGreater;
 			}
 		}
-		sum3 += (numGreater * FAC[7 - i - 1]);
+		sum3 += (numGreater * FAC[NUM_EDGES_2 - i - 1]);
 	}
+
 	return sum1 + 243*sum2 + 243000*sum3;
 }
 
@@ -339,26 +336,26 @@ void Cube::solve(Cube cube)
 {
 	// Retrieve the Turns to solve each step
 
-	vector<Turn> step1 = doStep(cube, STEP1MAP, &Cube::step1Code, OK_TURNS1);
+	//vector<Turn> step1 = doStep(cube, STEP1MAP, &Cube::edgeOrientsCode, OK_TURNS1);
 	std::cout << endl;
 
-	vector<Turn> step2 = doStep(cube, STEP2MAP, &Cube::step2Code, OK_TURNS2);
+	//vector<Turn> step2 = doStep(cube, STEP2MAP, &Cube::step2Code, OK_TURNS2);
 	std::cout << endl;
 
-	vector<Turn> step3 = doStep(cube, STEP3MAP, &Cube::step3Code, OK_TURNS3);
+	//vector<Turn> step3 = doStep(cube, STEP3MAP, &Cube::step3Code, OK_TURNS3);
 	std::cout << endl;
 
-	vector<Turn> step4 = doStep(cube, STEP4MAP, &Cube::step4Code, OK_TURNS4);
+	//vector<Turn> step4 = doStep(cube, STEP4MAP, &Cube::step4Code, OK_TURNS4);
 	std::cout << endl;
 
 	std::cout << "SUCCESS!!!!" << endl;
 
 	// Print out all the steps
 
-	printTurns(step1);
-	printTurns(step2);
-	printTurns(step3);
-	printTurns(step4);
+	//printTurns(step1);
+	//printTurns(step2);
+	//printTurns(step3);
+	//printTurns(step4);
 }
 
 // Solve for 2-face (debugging only)
@@ -484,60 +481,237 @@ vector<Cube::Turn> Cube::findTurns(const unordered_map<int, vector<MoveInstructi
 }
 
 
-queue<Cube> Cube::step4ValidCorners()
+
+
+
+std::deque<Cube::Turn> Cube::solveStep1()
 {
-	// add a solved Cube to the queue
-	Cube cube = solvedCube();
-	vector<Cube> cubeQueue;
-	cubeQueue.push_back(cube);
+	// Make sure end tables have been built
+	Cube solvedCube;
+	assert(STEP1MAP.count(solvedCube.cubeNums1()) == 1);
+	assert(STEP2MAP.count(solvedCube.cubeNums2()) == 1);
+	assert(EDGE_COLORS_TABLE2[3000][3] == 13466);
 
-	unordered_set<int> cubeCodes; // for easy access to the cubeCodes
-	cubeCodes.insert(cube.step4CornerCode());
 
-	// generate the 96 unique corner orientations
-	for (int i = 0; cubeCodes.size() < 96; ++i) {
 
-		Cube currCube = cubeQueue[i];
+	// keep track of cubes seen so far, so no duplicates
+	//unordered_set<CubeNums, CubeNums::CubeNumsHash1, CubeNums::key_equal> seenCubes;
+	unordered_set<CubeNums, CubeNums::Hash1> seenCubes;
 
-		for (auto turn : OK_TURNS4) {
 
-			Cube turnedCube = turn.turnFunc(currCube);
-			int code = turnedCube.step4CornerCode();
+	// check to see if the first cube matches
+	CubeNums firstCube = cubeNums1();
+	seenCubes.insert(firstCube);
 
-			if (cubeCodes.count(code) == 0) {
-				cubeQueue.push_back(turnedCube);
-				cubeCodes.insert(code);
-			}
+	// if the cube already has a value in the table
+	if (STEP1MAP.count(firstCube) > 0) {
+
+		deque<Turn> moves = turnsFromEndMap1(firstCube);
+
+		// FOR DEBUGGING: print the turns
+		for (auto turn : moves) {
+			cout << turn.toString << " ";
+		} cout << endl;
+
+		return moves;
+	}
+	// create cube queue and turns queue
+	queue<CubeNums> cubeQueue;
+	cubeQueue.push(firstCube);
+
+	queue<deque<Turn>> turnsQueue;
+	turnsQueue.push(deque<Turn>());
+
+	int i = 0;
+	while (true) {
+
+		// to keep track of how long it is taking...
+		if (i % 1000 == 0) {
+			cout << i << endl;
 		}
 
-	}
+		// pop the first cube and turn vector
+		CubeNums currCube = cubeQueue.front();
+		cubeQueue.pop();
 
-	queue<Cube> queueToReturn;
+		deque<Turn> currTurns = turnsQueue.front();
+		turnsQueue.pop();
 
-	for (auto c : cubeQueue) {
-		queueToReturn.push(c);
-	}
+		// push back a dummy turn that will immediately be popped
+		// (to simplify the loop)
+		currTurns.push_back(Turn(MoveInstruction::FRONT));
 
-	return queueToReturn;
-}
+		for (int j = 0; j < NUM_TURNS_STEP1; ++j) {
+			CubeNums turnedCube = currCube.turn1(j);
+			
+			// Calculate the code, and check if it matches
+			if (seenCubes.count(turnedCube) == 0) {
 
-int Cube::step4CornerCode()
-{
-	int sum = 0;
+				// If we've never seen the cube before, insert it
+				seenCubes.insert(turnedCube);
 
-	for (int i = 0; i < 7; ++i) {
+				currTurns.pop_back();
+				currTurns.push_back(OK_TURNS1[j].repr);
 
-		int numGreater = 0;
-		for (int j = i + 1; j < 8; ++j) {
+				// if the cube is in the step table, then we have found a match
+				if (STEP1MAP.count(turnedCube) > 0) {
 
-			if (cornerColors_[j] < cornerColors_[i]) {
-				++numGreater;
+					deque<Turn> lastMoves = turnsFromEndMap1(turnedCube);
+					
+					// concatenate the two paths
+					currTurns.insert(currTurns.end(), lastMoves.begin(), lastMoves.end());
+					
+					// FOR DEBUGGING: print out the current turns
+					for (auto turn : currTurns) {
+						cout << turn.toString << " ";
+					} cout << endl;
+					
+					return currTurns;
+				}
+				// otherwise, push onto the queue and keep searching
+				else {
+					cubeQueue.push(turnedCube);
+					turnsQueue.push(currTurns);
+				}
 			}
 		}
-		sum += (numGreater * FAC[8 - i - 1]);
+		++i;
 	}
-	return sum;
 }
+
+deque<Cube::Turn> Cube::solveStep1DFS()
+{
+	
+	Cube solvedCube;
+
+	assert(STEP1MAP.count(solvedCube.cubeNums1()) == 1);
+	assert(STEP2MAP.count(solvedCube.cubeNums2()) == 1);
+	assert(EDGE_COLORS_TABLE2[3000][3] == 13466);
+
+	CubeNums currCube = cubeNums1();
+
+
+	int MIN_DEPTH = 0;
+	int MAX_DEPTH = 8;
+
+	deque<Turn> result;
+
+	for (int depth = MIN_DEPTH; depth < MAX_DEPTH; ++depth) {
+		if (solveStep1Helper(depth, currCube, result)) {
+			cout << endl;
+			return result;
+		}
+	}
+	cout << "path not found :(" << endl;
+	return deque<Turn>();
+}
+int SOLVE_STEP_1_COUNTER = 0;
+bool Cube::solveStep1Helper(int depth, const CubeNums& curr, deque<Turn>& result)
+{
+	//if (SOLVE_STEP_1_COUNTER % 100 == 0) cout << SOLVE_STEP_1_COUNTER << endl;
+	//++SOLVE_STEP_1_COUNTER;
+	if (depth == 0) {
+		if (STEP1MAP.count(curr) > 0) {
+			cout << "found it" << endl;
+
+			deque<Turn> lastTurns = turnsFromEndMap1(curr);
+
+			// FOR DEBUGGING: print out the current turns
+			for (auto turn : lastTurns) {
+				cout << turn.toString << " ";
+			} cout << "|| ";
+
+			result = lastTurns;
+			return true;
+		}
+		else {
+			// not found, so return false
+			return false;
+		}
+	}
+	else {
+		// iterate through all the ok turns
+		for (int i = 0; i < NUM_TURNS_STEP1; ++i) {
+
+			CubeNums turned = curr.turn1(i);
+
+			// cube found: push back current move and return true
+			if (solveStep1Helper(depth - 1, turned, result)) {
+				Turn currTurn = OK_TURNS1[i];
+				
+				cout << currTurn.toString << " ";
+
+				result.push_front(currTurn);
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+
+deque<Cube::Turn> Cube::solveStep2DFS()
+{
+	Cube solvedCube;
+	assert(STEP1MAP.count(solvedCube.cubeNums1()) == 1);
+	assert(STEP2MAP.count(solvedCube.cubeNums2()) == 1);
+	assert(EDGE_COLORS_TABLE2[3000][3] == 13466);
+
+	CubeNums currCube = cubeNums2();
+
+	int MIN_DEPTH = 0;
+	int MAX_DEPTH = 10;
+
+	deque<Turn> result;
+
+	for (int depth = MIN_DEPTH; depth < MAX_DEPTH; ++depth) {
+		if (solveStep2Helper(depth, currCube, result)) {
+			cout << endl;
+			return result;
+		}
+	}
+
+	cout << "path not found :(" << endl;
+	return deque<Turn>();
+}
+
+bool Cube::solveStep2Helper(int depth, const CubeNums& curr, deque<Turn>& result)
+{
+	if (depth == 0) {
+		if (STEP2MAP.count(curr) > 0) {
+
+			deque<Turn> lastTurns = turnsFromEndMap2(curr);
+
+			// FOR DEBUGGING: print out the current turns
+			for (auto turn : lastTurns) {
+				cout << turn.toString << " ";
+			} cout << "|| ";
+
+			result = lastTurns;
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		// iterate through all ok turns
+		for (int i = 0; i < NUM_TURNS_STEP2; ++i) {
+			CubeNums turnedCube = curr.turn2(i);
+
+			// cube found: push back current move and return true
+			if (solveStep2Helper(depth - 1, turnedCube, result)) {
+				Turn currTurn = OK_TURNS2[i];
+				cout << currTurn.toString << " ";
+
+				result.push_front(currTurn);
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
 
 void Cube::buildMap(queue<Cube> cubeQueue, queue<vector<MoveInstruction>> turnsQueue, string fname,
 	int (Cube::*code)(), vector<Turn> okTurns, int tableSize)
@@ -549,7 +723,7 @@ void Cube::buildMap(queue<Cube> cubeQueue, queue<vector<MoveInstruction>> turnsQ
 	stepList[(cubeQueue.front().*code)()] = turnsQueue.front();
 
 	while (stepList.size() < tableSize) {
-
+	
 		// Retrieve the first cube and its corresponding moves
 		Cube currCube = cubeQueue.front();
 		vector<MoveInstruction> currMoves = turnsQueue.front();
@@ -596,21 +770,6 @@ void Cube::buildMap(queue<Cube> cubeQueue, queue<vector<MoveInstruction>> turnsQ
 	std::cout << "map serialized" << endl;
 }
 
-Cube Cube::solvedCube()
-{
-	// creates a solved cube
-	char eColors[12] = { 0,1,2,3,4,5,6,7,8,9,10,11 };
-	char eOrients[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };
-	char eOrbits[12] = { 0,1,1,0,2,2,2,2,0,1,1,0 };
-
-	char cColors[8] = { 0,1,2,3,4,5,6,7 };
-	char cOrients[8] = { 0,0,0,0,0,0,0,0 };
-
-	Cube cube(eColors, eOrients, eOrbits, cColors, cOrients);
-
-	return cube;
-}
-
 
 void Cube::printTurns(vector<Turn> turns) {
 	for (auto turn : turns) {
@@ -619,33 +778,6 @@ void Cube::printTurns(vector<Turn> turns) {
 	cout << endl;
 }
 
-/*
-void Cube::printTurns(vector<char> turns)
-{
-	for (auto turn : turns) {
-		switch (turn) {
-
-		case FRONT_2: std::cout << "F2"; break;
-		case RIGHT_2: std::cout << "R2"; break;
-		case BACK_2: std::cout << "B2"; break;
-		case LEFT_2: std::cout << "L2"; break;
-		case UP_2: std::cout << "U2"; break;
-		case DOWN_2: std::cout << "D2"; break;
-
-		case FRONT_INVERTED: std::cout << "F'"; break;
-		case RIGHT_INVERTED: std::cout << "R'"; break;
-		case BACK_INVERTED: std::cout << "B'"; break;
-		case LEFT_INVERTED: std::cout << "L'"; break;
-		case UP_INVERTED: std::cout << "U'"; break;
-		case DOWN_INVERTED: std::cout << "D'"; break;
-
-		default: std::cout << turn;
-		}
-		std::cout << " ";
-	}
-	std::cout << endl;
-}
-*/
 
 vector<Cube::Turn> Cube::invert(vector<Turn> turns)
 {
@@ -660,61 +792,7 @@ vector<Cube::Turn> Cube::invert(vector<Turn> turns)
 
 	return flipped;
 }
-/*
-vector<MoveInstruction> Cube::invert(vector<MoveInstruction> turns)
-{
-	reverse(turns.begin(), turns.end());
-	vector<char> flipped;
 
-	for (auto step : turns) {
-		switch (step) {
-		case FRONT: step = FRONT_INVERTED; break;
-		case RIGHT: step = RIGHT_INVERTED; break;
-		case BACK: step = BACK_INVERTED; break;
-		case LEFT: step = LEFT_INVERTED; break;
-		case UP: step = UP_INVERTED; break;
-		case DOWN: step = DOWN_INVERTED; break;
-
-		case FRONT_INVERTED: step = FRONT; break;
-		case RIGHT_INVERTED: step = RIGHT; break;
-		case BACK_INVERTED: step = BACK; break;
-		case LEFT_INVERTED: step = LEFT; break;
-		case UP_INVERTED: step = UP; break;
-		case DOWN_INVERTED: step = DOWN; break;
-		}
-
-		flipped.push_back(step);
-	}
-
-	return flipped;
-}
-*/
-/*
-MoveInstruction Cube::turnToChar(Cube(*turn)(Cube))
-{
-	if (turn == front) return FRONT;
-	else if (turn == right) return RIGHT;
-	else if (turn == back) return BACK;
-	else if (turn == left) return LEFT;
-	else if (turn == up) return UP;
-	else if (turn == down) return DOWN;
-
-	// return random numbers MoveInstructions
-	else if (turn == front2) return FRONT_2;
-	else if (turn == right2) return RIGHT_2;
-	else if (turn == back2) return BACK_2;
-	else if (turn == left2) return LEFT_2;
-	else if (turn == up2) return UP_2;
-	else if (turn == down2) return DOWN_2;
-
-	else if (turn == frontI) return FRONT_INVERTED;
-	else if (turn == rightI) return RIGHT_INVERTED;
-	else if (turn == backI) return BACK_INVERTED;
-	else if (turn == leftI) return LEFT_INVERTED;
-	else if (turn == upI) return UP_INVERTED;
-	else if (turn == downI) return DOWN_INVERTED;
-}
-*/
 Cube Cube::doTurns(Cube cube, vector<Turn> turns)
 {
 	for (Turn turn : turns) {
@@ -738,67 +816,7 @@ void Cube::loadMap(unordered_map<int, vector<MoveInstruction>>& stepTable, strin
 
 }
 
-/////// building turn tables //////////
-/*
-void Cube::buildTurnTable1()
-{
-	int TURN_TABLE_1[2048][12];
 
-	bitset<11> bits;
-
-	Cube cube = solvedCube();
-	for (int i = 0; i < 2048; ++i) {
-
-		bits = bitset<11>(i);
-		for (int bit = 0, int n = bits.size(); bit < n; ++bit) {
-			cube.edgeOrients_[i] = bit;
-		}
-		
-		int code = cube.step1Code();
-
-		for (auto turn : OK_TURNS1) {
-
-		}
-	}
-
-}
-*/
-void Cube::test()
-{
-	loadMap(TURNMAP2, "CubeMap2Face.ser");
-	char response;
-
-	do {
-		std::cout << "enter maneuver (followed by a \".\")" << endl;
-		
-		char move;
-
-		Cube cube = solvedCube();
-
-		cin >> move;
-
-		while (move != '.') {
-			if (move == 'F') cube = front(cube);
-			else if (move == 'f') cube = frontI(cube);
-			else if (move == 'R') cube = right(cube);
-			else if (move == 'r') cube = rightI(cube);
-
-			else { cout << "invalid turn" << endl; }
-
-			cin >> move;
-		}
-		std::cout << "done entering" << endl;
-
-
-		std::cout << "STARTING" << endl;
-
-		solve2(cube);
-
-		std::cout << endl << endl;
-		std::cout << "would you like to continue? (y/n)" << endl;
-		cin >> response;
-	} while (response == 'y');
-}
 
 
 /*
