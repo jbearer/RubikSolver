@@ -52,8 +52,6 @@ void Cube::testDFS()
 		cube = (turn.turnFunc)(cube);
 	} cout << endl;
 	
-	CubeNums cnums = cube.cubeNums2();
-	
 	deque<Turn> lastTurns = cube.solveStep2DFS();
 	
 	for (auto turn : lastTurns) {

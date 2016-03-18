@@ -63,7 +63,7 @@ void MotorDriver::step(
 
     // Step the motor.
     digitalWrite(dirPin, dir);
-    for (int counter = 0; counter < turns*100; counter++){
+    for (int counter = 0; counter < turns*50*MICROSTEPS; counter++){
         digitalWrite(stepPin,HIGH); 
         delayMicroseconds(DELAY); 
         digitalWrite(stepPin,LOW); 

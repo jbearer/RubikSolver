@@ -38,9 +38,12 @@ FaceTurn moves[NUM_STEPS] = {
 // Perform a sequence of actions on the cube
 void act( MotorControl::FaceTurn moves[], const int steps){
   // loop through list of steps
-  for (int i = 0; i < steps; ++i) {
+  /*for (int i = 0; i < steps; ++i) {
    moves[i](driver);
-  }
+  }*/
+
+  TURN_LEFT(driver);
+  delay(1000);
 }
 
 

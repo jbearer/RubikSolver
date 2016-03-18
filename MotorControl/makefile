@@ -80,11 +80,15 @@ $(TEST_PATH)/motorTest/motor-driver.cpp: $(ARD_INCL_PATH)/motor-driver.cpp
 $(TEST_PATH)/motorTest/comm-protocol.h: $(ARD_INCL_PATH)/comm-protocol.h
 	cp $< $(TEST_PATH)/motorTest
 
+$(TEST_PATH)/motorTest/comm-protocol.cpp: $(ARD_INCL_PATH)/comm-protocol.cpp
+	cp $< $(TEST_PATH)/motorTest
+
 $(TEST_PATH)/motorTest: $(TEST_PATH)/motorTest/motor-control.h \
 $(TEST_PATH)/motorTest/motor-control.cpp \
 $(TEST_PATH)/motorTest/motor-driver.h \
 $(TEST_PATH)/motorTest/motor-driver.cpp \
-$(TEST_PATH)/motorTest/comm-protocol.h
+$(TEST_PATH)/motorTest/comm-protocol.h \
+$(TEST_PATH)/motorTest/comm-protocol.cpp
 
 # Rules for solveController sketch:
 
@@ -103,8 +107,12 @@ $(SRC_PATH)/solveController/motor-driver.cpp: $(ARD_INCL_PATH)/motor-driver.cpp
 $(SRC_PATH)/solveController/comm-protocol.h: $(ARD_INCL_PATH)/comm-protocol.h
 	cp $< $(SRC_PATH)/solveController
 
+$(SRC_PATH)/solveController/comm-protocol.cpp: $(ARD_INCL_PATH)/comm-protocol.cpp
+	cp $< $(SRC_PATH)/solveController
+
 $(SRC_PATH)/solveController: $(SRC_PATH)/solveController/motor-control.h \
 $(SRC_PATH)/solveController/motor-control.cpp \
 $(SRC_PATH)/solveController/motor-driver.h \
 $(SRC_PATH)/solveController/motor-driver.cpp \
-$(SRC_PATH)/solveController/comm-protocol.h
+$(SRC_PATH)/solveController/comm-protocol.h \
+$(SRC_PATH)/solveController/comm-protocol.cpp

@@ -50,4 +50,16 @@ Temporary Items
 *.sdf
 *.sln
 *.filters
+<<<<<<< HEAD
 *.o
+=======
+*.log
+*.tlog
+*.obj
+*.pdb
+*.idb
+*.ilk
+*.lib
+*.lastbuildstate
+*.exp
+>>>>>>> origin/master

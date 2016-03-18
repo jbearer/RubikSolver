@@ -16,9 +16,9 @@
 
 using namespace testConstants;
 
-const char RECEIVE_INDICATOR = 8;
-const char SEND_INDICATOR = 9;
-const char OUTPUT_PIN = 10;
+const char RECEIVE_INDICATOR = 10;
+const char SEND_INDICATOR = 11;
+const char OUTPUT_PIN = 12;
 
 const int INDICATOR_DELAY = 500;
 
@@ -71,7 +71,7 @@ void sendTransmission(const char* message) {
 // char overload
 void sendTransmission(char message) {
   digitalWrite(SEND_INDICATOR, HIGH);
-  Serial.write(message);
+  Serial.print(message, DEC);
   delay(INDICATOR_DELAY);
   digitalWrite(SEND_INDICATOR, LOW);
 }
@@ -153,32 +153,6 @@ bool testGetChar(const char expected) {
   return true;
 }
 
-bool strEqual(const char* actual, const char* expected) {
-  if (!actual || !expected) return false;
-  while(*actual == *expected) {
-    if (*actual == '\0') return true;
-    ++actual;
-    ++expected;
-  }
-  return false;
-}
-
-// return true if we were able to read a string
-// return false only if we failed to read any bytes
-// indicate error only if we read a string and it did not match the expected byte,
-// or if the string was not null-terminated
-bool testGetString(const char* expected, const int expectedLength) {
-  char* transmission;
-  int bytesRead = getTransmission(transmission);
-  if (!getTransmission(transmission)) {
-    return false;
-  }
-  else if (bytesRead != expectedLength || !strEqual(transmission, expected)) {
-    indicateError(OUTPUT_PIN);
-  }
-  return true;
-}
-
 bool testBlink() {
    char instruction;
    if (!getTransmission(instruction)) return false;
@@ -206,21 +180,14 @@ void passedTest() {
 void loop() {
   static int testNum = 0;
 
-  switch(testNum) {
-    case 0:
-     if (testGetChar(TEST_CHAR)) {
+  if (testNum < NUM_CHARS) {
+    if (testGetChar(TEST_CHAR)) {
       passedTest();
-      //++testNum; COMMENTED OUT TO ONLY TEST CHARS
+      ++testNum;
      }
-     break;
-    case 1:
-      if (testGetString(TEST_STRING, TEST_STRING_LEN)) {
-        passedTest();
-        ++testNum;
-      }
-      break;
-    default:
-      testBlink();
+  }
+  else {
+    testBlink();
   }
 }
 
