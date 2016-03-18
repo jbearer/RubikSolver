@@ -50,9 +50,7 @@ Temporary Items
 *.sdf
 *.sln
 *.filters
-<<<<<<< HEAD
 *.o
-=======
 *.log
 *.tlog
 *.obj
@@ -62,4 +60,4 @@ Temporary Items
 *.lib
 *.lastbuildstate
 *.exp
->>>>>>> origin/master
+*Debug*
