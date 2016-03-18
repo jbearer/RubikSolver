@@ -72,7 +72,7 @@ void Cube::buildMap1()
 	// ensure tables have been initialized
 	assert(EDGE_COLORS_TABLE2[3000][3] == 13466);
 
-	int MAP1SIZE = 1000000; // MUST BE LARGER THAN OK_TURNS1.size()
+	int MAP1SIZE = 5000000; // MUST BE LARGER THAN OK_TURNS1.size()
 
 	
 	Cube solvedCube;
@@ -117,7 +117,7 @@ void Cube::buildMap2()
 	// ensure tables have been initialized
 	assert(EDGE_COLORS_TABLE2[3000][3] == 13466);
 
-	int MAP2SIZE = 1000000;	// MUST BE GREATER THAN OK_TURNS2!!!
+	int MAP2SIZE = 5000000;	// MUST BE GREATER THAN OK_TURNS2!!!
 
 	Cube solvedCube;
 	CubeNums solvedCubeNums = solvedCube.cubeNums2();

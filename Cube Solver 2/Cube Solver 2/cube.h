@@ -55,7 +55,9 @@ public:
 	static void test();
 
 	/// Compares normal turning and look-up turning
-	static void timeTrial();
+	static void timeTurnTables();
+
+	static void timeDFS();
 
 	////// Constructors ///////
 	/// creates a default solved cube
@@ -110,7 +112,7 @@ public:
 	*			Finally, uses F2,R2,B2,L2,U2,D2 to solve the rest.
 	*			In the end, it prints out the steps taken to solve the cube
 	*/
-	static std::vector<CommProtocol::MoveInstruction> solve(Cube cube);
+	//static std::vector<CommProtocol::MoveInstruction> solve(Cube cube);
 
 	/// for two-turn solve
 	static void solve2(Cube cube);
@@ -453,6 +455,8 @@ private:
 	std::deque<Turn> solveStep1();
 
 	std::deque<Turn> solveStep1DFS();
+
+	std::vector<CommProtocol::MoveInstruction> solve();
 
 	bool solveStep1Helper(int depth, const CubeNums& curr, std::deque<Turn>& result);
 

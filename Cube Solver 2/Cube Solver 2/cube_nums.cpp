@@ -1,4 +1,5 @@
-#include "cube.h";
+#include "cube.h"
+
 
 Cube::CubeNums::CubeNums() :	// initialize with invalid codes
 	first {USHRT_MAX }, second{ USHRT_MAX }, third{ USHRT_MAX }

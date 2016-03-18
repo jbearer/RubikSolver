@@ -333,7 +333,7 @@ int Cube::code2()
 
 	return sum1 + 243*sum2 + 243000*sum3;
 }
-
+/*
 std::vector<CommProtocol::MoveInstruction> Cube::solve(Cube cube)
 {
 	// Retrieve the Turns to solve each step
@@ -354,26 +354,12 @@ std::vector<CommProtocol::MoveInstruction> Cube::solve(Cube cube)
 
 	// Print out all the steps
 
-<<<<<<< HEAD:Cube Solver 2/Cube Solver 2/cube.cpp
 	//printTurns(step1);
 	//printTurns(step2);
 	//printTurns(step3);
 	//printTurns(step4);
-=======
-	printTurns(step1);
-	printTurns(step2);
-	printTurns(step3);
-	printTurns(step4);
-
-	vector<CommProtocol::MoveInstruction> solution;
-	for (auto turn : step1) solution.push_back(turn.repr);
-	for (auto turn : step2) solution.push_back(turn.repr);
-	for (auto turn : step3) solution.push_back(turn.repr);
-	for (auto turn : step4) solution.push_back(turn.repr);
-	return solution;
->>>>>>> origin/master:CubeSolver/cube.cpp
 }
-
+*/
 // Solve for 2-face (debugging only)
 void Cube::solve2(Cube cube)
 {
@@ -607,14 +593,13 @@ deque<Cube::Turn> Cube::solveStep1DFS()
 	CubeNums currCube = cubeNums1();
 
 
-	int MIN_DEPTH = 0;
+	int MIN_DEPTH = 4;
 	int MAX_DEPTH = 8;
 
 	deque<Turn> result;
 
 	for (int depth = MIN_DEPTH; depth < MAX_DEPTH; ++depth) {
 		if (solveStep1Helper(depth, currCube, result)) {
-			cout << endl;
 			return result;
 		}
 	}
@@ -628,14 +613,8 @@ bool Cube::solveStep1Helper(int depth, const CubeNums& curr, deque<Turn>& result
 	//++SOLVE_STEP_1_COUNTER;
 	if (depth == 0) {
 		if (STEP1MAP.count(curr) > 0) {
-			cout << "found it" << endl;
 
 			deque<Turn> lastTurns = turnsFromEndMap1(curr);
-
-			// FOR DEBUGGING: print out the current turns
-			for (auto turn : lastTurns) {
-				cout << turn.toString << " ";
-			} cout << "|| ";
 
 			result = lastTurns;
 			return true;
@@ -654,8 +633,6 @@ bool Cube::solveStep1Helper(int depth, const CubeNums& curr, deque<Turn>& result
 			// cube found: push back current move and return true
 			if (solveStep1Helper(depth - 1, turned, result)) {
 				Turn currTurn = OK_TURNS1[i];
-				
-				cout << currTurn.toString << " ";
 
 				result.push_front(currTurn);
 				return true;
@@ -675,14 +652,13 @@ deque<Cube::Turn> Cube::solveStep2DFS()
 
 	CubeNums currCube = cubeNums2();
 
-	int MIN_DEPTH = 0;
+	int MIN_DEPTH = 4;
 	int MAX_DEPTH = 10;
 
 	deque<Turn> result;
 
 	for (int depth = MIN_DEPTH; depth < MAX_DEPTH; ++depth) {
 		if (solveStep2Helper(depth, currCube, result)) {
-			cout << endl;
 			return result;
 		}
 	}
@@ -697,11 +673,6 @@ bool Cube::solveStep2Helper(int depth, const CubeNums& curr, deque<Turn>& result
 		if (STEP2MAP.count(curr) > 0) {
 
 			deque<Turn> lastTurns = turnsFromEndMap2(curr);
-
-			// FOR DEBUGGING: print out the current turns
-			for (auto turn : lastTurns) {
-				cout << turn.toString << " ";
-			} cout << "|| ";
 
 			result = lastTurns;
 			return true;
@@ -718,7 +689,6 @@ bool Cube::solveStep2Helper(int depth, const CubeNums& curr, deque<Turn>& result
 			// cube found: push back current move and return true
 			if (solveStep2Helper(depth - 1, turnedCube, result)) {
 				Turn currTurn = OK_TURNS2[i];
-				cout << currTurn.toString << " ";
 
 				result.push_front(currTurn);
 				return true;
@@ -786,6 +756,33 @@ void Cube::buildMap(queue<Cube> cubeQueue, queue<vector<MoveInstruction>> turnsQ
 	std::cout << "map serialized" << endl;
 }
 
+std::vector<MoveInstruction> Cube::solve()
+{
+	deque<Turn> firstTurns = solveStep1DFS();
+
+	// apply turns found in first turns
+	
+	for (auto turn : firstTurns) {
+		*this = (turn.turnFunc)(*this);
+	}
+	deque<Turn> lastTurns = solveStep2DFS();
+	
+	vector<MoveInstruction> instructions;
+	
+	// print and fill vector with move instructions to return
+	for (auto turn : firstTurns) {
+		cout << turn.toString << " ";
+		instructions.push_back(turn.repr);
+	} cout << endl;
+	
+	for (auto turn : lastTurns) {
+		cout << turn.toString << " ";
+		instructions.push_back(turn.repr);
+	} cout << endl;
+	
+
+	return instructions;
+}
 
 void Cube::printTurns(vector<Turn> turns) {
 	for (auto turn : turns) {
@@ -848,12 +845,6 @@ To do:
 
 Notes:
 
-1) Binary archive is about 5 times faster than text archive
-
-2) Having the turn methods return a new cube is faster than
-	having them take a reference to the cube, modify it, insert it into
-	the queue, and then unturn it.
-
-3) using ints was bout 4 times larger than chars (makes sense)
-4) using enums for turns was also 3 times larger than chars
+1) 3/17: average solve: 1.78 sec.  Longest: 24 sec
+2) First step: average solve: .017, Longest: .187
 */

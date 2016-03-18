@@ -23,9 +23,11 @@ void Cube::testDFS()
 		Turn(MoveInstruction::RIGHT),
 		Turn(MoveInstruction::FRONT_INVERTED),
 		
-		Turn(MoveInstruction::UP),
-		Turn(MoveInstruction::FRONT),
-		
+		Turn(MoveInstruction::UP_INVERTED),
+		Turn(MoveInstruction::FRONT_INVERTED),
+		Turn(MoveInstruction::BACK),
+		Turn(MoveInstruction::LEFT)
+		/*
 		Turn(MoveInstruction::BACK_2),
 		Turn(MoveInstruction::UP),
 		Turn(MoveInstruction::LEFT),
@@ -33,7 +35,7 @@ void Cube::testDFS()
 		Turn(MoveInstruction::RIGHT),
 		
 		Turn(MoveInstruction::UP_INVERTED)
-		
+		*/
 		};
 		
 	for (auto turn : maneuver) {
@@ -44,24 +46,64 @@ void Cube::testDFS()
 
 	clock_t t;
 	t = clock();
-	
-	deque<Turn> firstTurns = cube.solveStep1DFS();
 
-	for (auto turn : firstTurns) {
-		cout << turn.toString << " ";
-		cube = (turn.turnFunc)(cube);
-	} cout << endl;
-	
-	deque<Turn> lastTurns = cube.solveStep2DFS();
-	
-	for (auto turn : lastTurns) {
-		cout << turn.toString << " ";
-	}
+	cube.solve();
 
 	t = clock() - t;
 	cout << "time for searching: " << (float)t / CLOCKS_PER_SEC << endl;
 	
 	}
+
+void Cube::timeDFS()
+{
+	readTurnTables();
+	readEndMaps();
+
+	vector<Turn> allTurns({
+		Turn(MoveInstruction::FRONT), Turn(MoveInstruction::RIGHT),
+		Turn(MoveInstruction::BACK), Turn(MoveInstruction::LEFT),
+		Turn(MoveInstruction::UP), Turn(MoveInstruction::DOWN),
+		Turn(MoveInstruction::FRONT_INVERTED), Turn(MoveInstruction::RIGHT_INVERTED),
+		Turn(MoveInstruction::BACK_INVERTED), Turn(MoveInstruction::LEFT_INVERTED),
+		Turn(MoveInstruction::UP_INVERTED), Turn(MoveInstruction::DOWN_INVERTED)
+	});
+
+
+	int NUM_TRIALS = 100;
+	int MANEUVER_SIZE = 100;
+
+	clock_t t;
+	t = clock();
+
+	float maxTime = 0;
+
+	for (int i = 0; i < NUM_TRIALS; ++i) {
+
+		Cube cube;
+
+		for (int j = 0; j < MANEUVER_SIZE; ++j) {
+			vector<Turn>::iterator randIt = allTurns.begin();
+			advance(randIt, rand() % allTurns.size());
+			cube = cube.turnWith(*randIt);
+		}
+
+		// time each individual solve
+		clock_t cubeTime;
+		cubeTime = clock();
+		
+		cube.solve();
+		
+		cubeTime = clock() - cubeTime;
+		if (float(cubeTime) / CLOCKS_PER_SEC > maxTime) {
+			maxTime = float(cubeTime) / CLOCKS_PER_SEC;
+		}
+	}
+	t = clock() - t;
+
+	cout << "max time: " << maxTime << endl;
+	cout << "average time: " << ((float)t / CLOCKS_PER_SEC) / NUM_TRIALS << endl;
+
+}
 
 void Cube::turnTableTest()
 {
@@ -157,7 +199,7 @@ void Cube::turnTest()
 
 }
 
-void Cube::timeTrial()
+void Cube::timeTurnTables()
 {
 	initChoose();
 	readTurnTables();
@@ -221,8 +263,8 @@ void Cube::timeTrial()
 
 void Cube::test()
 {
-	//buildTurnTables();
-	readTurnTables();
+	buildTurnTables();
+	//readTurnTables();
 	buildEndMaps();
 	//readTurnTables();
 
@@ -235,7 +277,7 @@ int main()
 
 	Cube::initChoose();
 
-	Cube::testDFS();
+	Cube::timeDFS();
 
 	cout << endl << endl;
 	t = clock() - t;
