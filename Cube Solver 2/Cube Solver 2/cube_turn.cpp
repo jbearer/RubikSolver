@@ -156,8 +156,7 @@ void Cube::turn(const Edge_t faceEdges[4], const Corner_t faceCorners[4])
 {
 	forwardCycle(faceEdges, edgeColors_);
 	forwardCycle(faceEdges, edgeOrients_);
-	forwardCycle(faceEdges, edgeOrbits_);
-
+	
 	forwardCycle(faceCorners, cornerColors_);
 	forwardCycle(faceCorners, cornerOrients_);
 }
@@ -220,8 +219,7 @@ void Cube::turnI(const Edge_t faceEdges[4],
 {
 	backwardCycle(faceEdges, edgeColors_);
 	backwardCycle(faceEdges, edgeOrients_);
-	backwardCycle(faceEdges, edgeOrbits_);
-
+	
 	backwardCycle(faceCorners, cornerColors_);
 	backwardCycle(faceCorners, cornerOrients_);
 }
@@ -281,9 +279,7 @@ void Cube::turn2(const Edge_t faceEdges[4], const Corner_t faceCorners[4])
 	swap(edgeColors_[faceEdges[1]], edgeColors_[faceEdges[3]]);
 	swap(edgeOrients_[faceEdges[0]], edgeOrients_[faceEdges[2]]);
 	swap(edgeOrients_[faceEdges[1]], edgeOrients_[faceEdges[3]]);
-	swap(edgeOrbits_[faceEdges[0]], edgeOrbits_[faceEdges[2]]);
-	swap(edgeOrbits_[faceEdges[1]], edgeOrbits_[faceEdges[3]]);
-
+	
 	swap(cornerColors_[faceCorners[0]], cornerColors_[faceCorners[2]]);
 	swap(cornerColors_[faceCorners[1]], cornerColors_[faceCorners[3]]);
 	swap(cornerOrients_[faceCorners[0]], cornerOrients_[faceCorners[2]]);
@@ -307,3 +303,60 @@ void Cube::orientCorners(const Corner_t pos[4])
 	cornerOrients_[pos[2]] = (cornerOrients_[pos[2]] + 1) % 3;
 	cornerOrients_[pos[3]] = (cornerOrients_[pos[3]] + 2) % 3;
 }
+
+
+int Cube::getIndex1(MoveInstruction mi)
+{
+	switch (mi) {
+	case MoveInstruction::FRONT: return 0;
+		break;
+	case MoveInstruction::RIGHT: return 1;
+		break;
+	case MoveInstruction::BACK: return 2;
+		break;
+	case MoveInstruction::LEFT: return 3;
+		break;
+	case MoveInstruction::UP: return 4;
+		break;
+	case MoveInstruction::DOWN: return 5;
+		break;
+	case MoveInstruction::FRONT_INVERTED: return 6;
+		break;
+	case MoveInstruction::RIGHT_INVERTED: return 7;
+		break;
+	case MoveInstruction::BACK_INVERTED: return 8;
+		break;
+	case MoveInstruction::LEFT_INVERTED: return 9;
+		break;
+	case MoveInstruction::UP_INVERTED: return 10;
+		break;
+	case MoveInstruction::DOWN_INVERTED: return 11;
+		break;
+	default: cout << "not an acceptable turn" << endl;
+	}
+}
+
+int Cube::getIndex2(MoveInstruction mi)
+{
+	switch (mi) {
+	case MoveInstruction::FRONT_2: return 0;
+		break;
+	case MoveInstruction::RIGHT: return 1;
+		break;
+	case MoveInstruction::BACK_2: return 2;
+		break;
+	case MoveInstruction::LEFT: return 3;
+		break;
+	case MoveInstruction::UP_2: return 4;
+		break;
+	case MoveInstruction::DOWN_2: return 5;
+		break;
+	case MoveInstruction::RIGHT_INVERTED: return 6;
+		break;
+	case MoveInstruction::LEFT_INVERTED: return 7;
+		break;
+	default: cout << "not an acceptable turn" << endl;
+	}
+}
+
+

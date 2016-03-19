@@ -11,7 +11,6 @@
 #include <unordered_set>
 #include <functional>
 #include <queue>
-#include <tuple>
 #include <boost/archive/binary_oarchive.hpp>
 
 
@@ -26,9 +25,11 @@
 */
 class Cube {
 
-	/// forward declare Turn struct
+	/// forward declare Turn, CubeNums struct
 	struct Turn;
-	struct CubeNums;
+	struct CubeNumsStep1;
+	struct CubeNumsStep2;
+	//struct CubeNums;
 
 public:
 
@@ -42,30 +43,35 @@ public:
 
 	/// Memoizes combinatorial values for calculating Cube codes
 	static void initChoose();
+	static int fac(int n);
 
-	/// Initializes constants and loads the hash tables
-	static void init();
-
-	/// for two-face solve
-	static void init2();
-
-	/// Scramble and solve a test cube
-	static void testDFS();
+	/////////// TESTING ///////////
+	
+	/// ensure all the turn methods work for cubes
 	static void turnTest();
+
 	static void test();
+	static void test1();
 
 	/// Compares normal turning and look-up turning
 	static void timeTurnTables();
 
+	/// solve a cube using DFS given a set of moves
+	static void testDFS();
+
+	/// generate 100 random cubes, finds the average and max solve
 	static void timeDFS();
 
-	////// Constructors ///////
+	static void turnTableTest();
+
+	///////// Constructors //////////
+
 	/// creates a default solved cube
 	Cube() = default;
 
-	/// Five-argument parameterized constructor.  Constructs a cube
+	/// Four-argument parameterized constructor.  Constructs a cube
 	/// out of edgeColors, edgeOrients, cornerColors, and cornerOrients
-	Cube(Edge_t eColors[12], char eOrients[12], char eOrbits[12],
+	Cube(Edge_t eColors[12], char eOrients[12],
 		Corner_t cColors[8], char cOrients[8]);
 
 	Cube(const Cube& rhs) = default; ///< Default copy constructor
@@ -101,68 +107,131 @@ public:
 	static Cube up2(Cube cube);
 	static Cube down2(Cube cube);
 
-
-	/**
-	* \fn		solve
-	* \brief	Solves the cube by running steps 1 through 4.
-	* \details	Uses Thistlethwaite's method.  First uses F,R,B,L,U,D to orient
-	*			the edges.  Then uses F,R,B,L,U2,D2 to finish step 2 (and this
-	*			combination of moves will prevent the edges from becoming
-	*			unoriented.  Then uses F2,R,B2,L,U2,D2 to finish step 3.
-	*			Finally, uses F2,R2,B2,L2,U2,D2 to solve the rest.
-	*			In the end, it prints out the steps taken to solve the cube
-	*/
-	//static std::vector<CommProtocol::MoveInstruction> solve(Cube cube);
-
-	/// for two-turn solve
-	static void solve2(Cube cube);
+	// Solving:
+	std::vector<CommProtocol::MoveInstruction> solve();
 
 	/// Prints the cube in the form edgeColors, edgeOrients, cornerColors, cornerOrients
 	void print() const;
 
 private:
 
+
+	typedef unsigned short ushort;
+
+	/*
+	* \class CubeNums
+	* \brief	Represent the Cube's position with three unsigned shorts
+	*/
+	/*
 	struct CubeNums {
+
 		struct Hash1;
 		struct Hash2;
-		typedef unsigned short ushort;
 		friend class boost::serialization::access;
 
-		CubeNums();
+		// Constructors:
 
+		CubeNums(); ///< default constructor: creates invalid cubenums
+
+		/// parameterized constructor: assigns the three cubeNums data members
 		CubeNums(ushort in1, ushort in2, ushort in3);
 
+		/// hash function for cubenums in step 1
 		struct Hash1 : public std::unary_function<CubeNums, size_t> {
 			size_t operator()(const CubeNums& cube) const;
 		};
+		/// hash function for cubenums in step 2
 		// NOTE: I think overflow is okay in this case
 		struct Hash2 : public std::unary_function<CubeNums, size_t> {
 			size_t operator()(const CubeNums& cube) const;
 		};
 
+		/// serialize cubenums
 		template<typename Archive>
 		void serialize(Archive& ar, const unsigned int version)
 		{
 			ar & first & second & third;
 		}
 
+		CubeNums turn(int i) const;
 
+		/// turn1 gets the ith element of the turn tables for step 1
 		CubeNums turn1(int i) const;
+		/// turn2 gets the ith element of turn tables for step 2
 		CubeNums turn2(int i) const;
 
-		bool operator==(const CubeNums& rhs) const
+		bool operator==(const CubeNums& rhs) const;
+		bool operator!=(const CubeNums& rhs) const;
+
+		ushort first;	// edgeOrients or cornerColors
+		ushort second;	// cornerOrients or edgeColors1
+		ushort third;	// edgeOrbits or edgeColors2
+	};
+	*/
+	
+	struct CubeNumsStep1{
+		struct Hash;
+		
+		// Constructors
+		CubeNumsStep1();
+		CubeNumsStep1(const Cube& cube);
+		CubeNumsStep1(ushort edgeOrients, ushort cornerOrients, ushort edgeOrbits);
+
+		bool operator==(const CubeNumsStep1& rhs) const;
+		bool operator!=(const CubeNumsStep1& rhs) const;
+
+		struct Hash : public std::unary_function<CubeNumsStep1, size_t> {
+			size_t operator()(const CubeNumsStep1& cube) const;
+		};
+
+		/// serialize cubenums
+		template<typename Archive>
+		void serialize(Archive& ar, const unsigned int version)
 		{
-			return first == rhs.first &&
-				second == rhs.second &&
-				third == rhs.third;
+			ar & edgeOrients_ & cornerOrients_ & edgeOrbits_;
 		}
 
-		ushort first;	// edgeOrients_ or cornerColors_
-		ushort second;	// cornerOrients_ or edgeColors1_
-		ushort third;	// edgeOrbits_ or edgeColors2_
+		CubeNumsStep1 turn(int i) const;
+
+	private:
+
+		ushort edgeOrients_;
+		ushort cornerOrients_;
+		ushort edgeOrbits_;
 	};
 
+	struct CubeNumsStep2{
+		struct Hash;
 
+		CubeNumsStep2();
+		CubeNumsStep2(const Cube& cube);
+		CubeNumsStep2(ushort cornerColors, ushort edgeColors1, ushort edgeColors2);
+
+		bool operator==(const CubeNumsStep2& rhs) const;
+		bool operator!=(const CubeNumsStep2& rhs) const;
+
+
+		struct Hash : public std::unary_function<CubeNumsStep2, size_t> {
+			size_t operator()(const CubeNumsStep2& cube) const;
+		};
+
+		/// serialize cubenums
+		template<typename Archive>
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar & cornerColors_ & edgeColors1_ & edgeColors2_;
+		}
+
+		CubeNumsStep2 turn(int i) const;
+
+	private:
+
+		ushort cornerColors_;
+		ushort edgeColors1_;
+		ushort edgeColors2_;
+
+	};
+	
 	/// A turn struct, to easily convert between representations
 	struct Turn {
 		/// Constructors
@@ -206,16 +275,12 @@ private:
 	static const Edge_t LR_SLICE[4];
 
 	/// Hash maps from cube codes to the required turns to solve
-	static std::unordered_map<CubeNums, CommProtocol::MoveInstruction, CubeNums::Hash1> STEP1MAP;
-	static std::unordered_map<CubeNums, CommProtocol::MoveInstruction, CubeNums::Hash2> STEP2MAP;
-
-	static std::unordered_map < int, std::vector<CommProtocol::MoveInstruction>> TURNMAP2;
+	static std::unordered_map<CubeNumsStep1, CommProtocol::MoveInstruction, CubeNumsStep1::Hash> STEP1MAP;
+	static std::unordered_map<CubeNumsStep2, CommProtocol::MoveInstruction, CubeNumsStep2::Hash> STEP2MAP;
 
 	/// Vectors with function pointers to allowable turns
 	static const std::vector<Turn> OK_TURNS1;
 	static const std::vector<Turn> OK_TURNS2;
-
-	static const std::vector<Turn> OK_TURNS_2FACE;
 
 	static const int NUM_TURNS_STEP1 = 12;
 	static const int NUM_TURNS_STEP2 = 8;
@@ -252,7 +317,6 @@ private:
 	/// Reads turn tables from turnTables.ser.  Stores them in proper arrays
 	static void readTurnTables();
 
-	static void turnTableTest();
 
 
 	/**
@@ -318,8 +382,8 @@ private:
 	/// if the cornerOrients was {2,2,2...}, i.e. the "last" orientation.
 	bool nextCornerOrients();
 	
-	CubeNums cubeNums1();
-	CubeNums cubeNums2();
+	//CubeNums cubeNums1();
+	//CubeNums cubeNums2();
 
 	/////////////////// TURN METHODS ////////////////
 
@@ -342,8 +406,8 @@ private:
 	* \brief	Cycles the numbers at the given indices forward (i.e. clockwise on the cube)
 	* \details	For example, then numbers at indices {1,3,5,6} will now be at {6,1,3,5}
 	*/
-	template <typename Index_t, typename Cubies_t>
-	void forwardCycle(const Index_t positions[4], Cubies_t* cubies);
+	template <typename Index_t, typename Cubie_t>
+	void forwardCycle(const Index_t positions[4], Cubie_t* cubies);
 
 	/**
 	* \fn		forwardCycle
@@ -387,112 +451,28 @@ private:
 	* \details	Cubes had unique codes based only on edge orientation.
 	* \return	int
 	*/
-	int edgeOrientsCode();
+	ushort edgeOrientsCode() const;
 
 	/// same as edgeOrientsCode, but for corners
-	int cornerOrientsCode();
+	ushort cornerOrientsCode() const;
 
-	int cornerColorsCode();
+	ushort cornerColorsCode() const;
 
-	int edgeOrbitsCode();
+	ushort edgeOrbitsCode() const;
 
-	int edgeColorsCode1();
-	int edgeColorsCode2();
+	ushort edgeColorsCode1() const;
+	ushort edgeColorsCode2() const;
 
-	static int step1Code(int edgeOrients, int cornerOrients, int edgeOrbits);
-	int step1Code();
-	/**
-	* \fn		step2Code
-	* \brief	Hashes the cube into a relevant integer for step 2
-	* \details	Cubes have unique codes based only on corner orientation
-	*			and the position of the UD_SLICE edges
-	* \return	int
-	*/
-	long step2Code();
-	static long step2Code(int cornerColors, int edgeColors1, int edgeColors2);
+	///////// SOLVING ////////////
 
-
-	/**
-	* \fn		step3Code
-	* \brief	Hashes the cube into a relevant integer for step 2
-	* \details	Cubes have unique codes based only on edge orbits
-	*			and corner colors (corners must be in one of 96 possibilities)
-	* \return	int
-	*/
-	//int step3Code();
-
-	/**
-	* \fn		step4Code
-	* \brief	Hashes the cube into a relevant integer for step 4
-	* \details	Cube have unique codes based only on edge colors
-	*/
-	//int step4Code();
-
-	/// Helper method to hash the corners to a unique number.  Used to determine
-	/// The only 96 possible corner positions using double turns
-	//int step4CornerCode();
-	
-
-	/// Code for the 2-face solver
-	int code2();
-
-	/// Helper method to determine the code for cubies in a specific orbit
-	//int step4Help(const Edge_t orbit[4], Edge_t cubies[12]);
-
-	/**
-	* \fn		doStep
-	* \brief	Maneuvers the cube to complete a given step
-	* \details	Calls doStep to determine how to most quickly finish the step
-	*			Then turns the cube with the given function pointers.  Also prints
-	*			The steps and the cube.  Returns the turn vector.
-	* \param	Cube& cube					a reference to the cube
-	* \param	bool(Cube::*solved)()		the method to see if it's solved
-	* \param	std::vector<Turn> okSteps				the vector of allowable turns for this step
-	*/
-	static std::vector<Turn> doStep(Cube& cube, const std::unordered_map<int, std::vector<CommProtocol::MoveInstruction>>& stepTable,
-		int (Cube::*hashFunction)(), std::vector<Turn> okSteps);
-
-	std::deque<Turn> solveStep1();
 
 	std::deque<Turn> solveStep1DFS();
-
-	std::vector<CommProtocol::MoveInstruction> solve();
-
-	bool solveStep1Helper(int depth, const CubeNums& curr, std::deque<Turn>& result);
+	bool solveStep1Helper(int depth, const CubeNumsStep1& curr, std::deque<Turn>& result);
 
 	std::deque<Turn> solveStep2DFS();
-	bool solveStep2Helper(int depth, const CubeNums& curr, std::deque<Turn>& result);
+	bool solveStep2Helper(int depth, const CubeNumsStep2& curr, std::deque<Turn>& result);
 
-	/**
-	* \fn		findTurns
-	* \brief	Uses a breadth-first search to find the fastest way to finish a step
-	* \details	Given a method to see if the cube is solved and a vector of allowable
-	*			turns, findTurns creates a queue of Cubes and a queue of std::vector<Turn>.
-	*			Using a bfs, it continues to try every possible turn, check if it
-	*			is "solved", and if not, adds it to the queue.  If it is "solved,"
-	*			it returns the associated std::vector<Turn>.
-	* \param	bool (Cube::*solved)()		Method to check if the cube is done with step
-	* \param	std::vector<Turn> okSteps				A vector of allowable turns for this step
-	*/
-	std::vector<Turn> findTurns(const std::unordered_map<int, std::vector<CommProtocol::MoveInstruction>>& stepTable, int (Cube::*code)(), std::vector<Turn> okSteps);
-
-	/**
-	* \fn		printSteps
-	* \brief	Given a vector of function pointers to turns, prints them in readable form
-	*/
-	static void printTurns(std::vector<Turn> steps);
-
-	/// Inverts the step in a std::vector<Turn>.  For example, F R U2 becomes U2 R' F'
-	static std::vector<Turn> invert(std::vector<Turn> steps);
-	//static std::vector<char> invert(std::vector<char> turns);
-	static Cube doTurns(Cube cube, std::vector<Turn> turns);
-
-	//static MoveInstruction turnToChar(Cube(*turn)(Cube));
-
-
-	/// Builds the hashmaps holding the cubes
-	static void buildMap(std::queue<Cube> cubeQueue, std::queue<std::vector<CommProtocol::MoveInstruction>> turnsQueue,
-		std::string fname, int (Cube::*hashFunction)(), std::vector<Turn> okTurns, int tableSize);
+	////////// END MAPS ////////////
 
 	static void buildEndMaps();
 	static void buildMap1();
@@ -501,30 +481,18 @@ private:
 	static void archiveEndMaps();
 	static void readEndMaps();
 
-	static std::deque<Turn> turnsFromEndMap1(CubeNums start);
-	static std::deque<Turn> turnsFromEndMap2(CubeNums start);
+	static std::deque<Turn> turnsFromEndMap1(CubeNumsStep1 start);
+	static std::deque<Turn> turnsFromEndMap2(CubeNumsStep2 start);
 
 	static int getIndex1(CommProtocol::MoveInstruction);
 	static int getIndex2(CommProtocol::MoveInstruction);
 
-	/// Generates a queue with all 96 possible corner positions before step 4.
-	/// Used as a starting point to build the step 3 tables
-	//static std::queue<Cube> step4ValidCorners();
-
-	/// Loads a map from a filename to a hash map
-	static void loadMap(std::unordered_map<int, std::vector<CommProtocol::MoveInstruction>>& stepMap, std::string fname);
-
-	static int fac(int n);
 
 	/// data members set to a solved cube.
 	Edge_t edgeColors_[12] = {YB, YR, YO, YG, RB, OB, RG, OG, WB, WR, WO, WG };	///< Numbers represent colors (see table of consts above)
 	char edgeOrients_[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };  ///< 0 is oriented, 1 is unoriented
 	Corner_t cornerColors_[8] = { YRB, YOB, YRG, YOG, WRB, WOB, WRG, WOG };	///< Numbers represent colors (see table of consts above)
 	char cornerOrients_[8] = { 0,0,0,0,0,0,0,0 };	///< 0 is oriented, 1 is clockwise, 2 is counterclockwise
-
-	char edgeOrbits_[12] = { 0,1,1,0,2,2,2,2,0,1,1,0 };  ///< 0, 1, or 2 depending on whether the edge is at home
-
-
 
 };
 

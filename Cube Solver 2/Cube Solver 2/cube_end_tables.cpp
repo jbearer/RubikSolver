@@ -17,13 +17,13 @@
 using namespace std;
 using CommProtocol::MoveInstruction;
 
-unordered_map<Cube::CubeNums,
+unordered_map<Cube::CubeNumsStep1,
 	MoveInstruction,
-	Cube::CubeNums::Hash1> Cube::STEP1MAP;
+	Cube::CubeNumsStep1::Hash> Cube::STEP1MAP;
 	
-unordered_map<Cube::CubeNums,
+unordered_map<Cube::CubeNumsStep2,
 	MoveInstruction,
-	Cube::CubeNums::Hash2> Cube::STEP2MAP;
+	Cube::CubeNumsStep2::Hash> Cube::STEP2MAP;
 
 void Cube::readEndMaps()
 {
@@ -76,24 +76,24 @@ void Cube::buildMap1()
 
 	
 	Cube solvedCube;
-	CubeNums solvedCubeNums = solvedCube.cubeNums1();
+	CubeNumsStep1 solvedCubeNums;
 
 	//MAKE THIS AN EMPTY MOVE INSTRUCTION
 	STEP1MAP[solvedCubeNums] = MoveInstruction::FRONT;
 
-	queue<CubeNums> cubeQueue;
+	queue<CubeNumsStep1> cubeQueue;
 	cubeQueue.push(solvedCubeNums);
 
 	while (STEP1MAP.size() < MAP1SIZE) {
 		// Retrive the first cube nums and its corresponding moves
-		CubeNums cube = cubeQueue.front();
+		CubeNumsStep1 cube = cubeQueue.front();
 		
 		cubeQueue.pop();
 		
 		// Loop through all the allowable turns in this step to use a breadth
 		// first search to generate all possible cubes
 		for (int j = 0; j < NUM_TURNS_STEP1; ++j) {
-			CubeNums turnedCube = cube.turn1(j);
+			CubeNumsStep1 turnedCube = cube.turn(j);
 			
 			// only add if this cube has never been seen before
 			if (STEP1MAP.count(turnedCube) == 0) {
@@ -120,21 +120,21 @@ void Cube::buildMap2()
 	int MAP2SIZE = 5000000;	// MUST BE GREATER THAN OK_TURNS2!!!
 
 	Cube solvedCube;
-	CubeNums solvedCubeNums = solvedCube.cubeNums2();
+	CubeNumsStep2 solvedCubeNums;
 	STEP2MAP[solvedCubeNums] = MoveInstruction::FRONT;
 
-	queue<CubeNums> cubeQueue;
+	queue<CubeNumsStep2> cubeQueue;
 	cubeQueue.push(solvedCubeNums);
 
 	while (STEP2MAP.size() < MAP2SIZE) {
 		// Retrive the first cube nums and its corresponding moves
-		CubeNums cube = cubeQueue.front();
+		CubeNumsStep2 cube = cubeQueue.front();
 		cubeQueue.pop();
 		
 		// Loop through all the allowable turns in this step to use a breadth
 		// first search to generate all possible cubes
 		for (int j = 0; j < OK_TURNS2.size(); ++j) {
-			CubeNums turnedCube = cube.turn2(j);
+			CubeNumsStep2 turnedCube = cube.turn(j);
 			
 			// only add if this cube has never been seen before
 			if (STEP2MAP.count(turnedCube) == 0) {
@@ -153,94 +153,40 @@ void Cube::buildMap2()
 	}
 }
 
-deque<Cube::Turn> Cube::turnsFromEndMap1(CubeNums start)
+deque<Cube::Turn> Cube::turnsFromEndMap1(CubeNumsStep1 start)
 {
 	deque<Turn> path;
-	CubeNums currNums = start;
+	CubeNumsStep1 currNums = start;
 
 	Cube solvedCube;
-	while (!(currNums == solvedCube.cubeNums1())) {
+	while (currNums != CubeNumsStep1()) {
 		
 		MoveInstruction mi = STEP1MAP[currNums];
 		path.push_back(Turn(mi));
 
 		int i = getIndex1(mi);
-		currNums = currNums.turn1(i);
+		currNums = currNums.turn(i);
 	}
 
 	return path;
 }
 
-deque<Cube::Turn> Cube::turnsFromEndMap2(CubeNums start)
+deque<Cube::Turn> Cube::turnsFromEndMap2(CubeNumsStep2 start)
 {
 	deque<Turn> path;
-	CubeNums currNums = start;
+	CubeNumsStep2 currNums = start;
 
 	Cube solvedCube;
-	while (!(currNums == solvedCube.cubeNums2())) {
+	while (currNums != CubeNumsStep2()) {
 
 		MoveInstruction mi = STEP2MAP[currNums];
 		path.push_back(Turn(mi));
 
 		int i = getIndex2(mi);
-		currNums = currNums.turn2(i);
+		currNums = currNums.turn(i);
 	}
 
 	return path;
-}
-
-int Cube::getIndex1(MoveInstruction mi)
-{
-	switch (mi) {
-	case MoveInstruction::FRONT: return 0;
-		break;
-	case MoveInstruction::RIGHT: return 1;
-		break;
-	case MoveInstruction::BACK: return 2;
-		break;
-	case MoveInstruction::LEFT: return 3;
-		break;
-	case MoveInstruction::UP: return 4;
-		break;
-	case MoveInstruction::DOWN: return 5;
-		break;
-	case MoveInstruction::FRONT_INVERTED: return 6;
-		break;
-	case MoveInstruction::RIGHT_INVERTED: return 7;
-		break;
-	case MoveInstruction::BACK_INVERTED: return 8;
-		break;
-	case MoveInstruction::LEFT_INVERTED: return 9;
-		break;
-	case MoveInstruction::UP_INVERTED: return 10;
-		break;
-	case MoveInstruction::DOWN_INVERTED: return 11;
-		break;
-	default: cout << "not an acceptable turn" << endl;
-	}
-}
-
-int Cube::getIndex2(MoveInstruction mi)
-{
-	switch (mi) {
-	case MoveInstruction::FRONT_2: return 0;
-		break;
-	case MoveInstruction::RIGHT: return 1;
-		break;
-	case MoveInstruction::BACK_2: return 2;
-		break;
-	case MoveInstruction::LEFT: return 3;
-		break;
-	case MoveInstruction::UP_2: return 4;
-		break;
-	case MoveInstruction::DOWN_2: return 5;
-		break;
-	case MoveInstruction::RIGHT_INVERTED: return 6;
-		break;
-	case MoveInstruction::LEFT_INVERTED: return 7;
-		break;
-	default: cout << "not an acceptable turn" << endl;
-	}
 }
 
 

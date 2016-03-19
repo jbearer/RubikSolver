@@ -22,20 +22,10 @@ void Cube::testDFS()
 		Turn(MoveInstruction::DOWN),
 		Turn(MoveInstruction::RIGHT),
 		Turn(MoveInstruction::FRONT_INVERTED),
-		
 		Turn(MoveInstruction::UP_INVERTED),
 		Turn(MoveInstruction::FRONT_INVERTED),
 		Turn(MoveInstruction::BACK),
 		Turn(MoveInstruction::LEFT)
-		/*
-		Turn(MoveInstruction::BACK_2),
-		Turn(MoveInstruction::UP),
-		Turn(MoveInstruction::LEFT),
-		Turn(MoveInstruction::DOWN_INVERTED),
-		Turn(MoveInstruction::RIGHT),
-		
-		Turn(MoveInstruction::UP_INVERTED)
-		*/
 		};
 		
 	for (auto turn : maneuver) {
@@ -104,7 +94,7 @@ void Cube::timeDFS()
 	cout << "average time: " << ((float)t / CLOCKS_PER_SEC) / NUM_TRIALS << endl;
 
 }
-
+/*
 void Cube::turnTableTest()
 {
 	Cube cube;
@@ -128,7 +118,7 @@ void Cube::turnTableTest()
 		if (!(expected == turnedCubeNums)) {
 		cout << "doesn't match for i = " << i;
 		}
-		*/
+		
 		assert(cube.cubeNums1() == cubeNums);
 	}
 	cout << endl << endl;
@@ -151,7 +141,7 @@ void Cube::turnTableTest()
 		if (!(expected == turnedCubeNums)) {
 		cout << "doesn't match for i = " << i << endl;;
 		}
-		*/
+		
 		assert(cube2.cubeNums2() == cubeNums2);
 	}
 }
@@ -164,7 +154,7 @@ void Cube::turnTest()
 	cube = front(cube);
 	cube = frontI(cube);
 
-	assert(cube.cubeNums1() == cube2.cubeNums1());
+	assert(CubeNumsStep1(cube) == CubeNumsStep1(cube2));
 	assert(cube.cubeNums2() == cube2.cubeNums2());
 
 	cube = right(cube);
@@ -198,6 +188,7 @@ void Cube::turnTest()
 	assert(cube.cubeNums2() == cube2.cubeNums2());
 
 }
+*/
 
 void Cube::timeTurnTables()
 {
@@ -261,11 +252,49 @@ void Cube::timeTurnTables()
 
 }
 
+void Cube::test1()
+{
+	//14.457 seconds without subtyping
+
+	readTurnTables();
+	vector<Turn> maneuver = { Turn(MoveInstruction::FRONT),
+	Turn(MoveInstruction::RIGHT),
+	Turn(MoveInstruction::UP),
+	Turn(MoveInstruction::LEFT),
+	Turn(MoveInstruction::BACK),
+	Turn(MoveInstruction::DOWN) };
+
+	Cube cube;
+	CubeNumsStep1 solvedNums;
+	STEP1MAP[solvedNums] = MoveInstruction::FRONT;
+
+	for (auto turn : maneuver) {
+		cube = cube.turnWith(turn);
+	}
+
+	clock_t t;
+	t = clock();
+
+	cube.solveStep1DFS();
+
+	t = clock() - t;
+	cout << "time: " << (float)t / CLOCKS_PER_SEC << endl;
+}
+
 void Cube::test()
 {
-	buildTurnTables();
+	Cube cube;
+
+	cout << cube.edgeOrientsCode() << endl;
+	cout << cube.cornerOrientsCode() << endl;
+	cout << cube.edgeOrbitsCode() << endl;
+
+	cout << cube.cornerColorsCode() << endl;
+	cout << cube.edgeColorsCode1() << endl;
+	cout << cube.edgeColorsCode2() << endl;
+	//buildTurnTables();
 	//readTurnTables();
-	buildEndMaps();
+	//buildEndMaps();
 	//readTurnTables();
 
 }
@@ -277,7 +306,7 @@ int main()
 
 	Cube::initChoose();
 
-	Cube::timeDFS();
+	Cube::test1();
 
 	cout << endl << endl;
 	t = clock() - t;
