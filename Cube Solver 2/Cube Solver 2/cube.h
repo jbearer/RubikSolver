@@ -12,6 +12,7 @@
 #include <functional>
 #include <queue>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/unordered_map.hpp>
 
 
 
@@ -29,7 +30,7 @@ class Cube {
 	struct Turn;
 	struct CubeNumsStep1;
 	struct CubeNumsStep2;
-	//struct CubeNums;
+
 
 public:
 
@@ -194,7 +195,7 @@ private:
 		CubeNumsStep1 turn(int i) const;
 
 	private:
-
+		friend class Cube;
 		ushort edgeOrients_;
 		ushort cornerOrients_;
 		ushort edgeOrbits_;
@@ -225,7 +226,7 @@ private:
 		CubeNumsStep2 turn(int i) const;
 
 	private:
-
+		
 		ushort cornerColors_;
 		ushort edgeColors1_;
 		ushort edgeColors2_;
@@ -278,12 +279,13 @@ private:
 	static std::unordered_map<CubeNumsStep1, CommProtocol::MoveInstruction, CubeNumsStep1::Hash> STEP1MAP;
 	static std::unordered_map<CubeNumsStep2, CommProtocol::MoveInstruction, CubeNumsStep2::Hash> STEP2MAP;
 
-	/// Vectors with function pointers to allowable turns
-	static const std::vector<Turn> OK_TURNS1;
-	static const std::vector<Turn> OK_TURNS2;
-
 	static const int NUM_TURNS_STEP1 = 12;
 	static const int NUM_TURNS_STEP2 = 8;
+
+	/// Vectors with function pointers to allowable turns
+	static const Turn OK_TURNS1[NUM_TURNS_STEP1];
+	static const Turn OK_TURNS2[NUM_TURNS_STEP2];
+
 
 	static const int NUM_EDGE_ORIENTS = 4096; // 2^12
 	static const int NUM_CORNER_ORIENTS = 6561; // 3^8

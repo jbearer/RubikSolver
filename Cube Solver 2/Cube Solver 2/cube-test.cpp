@@ -94,55 +94,55 @@ void Cube::timeDFS()
 	cout << "average time: " << ((float)t / CLOCKS_PER_SEC) / NUM_TRIALS << endl;
 
 }
-/*
+
 void Cube::turnTableTest()
 {
 	Cube cube;
 	cube = front(cube);
 	cube = up(cube);
 	cube = right(cube);
-	CubeNums cubeNums = cube.cubeNums1();
+	CubeNumsStep1 cubeNums(cube);
 
 	for (int i = 0; i < NUM_TURNS_STEP1; ++i) {
 		Cube turnedCube = OK_TURNS1[i].turnFunc(cube);
-		CubeNums expected = turnedCube.cubeNums1();
+		CubeNumsStep1 expected(turnedCube);
 
-		CubeNums turnedCubeNums = cubeNums.turn1(i);
+		CubeNumsStep1 turnedCubeNums = cubeNums.turn(i);
 		/*
 		cout << "Expected: " << expected.first << ", "
 		<< expected.second << ", " << expected.third << endl;
 		cout << "Actual: " << turnedCubeNums.first << ", "
 		<< turnedCubeNums.second << ", " << turnedCubeNums.third << endl;
-
+		*/
 
 		if (!(expected == turnedCubeNums)) {
 		cout << "doesn't match for i = " << i;
 		}
 		
-		assert(cube.cubeNums1() == cubeNums);
+		assert(CubeNumsStep1(cube) == cubeNums);
 	}
 	cout << endl << endl;
 
 	Cube cube2;
-	CubeNums cubeNums2 = cube2.cubeNums2();
+	CubeNumsStep2 cubeNums2 (cube2);
 
 
 	for (int i = 0; i < NUM_TURNS_STEP2; ++i) {
 		Cube turnedCube = cube2.turnWith(OK_TURNS2[i]);
-		CubeNums expected = turnedCube.cubeNums2();
+		CubeNumsStep2 expected (turnedCube);
 
-		CubeNums turnedCubeNums = cubeNums2.turn2(i);
+		CubeNumsStep2 turnedCubeNums = cubeNums2.turn(i);
 		/*
 		cout << "Expected: " << expected.first << ", "
 		<< expected.second << ", " << expected.third << endl;
 		cout << "Actual: " << turnedCubeNums.first << ", "
 		<< turnedCubeNums.second << ", " << turnedCubeNums.third << endl;
-
+		*/
 		if (!(expected == turnedCubeNums)) {
 		cout << "doesn't match for i = " << i << endl;;
 		}
 		
-		assert(cube2.cubeNums2() == cubeNums2);
+		assert(CubeNumsStep2(cube2) == cubeNums2);
 	}
 }
 
@@ -155,40 +155,40 @@ void Cube::turnTest()
 	cube = frontI(cube);
 
 	assert(CubeNumsStep1(cube) == CubeNumsStep1(cube2));
-	assert(cube.cubeNums2() == cube2.cubeNums2());
+	assert(CubeNumsStep2(cube) == CubeNumsStep2(cube2));
 
 	cube = right(cube);
 	cube = rightI(cube);
 
-	assert(cube.cubeNums1() == cube2.cubeNums1());
-	assert(cube.cubeNums2() == cube2.cubeNums2());
+	assert(CubeNumsStep1(cube) == CubeNumsStep1(cube2));
+	assert(CubeNumsStep2(cube) == CubeNumsStep2(cube2));
 
 	cube = back(cube);
 	cube = backI(cube);
 
-	assert(cube.cubeNums1() == cube2.cubeNums1());
-	assert(cube.cubeNums2() == cube2.cubeNums2());
+	assert(CubeNumsStep1(cube) == CubeNumsStep1(cube2));
+	assert(CubeNumsStep2(cube) == CubeNumsStep2(cube2));
 
 	cube = left(cube);
 	cube = leftI(cube);
 
-	assert(cube.cubeNums1() == cube2.cubeNums1());
-	assert(cube.cubeNums2() == cube2.cubeNums2());
+	assert(CubeNumsStep1(cube) == CubeNumsStep1(cube2));
+	assert(CubeNumsStep2(cube) == CubeNumsStep2(cube2));
 
 	cube = up(cube);
 	cube = upI(cube);
 
-	assert(cube.cubeNums1() == cube2.cubeNums1());
-	assert(cube.cubeNums2() == cube2.cubeNums2());
+	assert(CubeNumsStep1(cube) == CubeNumsStep1(cube2));
+	assert(CubeNumsStep2(cube) == CubeNumsStep2(cube2));
 
 	cube = down(cube);
 	cube = downI(cube);
 
-	assert(cube.cubeNums1() == cube2.cubeNums1());
-	assert(cube.cubeNums2() == cube2.cubeNums2());
+	assert(CubeNumsStep1(cube) == CubeNumsStep1(cube2));
+	assert(CubeNumsStep2(cube) == CubeNumsStep2(cube2));
 
 }
-*/
+
 
 void Cube::timeTurnTables()
 {
@@ -254,15 +254,15 @@ void Cube::timeTurnTables()
 
 void Cube::test1()
 {
-	//14.457 seconds without subtyping
-
 	readTurnTables();
-	vector<Turn> maneuver = { Turn(MoveInstruction::FRONT),
-	Turn(MoveInstruction::RIGHT),
-	Turn(MoveInstruction::UP),
-	Turn(MoveInstruction::LEFT),
-	Turn(MoveInstruction::BACK),
-	Turn(MoveInstruction::DOWN) };
+	vector<Turn> maneuver = {
+		Turn(MoveInstruction::FRONT),
+		Turn(MoveInstruction::RIGHT),
+		Turn(MoveInstruction::UP),
+		Turn(MoveInstruction::LEFT),
+		Turn(MoveInstruction::BACK),
+		Turn(MoveInstruction::DOWN)
+	};
 
 	Cube cube;
 	CubeNumsStep1 solvedNums;
@@ -277,7 +277,7 @@ void Cube::test1()
 
 	cube.solveStep1DFS();
 
-	t = clock() - t;
+	t = clock() - t;		//11.555 seconds
 	cout << "time: " << (float)t / CLOCKS_PER_SEC << endl;
 }
 

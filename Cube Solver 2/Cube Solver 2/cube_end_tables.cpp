@@ -133,7 +133,7 @@ void Cube::buildMap2()
 		
 		// Loop through all the allowable turns in this step to use a breadth
 		// first search to generate all possible cubes
-		for (int j = 0; j < OK_TURNS2.size(); ++j) {
+		for (int j = 0; j < NUM_TURNS_STEP2; ++j) {
 			CubeNumsStep2 turnedCube = cube.turn(j);
 			
 			// only add if this cube has never been seen before

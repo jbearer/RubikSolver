@@ -20,14 +20,14 @@ using namespace std;
 using CommProtocol::MoveInstruction;
 
 // Vector of allowable turns for each step (easy to iterate through)
-const vector<Cube::Turn> Cube::OK_TURNS1({
+const Cube::Turn Cube::OK_TURNS1[Cube::NUM_TURNS_STEP1] = {
 	Cube::Turn(MoveInstruction::FRONT), Cube::Turn(MoveInstruction::RIGHT), Cube::Turn(MoveInstruction::BACK), Cube::Turn(MoveInstruction::LEFT),
 	Cube::Turn(MoveInstruction::UP), Cube::Turn(MoveInstruction::DOWN), Cube::Turn(MoveInstruction::FRONT_INVERTED), Cube::Turn(MoveInstruction::RIGHT_INVERTED),
-	Cube::Turn(MoveInstruction::BACK_INVERTED), Cube::Turn(MoveInstruction::LEFT_INVERTED), Cube::Turn(MoveInstruction::UP_INVERTED), Cube::Turn(MoveInstruction::DOWN_INVERTED) });
+	Cube::Turn(MoveInstruction::BACK_INVERTED), Cube::Turn(MoveInstruction::LEFT_INVERTED), Cube::Turn(MoveInstruction::UP_INVERTED), Cube::Turn(MoveInstruction::DOWN_INVERTED) };
 
-const vector<Cube::Turn> Cube::OK_TURNS2({
+const Cube::Turn Cube::OK_TURNS2[Cube::NUM_TURNS_STEP2] = {
 	Cube::Turn(MoveInstruction::FRONT_2), Cube::Turn(MoveInstruction::RIGHT), Cube::Turn(MoveInstruction::BACK_2), Cube::Turn(MoveInstruction::LEFT),
-	Cube::Turn(MoveInstruction::UP_2), Cube::Turn(MoveInstruction::DOWN_2), Cube::Turn(MoveInstruction::RIGHT_INVERTED), Cube::Turn(MoveInstruction::LEFT_INVERTED) });
+	Cube::Turn(MoveInstruction::UP_2), Cube::Turn(MoveInstruction::DOWN_2), Cube::Turn(MoveInstruction::RIGHT_INVERTED), Cube::Turn(MoveInstruction::LEFT_INVERTED) };
 
 int Cube::FAC[12];
 int Cube::CHOOSE[12][12];
@@ -224,10 +224,9 @@ bool Cube::solveStep1Helper(int depth, const CubeNumsStep1& curr, deque<Turn>& r
 	//++SOLVE_STEP_1_COUNTER;
 	if (depth == 0) {
 		if (STEP1MAP.count(curr) > 0) {
-			cout << "found it" << endl;
-			deque<Turn> lastTurns = turnsFromEndMap1(curr);
+			//cout << "found it" << endl;
+			result = turnsFromEndMap1(curr);
 
-			result = lastTurns;
 			return true;
 		}
 		else {
@@ -283,10 +282,8 @@ bool Cube::solveStep2Helper(int depth, const CubeNumsStep2& curr, deque<Turn>& r
 {
 	if (depth == 0) {
 		if (STEP2MAP.count(curr) > 0) {
-
-			deque<Turn> lastTurns = turnsFromEndMap2(curr);
-
-			result = lastTurns;
+			
+			result = turnsFromEndMap2(curr);
 			return true;
 		}
 		else {
@@ -296,6 +293,7 @@ bool Cube::solveStep2Helper(int depth, const CubeNumsStep2& curr, deque<Turn>& r
 	else {
 		// iterate through all ok turns
 		for (int i = 0; i < NUM_TURNS_STEP2; ++i) {
+
 			CubeNumsStep2 turnedCube = curr.turn(i);
 
 			// cube found: push back current move and return true
