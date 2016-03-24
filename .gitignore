@@ -42,3 +42,22 @@ Network Trash Folder
 Temporary Items
 .apdisk
 /bin/
+
+# Visual Studio files
+*.opendb
+*.vcxproj
+*.vs
+*.sdf
+*.sln
+*.filters
+*.o
+*.log
+*.tlog
+*.obj
+*.pdb
+*.idb
+*.ilk
+*.lib
+*.lastbuildstate
+*.exp
+*Debug*
