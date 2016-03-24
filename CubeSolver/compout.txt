@@ -1,2 +1,0 @@
-g++ -o CubeTest.exe -g -O0 -std=c++11 -Wall -Wextra -pedantic -DCOM_PORT=COM4 -IC:/Program_Files/boost_1_60_0 -I../MotorControl/src/arduino-incl -LC:/Program_Files/boost_1_60_0/lib64-msvc-14.0 -lboost_serialization-vc140-mt-1_60 cube-test.o cube.o cube_turn.o
-makefile:35: recipe for target 'CubeTest.exe' failed

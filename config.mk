@@ -12,7 +12,7 @@
 AVR_PATH = C:/Program_Files_x86/Arduino/hardware/arduino/avr
 
 # Path to Boost installation
-BOOST_PATH = C:/Program_Files/boost_1_60_0
+BOOST_PATH = C:/"Program Files"/boost_1_60_0
 
 ################################################################################
 # Hardware settings
