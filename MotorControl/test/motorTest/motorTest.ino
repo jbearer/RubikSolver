@@ -57,12 +57,17 @@ void setup() {
   pinMode(stepPinD,OUTPUT); pinMode(dirPinD,OUTPUT);
   pinMode(stepPinF,OUTPUT); pinMode(dirPinF,OUTPUT);
   pinMode(stepPinB,OUTPUT); pinMode(dirPinB,OUTPUT);
+
+  Serial.begin(9600);
+
+  delay(1000);
+
+  act(moves, NUM_STEPS);
 }
 
 /* loop
  *  solves the cube
  */
 void loop() {
-  delay(3000);
-  act(moves, NUM_STEPS);
+  //act(moves, NUM_STEPS);
 }

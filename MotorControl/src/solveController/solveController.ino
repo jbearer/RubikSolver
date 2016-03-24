@@ -40,5 +40,6 @@ void loop() {
 
   if (!next) CommProtocol::indicateError();
   else next(driver);
+
   delay(1000);
 }

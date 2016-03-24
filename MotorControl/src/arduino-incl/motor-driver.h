@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include "Arduino.h"
 
 typedef int PinID;
 
@@ -18,9 +19,9 @@ enum MotorID : char {
     BACK_MOTOR
 };
 
-enum MotorDirection : bool {
-    CLOCKWISE,
-    COUNTERCLOCKWISE
+enum MotorDirection : int {
+    CLOCKWISE = HIGH,
+    COUNTERCLOCKWISE = LOW
 };
 
 class MotorDriver {
@@ -50,11 +51,8 @@ public:
 
 private:
 
-    /// Determines the speed of the motor.
-    static const int DELAY = 40; 
-
-    /// Voltage pulses per step.
-    static const int MICROSTEPS = 16;
+	void quarterTurn(const MotorID motor, const MotorDirection dir);
+	void halfTurn(const MotorID motor, const MotorDirection dir);
 
     /// Hardware connections.
     PinID stepPinL_;

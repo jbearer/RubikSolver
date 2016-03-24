@@ -18,7 +18,7 @@
 
 namespace CommProtocol {
 
-  const int LED_INDICATOR = 10;
+  const int LED_INDICATOR = 12;
 
 	typedef char SerialMessage;
 
