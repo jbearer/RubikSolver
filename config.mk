@@ -61,15 +61,15 @@ WARNINGS = -Wall -Wextra -pedantic
 
 CXX = g++
 
-INCL = -I$(BOOST_PATH)
+INCL = -I$(BOOST_PATH) -I$(dir $(lastword $(MAKEFILE_LIST)))wiplib/include
 
 ################################################################################
 # C++ linker settings
 ################################################################################
 
-LIB_FLAG = -L$(BOOST_PATH)/lib64-msvc-14.0
+LIB_FLAG = -L$(BOOST_PATH)/lib64-msvc-14.0 -L$(dir $(lastword $(MAKEFILE_LIST)))/wiplib
 
-LIBS = -lboost_serialization-vc140-mt-1_60
+LIBS = -lboost_serialization-vc140-mt-1_60 -lwiplib
 
 ################################################################################
 # DO NOT CHANGE THE FOLLOWING - Generates variables based on above settings
