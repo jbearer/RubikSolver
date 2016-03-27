@@ -70,9 +70,6 @@ private:
 		// Current coordinates of the iterator
 		Point point_;
 
-		// Offset in the y-direction between the base and the current point
-		int yOffset_;
-
 		// The Triangle that this iterator points to
 		const Triangle& container_;
 

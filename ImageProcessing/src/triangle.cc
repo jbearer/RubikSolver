@@ -101,11 +101,18 @@ bool Triangle::contains(const Point& p) const {
 }
 
 Triangle::iterator Triangle::begin() const {
-	// Find the leftmost vertex in base
-	if ((*base_[0])[X] < (*base_[1])[X]) {
+	// Point to the base vertex which is further from the apex, to guarantee we
+	// hit every point as we move towards the apex
+	int diff0 = abs((*base_[0])[Y] - (*apex_)[Y]);
+	int diff1 = abs((*base_[1])[Y] - (*apex_)[Y]);
+
+	if (diff0 < diff1) {
+		return iterator((*base_[1]), *this);
+	}
+	else  {
+		// If the base vertices are at the same Y, prefer the left most one
 		return iterator((*base_[0]), *this);
 	}
-	else return iterator((*base_[1]), *this);
 }
 
 Triangle::iterator Triangle::end() const {
@@ -141,15 +148,12 @@ int Triangle::rightLegX(int y) const {
 // Implementation of Triangle::InteriorIterator
 ////////////////////////////////////////////////////////////////////////////////
 
-// Do we actually need yOffset? just seems to be confusing the issue
-
 Triangle::InteriorIterator::InteriorIterator(const Point& p, const Triangle& container) 
-:point_{p}, yOffset_{point_[Y] - container.baseY(point_[X])}, container_{container}
+:point_{p}, container_{container}
 {}
 
 Triangle::InteriorIterator& Triangle::InteriorIterator::operator++() {
 	++point_[X];
-	point_[Y] = yOffset_ + container_.baseY(point_[X]);
 	if (container_.contains(point_)) {
 		// We are done
 		return *this;
@@ -158,18 +162,10 @@ Triangle::InteriorIterator& Triangle::InteriorIterator::operator++() {
 	// We've gone past the edge of the triangle, need to wrap around
 
 	if ((*container_.apex_)[Y] > container_.baseY((*container_.apex_)[X])) {
-		++yOffset_;
+		++point_[Y];
 	}
 	else {
-		--yOffset_;
-	}
-
-	// Go back to the leftmost corner and increment one "row"
-	if ((*container_.base_[0])[X] < (*container_.base_[1])[X]) {
-		point_[Y] = (*container_.base_[0])[Y] + yOffset_;
-	}
-	else {
-		point_[Y] = (*container_.base_[1])[Y] + yOffset_;
+		--point_[Y];
 	}
 	point_[X] = container_.leftLegX(point_[Y]);
 	return *this;
