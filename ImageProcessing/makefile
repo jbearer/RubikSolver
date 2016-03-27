@@ -28,7 +28,7 @@ SKETCHES =
 # The library is currently header only. No objects need to be built.
 # (Non-header files are meant only for use by Arduino, and thus are compiled
 # separately in the Arduino environmnet.)
-OBJS = column-vector.o triangle.o
+OBJS = triangle.o
 
 TEST_OBJS = triangle-test.o
 
@@ -51,7 +51,7 @@ again: clean all
 column-vector.o: src/column-vector.cc src/column-vector.h
 	$(CXX) -c $(CXXFLAGS) $(INCL) $<
 
-triangle.o: src/triangle.cc src/triangle.h src/column-vector.h
+triangle.o: src/triangle.cc src/triangle.h src/column-vector.h src/column-vector-private.h
 	$(CXX) -c $(CXXFLAGS) $(INCL) $<
 
 triangle-test.o: test/triangle-test.cc src/triangle.h

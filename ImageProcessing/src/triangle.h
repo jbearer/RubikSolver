@@ -18,12 +18,16 @@ public:
 
 	using iterator = InteriorIterator;
 
+	Triangle();
+
 	/**
 	 * \brief Construct a representation of the triangle described by the
 	 *	given three points.
 	 * \pre The points are not colinear.
 	 */
-	Triangle(Point p1, Point p2, Point p3);
+	Triangle(const Point& p1, const Point& p2, const Point& p3);
+
+	~Triangle();
 
 	/** 
 	 * \brief Determine if a point lies in the interior of the triangle.
@@ -102,15 +106,20 @@ private:
 	 */
 	int rightLegX(int y) const;
 
+	// Point pointers instead of just points are used here to avoid calling the
+	// default constructor for Point in the constructor for Triangle. This is
+	// necessary because the fairly complex logic involved in initializing
+	// the points makes the use of initializer lists impractical.
+
 	// The points that define the base of the triangle.
-	Point base_[2];
+	Point *base_[2];
 
 	// The points that define the left leg of the triangle.
-	Point leftLeg_[2];
+	Point *leftLeg_[2];
 
 	// The points that define the right leg of the triangle.
-	Point rightLeg_[2];
+	Point *rightLeg_[2];
 
 	// The vertex not adjacent to the base.
-	Point apex_;
+	Point *apex_;
 };

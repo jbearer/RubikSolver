@@ -1,30 +1,63 @@
 #include "triangle.h"
 
-Triangle::Triangle(Point p1, Point p2, Point p3) {
-	// There is at most one horizontal edge. To guarantee the legs are not
-	// horizontal, we need the base to be horizontal if possible.
-	if (p1[Y] == p2[Y]) {
-		base_[0] = p1; base_[1] = p2;
-		apex_ = p3;
-	}
-	else if (p2[Y] == p3[Y]) {
-		base_[0] = p2; base_[1] = p3;
-		apex_ = p1;
-	}
-	else {
-		if (p1[X] == p3[X]) {
-			// If p1p3 is horizontal, any of the other edges will work
-			base_[0] = p1; base_[1] = p2;
-			apex_ = p3;
+Triangle::Triangle()
+: base_{nullptr, nullptr},
+  leftLeg_{nullptr, nullptr},
+  rightLeg_{nullptr, nullptr},
+  apex_{nullptr}
+ {}
+
+Triangle::Triangle(const Point& p1, const Point& p2, const Point& p3) {
+	// Choose the edge with the least slope to be the base
+	// Guarantees that if one edge is horizontal, it is the base
+	int diff12 = abs(p1[Y] - p2[Y]);
+	int diff13 = abs(p1[Y] - p3[Y]);
+	int diff23 = abs(p2[Y] - p3[Y]);
+
+	if (diff12 < diff13 && diff12 < diff23) {
+		// The base should be p1p2; set base_[0] to be the leftmost base vertex
+		if (p1[X] < p2[X]) {
+			// p1 is leftmost
+			base_[0] = new Point(p1);
+			base_[1] = new Point(p2);
 		}
 		else {
-			// If p1p3 is not horizontal, use it for the base
-			base_[0] = p1; base_[1] = p3;
-			apex_ = p2;
+			// p2 is leftmost
+			base_[0] = new Point(p2);
+			base_[1] = new Point(p1);
 		}
+		apex_ = new Point(p3);
+	}
+	else if (diff13 < diff23) {
+		// The base should be p1p3; set base_[0] to be the leftmost base vertex
+		if (p1[X] < p3[X]) {
+			// p1 is leftmost
+			base_[0] = new Point(p1);
+			base_[1] = new Point(p3);
+		}
+		else {
+			// p3 is leftmost
+			base_[0] = new Point(p3);
+			base_[1] = new Point(p1);
+		}
+		apex_ = new Point(p2);
+	}
+	else {
+		// The base should be p2p3; set base_[0] to be the leftmost base vertex
+		if (p2[X] < p3[X]) {
+			// p2 is leftmost
+			base_[0] = new Point(p2);
+			base_[1] = new Point(p3);
+		}
+		else {
+			// p3 is leftmost
+			base_[0] = new Point(p3);
+			base_[1] = new Point(p2);
+		}
+		apex_ = new Point(p1);
 	}
 
-	if (base_[0][X] < base_[1][X]) {
+	if ((*base_[0])[X] < (*base_[1])[X]) {
 		// The left side is base_[0]apex_
 		leftLeg_[0] = base_[0];
 		leftLeg_[1] = apex_;
@@ -44,8 +77,18 @@ Triangle::Triangle(Point p1, Point p2, Point p3) {
 	}
 }
 
+Triangle::~Triangle() {
+
+	// Only 3 distinct pointers
+	delete base_[0];
+	delete base_[1];
+	delete apex_;
+
+	// Legs are aliases for the above pointers, so no need to delete
+}
+
 bool Triangle::contains(const Point& p) const {
-	if (apex_[Y] > baseY(apex_[X])) {
+	if ((*apex_)[Y] > baseY((*apex_)[X])) {
 		return p[Y] >= baseY(p[X]) && 
 		p[X] >= leftLegX(p[Y]) && 
 		p[X] <= rightLegX(p[Y]);
@@ -59,38 +102,46 @@ bool Triangle::contains(const Point& p) const {
 
 Triangle::iterator Triangle::begin() const {
 	// Find the leftmost vertex in base
-	if (base_[0][X] < base_[1][X]) {
-		return iterator(base_[0], *this);
+	if ((*base_[0])[X] < (*base_[1])[X]) {
+		return iterator((*base_[0]), *this);
 	}
-	else return iterator(base_[1], *this);
+	else return iterator((*base_[1]), *this);
 }
 
 Triangle::iterator Triangle::end() const {
-	iterator it(apex_, *this);
+	iterator it((*apex_), *this);
 	return ++it;
 }
 
 int Triangle::baseY(int x) const {
-	// Compute slope, interpolate to find y(x), and round to the nearest integer
-	return (int) ( ( (double)(base_[1][Y] - base_[0][Y]) /
-		(double)(base_[1][X] - base_[0][X]) ) * x + 0.5);
+	// Compute slope, use point-slope equation, and round to the nearest integer
+	double m =	(double)((*base_[1])[Y] - (*base_[0])[Y]) / 
+				(double)((*base_[1])[X] - (*base_[0])[X]);
+
+	return (int)((*base_[0])[Y] + m*((double)(x - (*base_[0])[X])) + 0.5);
 }
 
 int Triangle::leftLegX(int y) const {
-	// Compute slope, interpolate to find x(y), and round to the nearest integer
-	return (int) ( ( (double)(leftLeg_[1][X] - leftLeg_[0][X]) /
-		(double)(leftLeg_[1][Y] - leftLeg_[0][Y]) ) * y + 0.5);
+	// Compute slope, use point-slope equation, and round to the nearest integer
+	double m = 	(double)((*leftLeg_[1])[X] - (*leftLeg_[0])[X]) /
+				(double)((*leftLeg_[1])[Y] - (*leftLeg_[0])[Y]);
+
+	return (int)((*leftLeg_[0])[X] + m*((double)(y - (*leftLeg_[0])[Y])) + 0.5);
 }
 
 int Triangle::rightLegX(int y) const {
-	// Compute slope, interpolate to find x(y), and round to the nearest integer
-	return (int) ( ( (double)(rightLeg_[1][X] - rightLeg_[0][X]) /
-		(double)(rightLeg_[1][Y] - rightLeg_[0][Y]) ) * y + 0.5);
+	// Compute slope, use point-slope equation, and round to the nearest integer
+	double m = 	(double)((*rightLeg_[1])[X] - (*rightLeg_[0])[X]) /
+				(double)((*rightLeg_[1])[Y] - (*rightLeg_[0])[Y]);
+
+	return (int)((*rightLeg_[0])[X] + m*((double)(y - (*rightLeg_[0])[Y])) + 0.5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Implementation of Triangle::InteriorIterator
 ////////////////////////////////////////////////////////////////////////////////
+
+// Do we actually need yOffset? just seems to be confusing the issue
 
 Triangle::InteriorIterator::InteriorIterator(const Point& p, const Triangle& container) 
 :point_{p}, yOffset_{point_[Y] - container.baseY(point_[X])}, container_{container}
@@ -106,7 +157,7 @@ Triangle::InteriorIterator& Triangle::InteriorIterator::operator++() {
 
 	// We've gone past the edge of the triangle, need to wrap around
 
-	if (container_.apex_[Y] > container_.baseY(container_.apex_[X])) {
+	if ((*container_.apex_)[Y] > container_.baseY((*container_.apex_)[X])) {
 		++yOffset_;
 	}
 	else {
@@ -114,11 +165,11 @@ Triangle::InteriorIterator& Triangle::InteriorIterator::operator++() {
 	}
 
 	// Go back to the leftmost corner and increment one "row"
-	if (container_.base_[0][X] < container_.base_[1][X]) {
-		point_[Y] = container_.base_[0][Y] + yOffset_;
+	if ((*container_.base_[0])[X] < (*container_.base_[1])[X]) {
+		point_[Y] = (*container_.base_[0])[Y] + yOffset_;
 	}
 	else {
-		point_[Y] = container_.base_[1][Y] + yOffset_;
+		point_[Y] = (*container_.base_[1])[Y] + yOffset_;
 	}
 	point_[X] = container_.leftLegX(point_[Y]);
 	return *this;
