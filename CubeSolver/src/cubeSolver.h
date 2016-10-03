@@ -102,10 +102,6 @@ typedef std::unordered_map<CubeNumsStep2, CommProtocol::MoveInstruction, CubeNum
 	// Solving:
 std::vector<CommProtocol::MoveInstruction> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2);
 
-	/// Vectors with function pointers to allowable turns
-	//Turn OK_TURNS1[NUM_TURNS_STEP1];
-	//Turn OK_TURNS2[NUM_TURNS_STEP2];
-
 
 	/// Hash maps from cube codes to the required turns to solve
 static std::unordered_map<CubeNumsStep1, CommProtocol::MoveInstruction, CubeNumsStep1::Hash> STEP1MAP;

@@ -1,5 +1,4 @@
 #include "cubeSolver.h"
-//#include "cube_end_tables.h"
 
 #include <assert.h>
 #include <iostream>
@@ -18,27 +17,6 @@
 
 
 using namespace std;
-
-// Vector of allowable turns for each step (easy to iterate through)
-/*
-Turn OK_TURNS1[NUM_TURNS_STEP1] = {
-	Turn(MoveInstruction::FRONT), Turn(MoveInstruction::RIGHT), Turn(MoveInstruction::BACK), Turn(MoveInstruction::LEFT),
-	Turn(MoveInstruction::UP), Turn(MoveInstruction::DOWN), Turn(MoveInstruction::FRONT_INVERTED), Turn(MoveInstruction::RIGHT_INVERTED),
-	Turn(MoveInstruction::BACK_INVERTED), Turn(MoveInstruction::LEFT_INVERTED), Turn(MoveInstruction::UP_INVERTED), Turn(MoveInstruction::DOWN_INVERTED) };
-
-Turn OK_TURNS2[NUM_TURNS_STEP2] = {
-	Turn(MoveInstruction::FRONT_2), Turn(MoveInstruction::RIGHT), Turn(MoveInstruction::BACK_2), Turn(MoveInstruction::LEFT),
-	Turn(MoveInstruction::UP_2), Turn(MoveInstruction::DOWN_2), Turn(MoveInstruction::RIGHT_INVERTED), Turn(MoveInstruction::LEFT_INVERTED) };
-*/
-
-/*
-void init()
-{
-	// todo: if no tables/maps, then create such maps
-	readTurnTables();
-	readEndMaps();
-}
-*/
 
 const string END_TABLES_PATH = "ser/end_maps.ser";
 
@@ -64,40 +42,13 @@ void readEndMaps(string pathToFile, EndMap1*& endMap1, EndMap2*& endMap2)
 }
 
 
-/*
-void Cube::print() const
-{
-	std::cout << "//// EDGES ////" << endl;
-
-	// cast to an int, since they're chars
-	for (size_t i = 0; i < NUM_EDGES; ++i) {
-		std::cout << (int)edgeColors_[i] << "   ";
-		std::cout << (int)edgeOrients_[i] << endl;
-
-	}
-	std::cout << endl;
-
-	std::cout << " /// CORNERS ////" << endl;
-	for (size_t i = 0; i < NUM_CORNERS; ++i) {
-		std::cout << (int)cornerColors_[i] << "   ";
-		std::cout << (int)cornerOrients_[i] << endl;
-	}
-
-	std::cout << endl << endl;
-}
-*/
-
 int SOLVE_STEP_1_COUNTER = 1;
 deque<Turn> solveStep1DFS(Cube cube, EndMap1* endMap1)
 {
 	SOLVE_STEP_1_COUNTER = 1;
-	/*
-	Cube solvedCube;
 
-	assert(STEP1MAP.count(solvedCube.cubeNums1()) == 1);
-	assert(STEP2MAP.count(solvedCube.cubeNums2()) == 1);
-	assert(EDGE_COLORS_TABLE2[3000][3] == 13466);
-	*/
+	// TODO: assert tables have been loaded
+
 	CubeNumsStep1 currCube(cube);
 
 
@@ -156,12 +107,9 @@ int SOLVE_STEP_2_COUNTER = 1;
 deque<Turn> solveStep2DFS(Cube cube, EndMap2* endMap2)
 {
 	SOLVE_STEP_2_COUNTER = 1;
-	/*
-	Cube solvedCube;
-	assert(STEP1MAP.count(solvedCube.cubeNums1()) == 1);
-	assert(STEP2MAP.count(solvedCube.cubeNums2()) == 1);
-	assert(EDGE_COLORS_TABLE2[3000][3] == 13466);
-	*/
+
+	// TODO: assert tables have been loaded
+
 	CubeNumsStep2 currCube(cube);
 
 	int MIN_DEPTH = 0;
@@ -238,7 +186,6 @@ deque<Turn> turnsFromEndMap1(CubeNumsStep1 start, EndMap1* endMap1)
 		}
 		++pathLength;
 	}
-	//cout << "found path" << endl;
 
 	return path;
 }
@@ -259,13 +206,6 @@ deque<Turn> turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endMap2)
 
 	return path;
 }
-/*
-bool Cube::isSolved()
-{
-	Cube solvedCube;
-	return *this == solvedCube;
-}
-*/
 
 std::vector<MoveInstruction> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2)
 {
@@ -282,20 +222,7 @@ std::vector<MoveInstruction> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap
 		cube = cube.turnWith(turn);
 	}
 
-	vector<MoveInstruction> instructions;
-	
-	// print and fill vector with move instructions to return
-	/*
-	for (auto turn : firstTurns) {
-		cout << turn.toString << " ";
-		instructions.push_back(turn.repr);
-	} cout << endl;
-	
-	for (auto turn : lastTurns) {
-		cout << turn.toString << " ";
-		instructions.push_back(turn.repr);
-	} cout << endl;
-	*/	
+	vector<MoveInstruction> instructions;	
 
 	return instructions;
 }
@@ -358,65 +285,3 @@ int getIndex2(MoveInstruction mi)
 		return 0;
 	}
 }
-
-/*
-void Cube::testDFS()
-{
-	readTurnTables();
-	readEndMaps();
-	
-	Cube cube;
-
-	vector<Turn> maneuver = {
-		Turn(MoveInstruction::DOWN),
-		Turn(MoveInstruction::RIGHT),
-		Turn(MoveInstruction::FRONT_INVERTED),
-		Turn(MoveInstruction::UP_INVERTED),
-		Turn(MoveInstruction::FRONT_INVERTED),
-		Turn(MoveInstruction::BACK),
-		Turn(MoveInstruction::LEFT)
-		};
-		
-	for (auto turn : maneuver) {
-		cube = cube.turnWith(turn);
-	}
-	
-	cout << "Starting..." << endl;
-
-	clock_t t;
-	t = clock();
-
-	cube.solve();
-
-	t = clock() - t;
-	cout << "time for searching: " << (float)t / CLOCKS_PER_SEC << endl;
-	
-	}
-*/
-/*int main()
-{
-
-	Cube::testDFS();
-	
-	//std::system("pause");
-	return 0;
-}*/
-
-
-
-/*
-To do:
-
-1) Build move tables
-2) Shorten to two-phase
-3) Serialize 6-face solve hash tables
-4) Create different executables for building maps and solving cube
-5) Account for symmetries
-
-
-
-Notes:
-
-1) 3/17: average solve: 1.78 sec.  Longest: 24 sec
-2) First step: average solve: .017, Longest: .187
-*/
