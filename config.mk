@@ -12,7 +12,7 @@
 AVR_PATH = C:/Program_Files_x86/Arduino/hardware/arduino/avr
 
 # Path to Boost installation
-BOOST_PATH = C:/"Program Files"/boost_1_60_0
+BOOST_PATH = usr/include/boost
 
 ################################################################################
 # Hardware settings
@@ -61,15 +61,15 @@ WARNINGS = -Wall -Wextra -pedantic
 
 CXX = g++
 
-INCL = -I$(BOOST_PATH)
+INCL = -isystem $(BOOST_PATH)
 
 ################################################################################
 # C++ linker settings
 ################################################################################
 
-LIB_FLAG = -L$(BOOST_PATH)/lib64-msvc-14.0
+LIB_FLAG = -L$(BOOST_PATH)
 
-LIBS = -lboost_serialization-vc140-mt-1_60
+LIBS = -lboost_serialization
 
 ################################################################################
 # DO NOT CHANGE THE FOLLOWING - Generates variables based on above settings
