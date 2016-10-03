@@ -3,8 +3,6 @@
  */
 #include <gtest/gtest.h>
 #include "cubeSolver.h"
-//#include "end_maps.h"
-//#include "turn_tables.h"
 #include <ctime>
 #include <iostream>
 #include <cstdlib>
@@ -64,10 +62,9 @@ TEST(Build, buildTurnTables)
 
 class CubeTest : public ::testing::Test {
  protected:
-  // Per-test-case set-up.
-  // Called before the first test in this test case.
-  // Can be omitted if not needed.
+
   static void SetUpTestCase() {
+
   	readTurnTables();
   }
 
@@ -170,6 +167,7 @@ class CubeSolverTest : public ::testing::Test {
   // Can be omitted if not needed.
   static void SetUpTestCase() {
   	readTurnTables();
+  	buildEndMaps(ENDMAP_SMALL_PATH, MAP_SIZE_SMALL, MAP_SIZE_SMALL);
     readEndMaps(ENDMAP_SMALL_PATH, endMap1, endMap2);
     }
 

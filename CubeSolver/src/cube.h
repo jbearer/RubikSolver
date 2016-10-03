@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef CUBE_H_INCLUDED
-#define CUBE_H_INCLUDED 1
-
 /**
 * \class Cube
 * \brief Stores a cube, composed of 12 Edge_t's and 8 Corner_t's
@@ -223,4 +220,3 @@ private:
 
 };
 
-#endif //CUBE_NUMS_H_INCLUDED

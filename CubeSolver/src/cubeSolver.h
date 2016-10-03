@@ -18,11 +18,6 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/unordered_map.hpp>
 
-
-//static const int NUM_TURNS_STEP1 = 12;
-//static const int NUM_TURNS_STEP2 = 8;
-
-
 /**
 * \class Cube
 * \brief Contains the implementation for a Rubik's Cube
@@ -31,35 +26,12 @@
 *		   the ith index of an array corresponds to the cubie
 *		   in the space that is home to cubie i.
 */
-struct CubeNumsStep1;
-struct CubeNumsStep2;
-
-void init();
-
-	/////////// TESTING ///////////
-
-	/// ensure all the turn methods work for cubes
-void turnTest();
-
-void test();
-void test1();
-
-	/// Compares normal turning and look-up turning
-void timeTurnTables();
-
-	/// solve a cube using DFS given a set of moves
-void testDFS();
-
-	/// generate 100 random cubes, finds the average and max solve
-void timeDFS();
-
-void turnTableTest();
 
 ///////////////////////////////////
 //// Cube nums/////////////////////
 ///////////////////////////////////
 
-struct CubeNumsStep1{
+struct CubeNumsStep1 {
 	struct Hash;
 
 		// Constructors
@@ -86,7 +58,7 @@ struct CubeNumsStep1{
 	CubeNumsStep1 turn(int i) const;
 
 private:
-	friend class Cube;
+	
 	ushort edgeOrients_;
 	ushort cornerOrients_;
 	ushort edgeOrbits_;
@@ -158,12 +130,12 @@ int getIndex2(CommProtocol::MoveInstruction);
 
 /// Turn tables
 namespace TurnTables{
-	static int EDGE_ORIENTS_TABLE[NUM_EDGE_ORIENTS][NUM_TURNS_STEP1];
-	static int CORNER_ORIENTS_TABLE[NUM_CORNER_ORIENTS][NUM_TURNS_STEP1];
-	static int CORNER_COLORS_TABLE[NUM_CORNER_COLORS][NUM_TURNS_STEP2];
-	static int EDGE_ORBITS_TABLE[NUM_EDGE_ORBITS][NUM_TURNS_STEP1];
-	static int EDGE_COLORS_TABLE1[NUM_EDGE_COLORS1][NUM_TURNS_STEP2];
-	static int EDGE_COLORS_TABLE2[NUM_EDGE_COLORS2][NUM_TURNS_STEP2];
+	extern int EDGE_ORIENTS_TABLE[NUM_EDGE_ORIENTS][NUM_TURNS_STEP1];
+	extern int CORNER_ORIENTS_TABLE[NUM_CORNER_ORIENTS][NUM_TURNS_STEP1];
+	extern int CORNER_COLORS_TABLE[NUM_CORNER_COLORS][NUM_TURNS_STEP2];
+	extern int EDGE_ORBITS_TABLE[NUM_EDGE_ORBITS][NUM_TURNS_STEP1];
+	extern int EDGE_COLORS_TABLE1[NUM_EDGE_COLORS1][NUM_TURNS_STEP2];
+	extern int EDGE_COLORS_TABLE2[NUM_EDGE_COLORS2][NUM_TURNS_STEP2];
 }
 /// Reads turn tables from turnTables.ser.  Stores them in proper arrays
 void readTurnTables();

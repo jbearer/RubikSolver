@@ -6,12 +6,12 @@
 
 using namespace std;
 
-int MAKE_EDGE_ORIENTS_TABLE[NUM_EDGE_ORIENTS][NUM_TURNS_STEP1];
-int MAKE_CORNER_ORIENTS_TABLE[NUM_CORNER_ORIENTS][NUM_TURNS_STEP1];
-int MAKE_CORNER_COLORS_TABLE[NUM_CORNER_COLORS][NUM_TURNS_STEP2];
-int MAKE_EDGE_ORBITS_TABLE[NUM_EDGE_ORBITS][NUM_TURNS_STEP1];
-int MAKE_EDGE_COLORS_TABLE1[NUM_EDGE_COLORS1][NUM_TURNS_STEP2];
-int MAKE_EDGE_COLORS_TABLE2[NUM_EDGE_COLORS2][NUM_TURNS_STEP2];
+int TurnTables::EDGE_ORIENTS_TABLE[NUM_EDGE_ORIENTS][NUM_TURNS_STEP1];
+int TurnTables::CORNER_ORIENTS_TABLE[NUM_CORNER_ORIENTS][NUM_TURNS_STEP1];
+int TurnTables::CORNER_COLORS_TABLE[NUM_CORNER_COLORS][NUM_TURNS_STEP2];
+int TurnTables::EDGE_ORBITS_TABLE[NUM_EDGE_ORBITS][NUM_TURNS_STEP1];
+int TurnTables::EDGE_COLORS_TABLE1[NUM_EDGE_COLORS1][NUM_TURNS_STEP2];
+int TurnTables::EDGE_COLORS_TABLE2[NUM_EDGE_COLORS2][NUM_TURNS_STEP2];
 
 const string TURN_TABLES_PATH = "ser/turn_tables.ser";
 
@@ -48,10 +48,15 @@ void archiveTurnTables()
 	boost::archive::binary_oarchive oarch(os);
 
 	// tables for step 1
-	oarch << MAKE_EDGE_ORIENTS_TABLE << MAKE_CORNER_ORIENTS_TABLE << MAKE_EDGE_ORBITS_TABLE;
+	oarch << TurnTables::EDGE_ORIENTS_TABLE; 
+	oarch << TurnTables::CORNER_ORIENTS_TABLE;
+	oarch << TurnTables::EDGE_ORBITS_TABLE;
 
 	// tables for step 2
-	oarch << MAKE_CORNER_COLORS_TABLE << MAKE_EDGE_COLORS_TABLE1 << MAKE_EDGE_COLORS_TABLE2;
+	oarch << TurnTables::CORNER_COLORS_TABLE;
+	oarch << TurnTables::EDGE_COLORS_TABLE1;
+	oarch << TurnTables::EDGE_COLORS_TABLE2;
+	
 	os.close();
 }
 
@@ -69,7 +74,7 @@ void buildEdgeOrientsTable()
 
 			int newCode = newCube.edgeOrientsCode();
 			assert(newCode < NUM_EDGE_ORIENTS);
-			MAKE_EDGE_ORIENTS_TABLE[currCode][j] = newCode;
+			TurnTables::EDGE_ORIENTS_TABLE[currCode][j] = newCode;
 		}
 	} while (cube.nextEdgeOrients());
 
@@ -93,7 +98,7 @@ void buildCornerOrientsTable()
 
 			int newCode = newCube.cornerOrientsCode();
 			assert(newCode < NUM_CORNER_ORIENTS);
-			MAKE_CORNER_ORIENTS_TABLE[currCode][j] = newCube.cornerOrientsCode();
+			TurnTables::CORNER_ORIENTS_TABLE[currCode][j] = newCube.cornerOrientsCode();
 		}
 	} while (cube.nextCornerOrients());
 
@@ -124,7 +129,7 @@ void buildEdgeOrbitsTable()
 			Turn currTurn = OK_TURNS1[j];
 			Cube newCube = cube.turnWith(currTurn);
 
-			MAKE_EDGE_ORBITS_TABLE[currCode][j] = newCube.edgeOrbitsCode();
+			TurnTables::EDGE_ORBITS_TABLE[currCode][j] = newCube.edgeOrbitsCode();
 		}
 	} while (cube.nextEdgeOrbits());
 
@@ -144,7 +149,7 @@ void buildCornerColorsTable()
 			Turn currTurn = OK_TURNS2[j];
 			Cube newCube = cube.turnWith(currTurn);
 
-			MAKE_CORNER_COLORS_TABLE[currCode][j] = newCube.cornerColorsCode();
+			TurnTables::CORNER_COLORS_TABLE[currCode][j] = newCube.cornerColorsCode();
 		}
 	} while (cube.nextCornerColors());
 
@@ -172,7 +177,7 @@ void buildEdgeColorsTable1()
 			Turn currTurn = OK_TURNS2[j];
 			Cube newCube = cube.turnWith(currTurn);
 
-			MAKE_EDGE_COLORS_TABLE1[currCode][j] = newCube.edgeColorsCode1();
+			TurnTables::EDGE_COLORS_TABLE1[currCode][j] = newCube.edgeColorsCode1();
 		}
 	} while (cube.nextEdgeColors1());
 }
@@ -199,7 +204,7 @@ void buildEdgeColorsTable2()
 			Turn currTurn = OK_TURNS2[j];
 			Cube newCube = cube.turnWith(currTurn);
 
-			MAKE_EDGE_COLORS_TABLE2[currCode][j] = newCube.edgeColorsCode2();
+			TurnTables::EDGE_COLORS_TABLE2[currCode][j] = newCube.edgeColorsCode2();
 		}
 	} while (cube.nextEdgeColors2());
 }
