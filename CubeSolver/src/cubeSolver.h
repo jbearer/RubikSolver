@@ -11,19 +11,19 @@
 #include "comm-protocol.h"
 #include "cube.h"
 #include "turn.h"
-#include "constants.h"
 
-#include <gtest/gtest.h>
-#include <utility>
 #include <vector>
 #include <unordered_map>
-#include <unordered_set>
-#include <functional>
 #include <queue>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/unordered_map.hpp>
 
 namespace CubeSolver {
+
+const int NUM_EDGE_ORIENTS = 4096; // 2^12
+const int NUM_CORNER_ORIENTS = 6561; // 3^8
+const int NUM_CORNER_COLORS = 40320; // 8!
+const int NUM_EDGE_ORBITS = 495; // 12 nCr 4
+const int NUM_EDGE_COLORS1 = 24; // 4!
+const int NUM_EDGE_COLORS2 = 40320; // 8!
 
 ///////////////////////////////////
 //// Cube nums/////////////////////

@@ -1,21 +1,13 @@
 #include "cubeSolver.h"
 
-#include <assert.h>
 #include <iostream>
-#include <algorithm>
 #include <queue>
-//#include <ctime>
-#include <map>
 #include <fstream>
 #include <boost/serialization/unordered_map.hpp>
-#include <boost/serialization/vector.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#include <bitset>
 #include <vector>
-//#include "comm-protocol.h"
 
-using std::cin;
 using std::cout;
 using std::endl;
 
@@ -23,25 +15,7 @@ using namespace CubeSolver;
 
 const std::string END_TABLES_PATH = "ser/end_maps.ser";
 
-void CubeSolver::readEndMaps(std::string pathToFile, EndMap1*& endMap1, EndMap2*& endMap2)
-{
-	std::ifstream is(pathToFile, std::ios::binary);
-	boost::archive::binary_iarchive iarch(is);
 
-	endMap1 = new EndMap1();
-
-	cout << "reading map 1" << endl;
-	iarch >> *endMap1;
-	cout << endMap1->size() << endl;
-
-	endMap2 = new EndMap2();
-
-	cout << "reading map 2" << endl;
-	iarch >> *endMap2;
-	cout << endMap2->size() << endl;
-
-	is.close();
-}
 
 
 int SOLVE_STEP_1_COUNTER = 1;

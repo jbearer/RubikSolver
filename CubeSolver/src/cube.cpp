@@ -3,15 +3,15 @@
 */
 
 #include <utility>
-#include <algorithm>
 #include <iostream>
 #include <boost/math/special_functions/binomial.hpp>
 #include "cube.h"
 
 using CommProtocol::MoveInstruction;
 using CubeSolver::Turn;
+using boost::math::binomial_coefficient;
+using boost::math::factorial;
 
-using namespace boost::math;
 using namespace CubeSolver;
 
 // Vectors containing numbers that correspond to faces

@@ -7,7 +7,6 @@
 */
 
 #include "turn.h"
-#include "../../MotorControl/src/arduino-incl/comm-protocol.h"
 
 using CommProtocol::MoveInstruction;
 using CubeSolver::Turn;

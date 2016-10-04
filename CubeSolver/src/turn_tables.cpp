@@ -2,6 +2,7 @@
 #include "assert.h"
 #include <iostream>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 #include <fstream>
 
 using std::cout;
@@ -19,6 +20,20 @@ int TurnTables::EDGE_COLORS_TABLE1[NUM_EDGE_COLORS1][NUM_TURNS_STEP2];
 int TurnTables::EDGE_COLORS_TABLE2[NUM_EDGE_COLORS2][NUM_TURNS_STEP2];
 
 const std::string TURN_TABLES_PATH = "ser/turn_tables.ser";
+
+void CubeSolver::readTurnTables()
+{
+	std::ifstream is(TURN_TABLES_PATH, std::ios::binary);
+	boost::archive::binary_iarchive iarch(is);
+
+	// turn tables for step 1
+	iarch >> TurnTables::EDGE_ORIENTS_TABLE >> TurnTables::CORNER_ORIENTS_TABLE >> TurnTables::EDGE_ORBITS_TABLE;
+	
+	// turn tables for step 2
+	iarch >> TurnTables::CORNER_COLORS_TABLE >> TurnTables::EDGE_COLORS_TABLE1 >> TurnTables::EDGE_COLORS_TABLE2;
+	is.close();
+
+}
 
 void CubeSolver::buildTurnTables()
 {

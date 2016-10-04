@@ -1,26 +1,17 @@
 #include "cubeSolver.h"
 
-#include <assert.h>
 #include <unordered_map>
-#include <assert.h>
 #include <iostream>
 #include <fstream>
-#include <algorithm>
-#include <boost/serialization/vector.hpp>	// needed for serializing maps
 #include <boost/serialization/unordered_map.hpp>
-
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#include <vector>
-#include <tuple>
 #include <queue>
 
 using namespace CubeSolver;
 
 using std::cout;
 using std::endl;
-//using CommProtocol::MoveInstruction;
-using CommProtocol::MoveInstruction::FRONT;
 
 const std::string END_TABLES_PATH = "ser/end_maps.ser";
 
@@ -31,6 +22,26 @@ std::unordered_map<CubeNumsStep1,
 std::unordered_map<CubeNumsStep2,
 	MoveInstruction,
 	CubeNumsStep2::Hash> MAKE_STEP2MAP;
+
+void CubeSolver::readEndMaps(std::string pathToFile, EndMap1*& endMap1, EndMap2*& endMap2)
+{
+	std::ifstream is(pathToFile, std::ios::binary);
+	boost::archive::binary_iarchive iarch(is);
+
+	endMap1 = new EndMap1();
+
+	cout << "reading map 1" << endl;
+	iarch >> *endMap1;
+	cout << endMap1->size() << endl;
+
+	endMap2 = new EndMap2();
+
+	cout << "reading map 2" << endl;
+	iarch >> *endMap2;
+	cout << endMap2->size() << endl;
+
+	is.close();
+}
 
 void CubeSolver::buildEndMaps(std::string pathToFile, size_t map1Size, size_t map2Size)
 {

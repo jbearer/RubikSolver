@@ -2,11 +2,8 @@
 * \file cube_nums.cpp
 */
 
-#include <fstream>
 #include <iostream>
-#include <boost/archive/binary_iarchive.hpp>
 
-//#include "cube_nums.h"
 #include "cubeSolver.h"
 
 using CubeSolver::Cube;
@@ -15,25 +12,12 @@ using namespace CubeSolver;
 
 const std::string TURN_TABLES_PATH = "ser/turn_tables.ser";
 
-void CubeSolver::readTurnTables()
-{
-	std::ifstream is(TURN_TABLES_PATH, std::ios::binary);
-	boost::archive::binary_iarchive iarch(is);
-
-	// turn tables for step 1
-	iarch >> TurnTables::EDGE_ORIENTS_TABLE >> TurnTables::CORNER_ORIENTS_TABLE >> TurnTables::EDGE_ORBITS_TABLE;
-	
-	// turn tables for step 2
-	iarch >> TurnTables::CORNER_COLORS_TABLE >> TurnTables::EDGE_COLORS_TABLE1 >> TurnTables::EDGE_COLORS_TABLE2;
-	is.close();
-
-}
 
 CubeNumsStep1::CubeNumsStep1() : // initialize with solved cube
-	edgeOrients_{0}, cornerOrients_{0}, edgeOrbits_{105} //TODO: FIX EDGE ORBITS
-	{
-		//	nothing to do
-	}
+edgeOrients_{0}, cornerOrients_{0}, edgeOrbits_{105} //TODO: FIX EDGE ORBITS
+{
+	//	nothing to do
+}
 
 CubeNumsStep2::CubeNumsStep2() : // initialize with solved cube
 	cornerColors_{ 0 }, edgeColors1_{ 0 }, edgeColors2_{ 0 } //TODO: FIX EDGE ORBITS

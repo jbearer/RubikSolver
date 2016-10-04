@@ -1,6 +1,11 @@
 #include "cubeSolver.h"
 
-using namespace std;
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
+using namespace CubeSolver;
 
 int main()
 {
@@ -10,7 +15,7 @@ int main()
 
 	readEndMaps("ser/endMap_big.ser", endMap1, endMap2);
 	
-	vector<Turn> allTurns({
+	std::vector<Turn> allTurns({
 		Turn(MoveInstruction::FRONT), Turn(MoveInstruction::RIGHT),
 		Turn(MoveInstruction::BACK), Turn(MoveInstruction::LEFT),
 		Turn(MoveInstruction::UP), Turn(MoveInstruction::DOWN),
@@ -38,7 +43,7 @@ int main()
 		cout << "scramble: ";
 
 		for (int j = 0; j < MANEUVER_SIZE; ++j) {
-			vector<Turn>::iterator randIt = allTurns.begin();
+			std::vector<Turn>::iterator randIt = allTurns.begin();
 			advance(randIt, rand() % allTurns.size());
 			cube = cube.turnWith(*randIt);
 			cout << randIt->toString << " ";
