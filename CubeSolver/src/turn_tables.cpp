@@ -4,7 +4,12 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <fstream>
 
-using namespace std;
+using std::cout;
+using std::endl;
+using CubeSolver::Cube;
+using CubeSolver::Turn;
+
+using namespace CubeSolver;
 
 int TurnTables::EDGE_ORIENTS_TABLE[NUM_EDGE_ORIENTS][NUM_TURNS_STEP1];
 int TurnTables::CORNER_ORIENTS_TABLE[NUM_CORNER_ORIENTS][NUM_TURNS_STEP1];
@@ -13,9 +18,9 @@ int TurnTables::EDGE_ORBITS_TABLE[NUM_EDGE_ORBITS][NUM_TURNS_STEP1];
 int TurnTables::EDGE_COLORS_TABLE1[NUM_EDGE_COLORS1][NUM_TURNS_STEP2];
 int TurnTables::EDGE_COLORS_TABLE2[NUM_EDGE_COLORS2][NUM_TURNS_STEP2];
 
-const string TURN_TABLES_PATH = "ser/turn_tables.ser";
+const std::string TURN_TABLES_PATH = "ser/turn_tables.ser";
 
-void buildTurnTables()
+void CubeSolver::buildTurnTables()
 {
 	// fill all the static turn tables
 	cout << "building EDGE_ORIENTS_TABLE (1/6)" << endl;
@@ -41,10 +46,10 @@ void buildTurnTables()
 
 }
 
-void archiveTurnTables()
+void CubeSolver::archiveTurnTables()
 {
 	// store the tables in turnTables.ser
-	ofstream os(TURN_TABLES_PATH, ios::binary);
+	std::ofstream os(TURN_TABLES_PATH, std::ios::binary);
 	boost::archive::binary_oarchive oarch(os);
 
 	// tables for step 1
@@ -60,7 +65,7 @@ void archiveTurnTables()
 	os.close();
 }
 
-void buildEdgeOrientsTable()
+void CubeSolver::buildEdgeOrientsTable()
 {
 	// default initialize an orientation with eleven 0's
 	Cube cube;
@@ -84,7 +89,7 @@ void buildEdgeOrientsTable()
 	//}
 }
 
-void buildCornerOrientsTable()
+void CubeSolver::buildCornerOrientsTable()
 {
 	// default initialize a cube with cornerOrients_ as 0
 	Cube cube;
@@ -108,7 +113,7 @@ void buildCornerOrientsTable()
 	//}
 }
 
-void buildEdgeOrbitsTable()
+void CubeSolver::buildEdgeOrbitsTable()
 {
 	Cube cube;
 /*
@@ -139,7 +144,7 @@ void buildEdgeOrbitsTable()
 	//}
 }
 
-void buildCornerColorsTable()
+void CubeSolver::buildCornerColorsTable()
 {
 	Cube cube;
 	do {
@@ -157,7 +162,7 @@ void buildCornerColorsTable()
 
 
 
-void buildEdgeColorsTable1()
+void CubeSolver::buildEdgeColorsTable1()
 {
 	Cube cube;
 	//const int ORBIT_SIZE = 4;
@@ -182,7 +187,7 @@ void buildEdgeColorsTable1()
 	} while (cube.nextEdgeColors1());
 }
 
-void buildEdgeColorsTable2()
+void CubeSolver::buildEdgeColorsTable2()
 {
 	Cube cube;
 

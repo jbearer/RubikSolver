@@ -15,15 +15,17 @@
 #include <vector>
 //#include "comm-protocol.h"
 
+using std::cin;
+using std::cout;
+using std::endl;
 
-using namespace std;
+using namespace CubeSolver;
 
-const string END_TABLES_PATH = "ser/end_maps.ser";
+const std::string END_TABLES_PATH = "ser/end_maps.ser";
 
-
-void readEndMaps(string pathToFile, EndMap1*& endMap1, EndMap2*& endMap2)
+void CubeSolver::readEndMaps(std::string pathToFile, EndMap1*& endMap1, EndMap2*& endMap2)
 {
-	ifstream is(pathToFile, ios::binary);
+	std::ifstream is(pathToFile, std::ios::binary);
 	boost::archive::binary_iarchive iarch(is);
 
 	endMap1 = new EndMap1();
@@ -43,7 +45,7 @@ void readEndMaps(string pathToFile, EndMap1*& endMap1, EndMap2*& endMap2)
 
 
 int SOLVE_STEP_1_COUNTER = 1;
-deque<Turn> solveStep1DFS(Cube cube, EndMap1* endMap1)
+std::deque<Turn> CubeSolver::solveStep1DFS(Cube cube, EndMap1* endMap1)
 {
 	SOLVE_STEP_1_COUNTER = 1;
 
@@ -55,7 +57,7 @@ deque<Turn> solveStep1DFS(Cube cube, EndMap1* endMap1)
 	int MIN_DEPTH = 0;
 	int MAX_DEPTH = 10;
 
-	deque<Turn> result;
+	std::deque<Turn> result;
 
 	for (int depth = MIN_DEPTH; depth < MAX_DEPTH; ++depth) {
 
@@ -64,11 +66,11 @@ deque<Turn> solveStep1DFS(Cube cube, EndMap1* endMap1)
 		}
 	}
 	cout << "path not found :(" << endl;
-	return deque<Turn>();
+	return std::deque<Turn>();
 }
 
 
-bool solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1* endMap1, deque<Turn>& result)
+bool CubeSolver::solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1* endMap1, std::deque<Turn>& result)
 {
 	if (SOLVE_STEP_1_COUNTER % 100000 == 0) {
 		cout << "step 1: " << SOLVE_STEP_1_COUNTER << endl;
@@ -104,7 +106,7 @@ bool solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1* endMap1, de
 }
 
 int SOLVE_STEP_2_COUNTER = 1;
-deque<Turn> solveStep2DFS(Cube cube, EndMap2* endMap2)
+std::deque<Turn> CubeSolver::solveStep2DFS(Cube cube, EndMap2* endMap2)
 {
 	SOLVE_STEP_2_COUNTER = 1;
 
@@ -115,7 +117,7 @@ deque<Turn> solveStep2DFS(Cube cube, EndMap2* endMap2)
 	int MIN_DEPTH = 0;
 	int MAX_DEPTH = 10;
 
-	deque<Turn> result;
+	std::deque<Turn> result;
 
 	for (int depth = MIN_DEPTH; depth < MAX_DEPTH; ++depth) {
 		if (solveStep2Helper(depth, currCube, endMap2, result)) {
@@ -124,11 +126,11 @@ deque<Turn> solveStep2DFS(Cube cube, EndMap2* endMap2)
 	}
 
 	cout << "path not found :(" << endl;
-	return deque<Turn>();
+	return std::deque<Turn>();
 }
 
 
-bool solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2* endMap2, deque<Turn>& result)
+bool CubeSolver::solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2* endMap2, std::deque<Turn>& result)
 {
 
 	if (SOLVE_STEP_2_COUNTER % 100000 == 0) {
@@ -164,10 +166,10 @@ bool solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2* endMap2, de
 	}
 }
 
-deque<Turn> turnsFromEndMap1(CubeNumsStep1 start, EndMap1* endMap1)
+std::deque<Turn> CubeSolver::turnsFromEndMap1(CubeNumsStep1 start, EndMap1* endMap1)
 {
 	//cout << "end maps" << endl;
-	deque<Turn> path;
+	std::deque<Turn> path;
 	CubeNumsStep1 currNums = start;
 	//cout << "finding turns" << endl;
 	//start.print();
@@ -190,9 +192,9 @@ deque<Turn> turnsFromEndMap1(CubeNumsStep1 start, EndMap1* endMap1)
 	return path;
 }
 
-deque<Turn> turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endMap2)
+std::deque<Turn> CubeSolver::turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endMap2)
 {
-	deque<Turn> path;
+	std::deque<Turn> path;
 	CubeNumsStep2 currNums = start;
 
 	while (currNums != CubeNumsStep2()) {
@@ -207,28 +209,28 @@ deque<Turn> turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endMap2)
 	return path;
 }
 
-std::vector<MoveInstruction> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2)
+std::vector<MoveInstruction> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2)
 {
-	deque<Turn> firstTurns = solveStep1DFS(cube, endMap1);
+	std::deque<Turn> firstTurns = solveStep1DFS(cube, endMap1);
 
 	// apply turns found in first turns
 	
 	for (auto turn : firstTurns) {
 		cube = cube.turnWith(turn);
 	}
-	deque<Turn> lastTurns = solveStep2DFS(cube, endMap2);
+	std::deque<Turn> lastTurns = solveStep2DFS(cube, endMap2);
 	
 	for (auto turn : lastTurns) {
 		cube = cube.turnWith(turn);
 	}
 
-	vector<MoveInstruction> instructions;	
+	std::vector<MoveInstruction> instructions;	
 
 	return instructions;
 }
 
 //TODO: get rid of this
-int getIndex1(MoveInstruction mi)
+int CubeSolver::getIndex1(MoveInstruction mi)
 {
 	switch (mi) {
 	case MoveInstruction::FRONT: return 0;
@@ -261,7 +263,7 @@ int getIndex1(MoveInstruction mi)
 	}
 }
 
-int getIndex2(MoveInstruction mi)
+int CubeSolver::getIndex2(MoveInstruction mi)
 {
 	switch (mi) {
 	case MoveInstruction::FRONT_2: return 0;

@@ -9,6 +9,8 @@
 
 using CommProtocol::MoveInstruction;
 
+using namespace CubeSolver;
+
 Turn::Turn(MoveInstruction c) : repr{ c }
 {
 	repr = c;

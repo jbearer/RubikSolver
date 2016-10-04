@@ -1,8 +1,13 @@
 #pragma once
-/**
-* \file cube.h
-* \brief interface for Cube class
+
+/** cubeSovler.h
+* \brief	Contains methods to solve a Rubiks Cube
+* \details	Solves the cube in two steps.  First, does a iterative deepening DFS
+*			to "orient" the edges and corners.  Then uses a subset of the possible moves
+*			which preserve the orientations to place the pieces in the proper places,
+*			another iterative deepening DFS.
 */
+
 #include "comm-protocol.h"
 #include "cube.h"
 #include "turn.h"
@@ -18,14 +23,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/unordered_map.hpp>
 
-/**
-* \class Cube
-* \brief Contains the implementation for a Rubik's Cube
-* \details A rubik's cube is identified by it's edge colors,
-*		   edge orientations, corner colors, and corner orientations
-*		   the ith index of an array corresponds to the cubie
-*		   in the space that is home to cubie i.
-*/
+namespace CubeSolver {
 
 ///////////////////////////////////
 //// Cube nums/////////////////////
@@ -222,6 +220,6 @@ void buildMap2(size_t mapSize);
 void archiveEndMaps(std::string pathToFile);
 
 
-
+} // end namespace CubeSolver
 
 

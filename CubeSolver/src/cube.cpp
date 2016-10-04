@@ -9,7 +9,10 @@
 #include "cube.h"
 
 using CommProtocol::MoveInstruction;
+using CubeSolver::Turn;
+
 using namespace boost::math;
+using namespace CubeSolver;
 
 // Vectors containing numbers that correspond to faces
 const Cube::Edge_t Cube::FRONT_EDGES[4] = { YG, OG, WG, RG };

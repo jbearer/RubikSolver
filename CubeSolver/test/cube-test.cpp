@@ -7,14 +7,20 @@
 #include <iostream>
 #include <cstdlib>
 
-using namespace std;
 using CommProtocol::MoveInstruction;
+using CubeSolver::Cube;
+using CubeSolver::Turn;
+using std::cin;
+using std::cout;
+using std::endl;
+
+using namespace CubeSolver;
 
 const std::string ENDMAP_SMALL_PATH = "ser/endMap_small.ser";
 const std::string ENDMAP_BIG_PATH = "ser/endMap_big.ser";
 const std::string TURNTABLES_PATH = "ser/turnTables.ser";
 
-vector<Turn> allTurns({
+std::vector<Turn> allTurns({
 		Turn(MoveInstruction::FRONT), Turn(MoveInstruction::RIGHT),
 		Turn(MoveInstruction::BACK), Turn(MoveInstruction::LEFT),
 		Turn(MoveInstruction::UP), Turn(MoveInstruction::DOWN),
@@ -36,7 +42,7 @@ Turn randomTurn2() {
 	return OK_TURNS2[i];		
 }
 
-Cube scramble(vector<MoveInstruction> turns)
+Cube scramble(std::vector<MoveInstruction> turns)
 {
 	Cube cube;
 
@@ -208,7 +214,7 @@ EndMap2* EndMap2_trivial()
 
 TEST_F(CubeSolverTest, endMap)
 {
-	queue<CubeNumsStep1> cubeQueue = buildMap1(MAP_SIZE_SMALL);
+	std::queue<CubeNumsStep1> cubeQueue = buildMap1(MAP_SIZE_SMALL);
 
 	int size = cubeQueue.size();
 	

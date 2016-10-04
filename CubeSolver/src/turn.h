@@ -9,12 +9,14 @@
 
 #include "../../MotorControl/src/arduino-incl/comm-protocol.h"
 
+namespace CubeSolver {
+
 const int NUM_TURNS_STEP1 = 12;
 const int NUM_TURNS_STEP2 = 8;
 
 
 struct Turn {
-		/// Constructors
+	/// Constructors
 	Turn() = delete;
 	Turn(CommProtocol::MoveInstruction c);
 
@@ -23,8 +25,8 @@ struct Turn {
 	CommProtocol::MoveInstruction repr;
 	CommProtocol::MoveInstruction oppTurn;
 
-		/// Construct a vector of Turns from a vector of MoveInstructions
+	/// Construct a vector of Turns from a vector of MoveInstructions
 	static std::vector<Turn> movesToTurns(std::vector<CommProtocol::MoveInstruction> moves);
 };
 
-
+} // end namespace CubeSolver

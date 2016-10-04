@@ -6,12 +6,13 @@
 * Contains methods to turn the cube
 */
 
-//#include "../util/combo_util.hpp"
 #include "turn.h"
 #include "../../MotorControl/src/arduino-incl/comm-protocol.h"
 
-// Bad to use using?
 using CommProtocol::MoveInstruction;
+using CubeSolver::Turn;
+
+namespace CubeSolver {
 
 static Turn OK_TURNS1[NUM_TURNS_STEP1] = {
 	Turn(MoveInstruction::FRONT), Turn(MoveInstruction::RIGHT), Turn(MoveInstruction::BACK), Turn(MoveInstruction::LEFT),
@@ -218,5 +219,6 @@ private:
 	Corner_t cornerColors_[8] = { YRB, YOB, YRG, YOG, WRB, WOB, WRG, WOG };	///< Numbers represent colors (see table of consts above)
 	char cornerOrients_[8] = { 0,0,0,0,0,0,0,0 };	///< 0 is oriented, 1 is clockwise, 2 is counterclockwise
 
-};
+}; // end class Cube
 
+} // end namespace CubeSolver

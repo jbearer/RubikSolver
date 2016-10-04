@@ -9,9 +9,13 @@
 //#include "cube_nums.h"
 #include "cubeSolver.h"
 
+using CubeSolver::Cube;
+using CubeSolver::Turn;
+using namespace CubeSolver;
+
 const std::string TURN_TABLES_PATH = "ser/turn_tables.ser";
 
-void readTurnTables()
+void CubeSolver::readTurnTables()
 {
 	std::ifstream is(TURN_TABLES_PATH, std::ios::binary);
 	boost::archive::binary_iarchive iarch(is);
@@ -135,21 +139,3 @@ void CubeNumsStep1::print()
 	std::cout << edgeOrbits_ << std::endl;
 }
 
-/*
-Cube::CubeNums Cube::cubeNums1()
-{
-	return CubeNums(
-		edgeOrientsCode(),
-		cornerOrientsCode(),
-		edgeOrbitsCode());
-}
-
-
-Cube::CubeNums Cube::cubeNums2()
-{
-	return CubeNums(
-		cornerColorsCode(),
-		edgeColorsCode1(),
-		edgeColorsCode2());
-}
-*/

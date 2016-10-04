@@ -15,26 +15,28 @@
 #include <tuple>
 #include <queue>
 
-using namespace std;
+using namespace CubeSolver;
+
+using std::cout;
+using std::endl;
 //using CommProtocol::MoveInstruction;
 using CommProtocol::MoveInstruction::FRONT;
 
-const string END_TABLES_PATH = "ser/end_maps.ser";
+const std::string END_TABLES_PATH = "ser/end_maps.ser";
 
-unordered_map<CubeNumsStep1,
+std::unordered_map<CubeNumsStep1,
 	MoveInstruction,
 	CubeNumsStep1::Hash> MAKE_STEP1MAP;
 	
-unordered_map<CubeNumsStep2,
+std::unordered_map<CubeNumsStep2,
 	MoveInstruction,
 	CubeNumsStep2::Hash> MAKE_STEP2MAP;
 
-void buildEndMaps(string pathToFile, size_t map1Size, size_t map2Size)
+void CubeSolver::buildEndMaps(std::string pathToFile, size_t map1Size, size_t map2Size)
 {
 	readTurnTables();
 
-	// ensure choose table is loaded
-	//assert(CHOOSE[5][2] == 10);
+	// TODO: assert turn tables properly loaded
 
 	cout << "building map 1";
 	buildMap1(map1Size);
@@ -48,10 +50,10 @@ void buildEndMaps(string pathToFile, size_t map1Size, size_t map2Size)
 	archiveEndMaps(pathToFile);
 }
 
-void archiveEndMaps(string pathToFile)
+void CubeSolver::archiveEndMaps(std::string pathToFile)
 {
 	// store the tables in turnTables.ser
-	ofstream os(pathToFile, ios::binary);
+	std::ofstream os(pathToFile, std::ios::binary);
 	boost::archive::binary_oarchive oarch(os);
 
 	oarch << MAKE_STEP1MAP << MAKE_STEP2MAP;
@@ -59,7 +61,7 @@ void archiveEndMaps(string pathToFile)
 	os.close();
 }
 
-queue<CubeNumsStep1> buildMap1(size_t mapSize)
+std::queue<CubeNumsStep1> CubeSolver::buildMap1(size_t mapSize)
 {
 	// map_size must be greater than OK_TURNS size to work
 	//assert(mapSize > NUM_TURNS_STEP1);
@@ -72,7 +74,7 @@ queue<CubeNumsStep1> buildMap1(size_t mapSize)
 
 	MAKE_STEP1MAP[solvedCubeNums] = MoveInstruction::FRONT;
 
-	queue<CubeNumsStep1> cubeQueue;
+	std::queue<CubeNumsStep1> cubeQueue;
 	cubeQueue.push(solvedCubeNums);
 
 	while (MAKE_STEP1MAP.size() < mapSize) {
@@ -105,7 +107,7 @@ queue<CubeNumsStep1> buildMap1(size_t mapSize)
 	return cubeQueue;
 }
 
-void buildMap2(size_t mapSize)
+void CubeSolver::buildMap2(size_t mapSize)
 {
 	// ensure tables have been initialized
 	//assert(EDGE_COLORS_TABLE2[3000][3] == 13466);
@@ -116,7 +118,7 @@ void buildMap2(size_t mapSize)
 	CubeNumsStep2 solvedCubeNums;
 	MAKE_STEP2MAP[solvedCubeNums] = MoveInstruction::FRONT;
 
-	queue<CubeNumsStep2> cubeQueue;
+	std::queue<CubeNumsStep2> cubeQueue;
 	cubeQueue.push(solvedCubeNums);
 
 	while (MAKE_STEP2MAP.size() < mapSize) {
