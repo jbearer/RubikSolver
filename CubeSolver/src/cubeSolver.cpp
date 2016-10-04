@@ -12,6 +12,7 @@ using std::cout;
 using std::endl;
 
 using namespace CubeSolver;
+using namespace CommProtocol;
 
 const std::string END_TABLES_PATH = "ser/end_maps.ser";
 
@@ -207,29 +208,29 @@ std::vector<MoveInstruction> CubeSolver::solve(Cube& cube, EndMap1* endMap1, End
 int CubeSolver::getIndex1(MoveInstruction mi)
 {
 	switch (mi) {
-	case MoveInstruction::FRONT: return 0;
+	case FRONT: return 0;
 		break;
-	case MoveInstruction::RIGHT: return 1;
+	case RIGHT: return 1;
 		break;
-	case MoveInstruction::BACK: return 2;
+	case BACK: return 2;
 		break;
-	case MoveInstruction::LEFT: return 3;
+	case LEFT: return 3;
 		break;
-	case MoveInstruction::UP: return 4;
+	case UP: return 4;
 		break;
-	case MoveInstruction::DOWN: return 5;
+	case DOWN: return 5;
 		break;
-	case MoveInstruction::FRONT_INVERTED: return 6;
+	case FRONT_INVERTED: return 6;
 		break;
-	case MoveInstruction::RIGHT_INVERTED: return 7;
+	case RIGHT_INVERTED: return 7;
 		break;
-	case MoveInstruction::BACK_INVERTED: return 8;
+	case BACK_INVERTED: return 8;
 		break;
-	case MoveInstruction::LEFT_INVERTED: return 9;
+	case LEFT_INVERTED: return 9;
 		break;
-	case MoveInstruction::UP_INVERTED: return 10;
+	case UP_INVERTED: return 10;
 		break;
-	case MoveInstruction::DOWN_INVERTED: return 11;
+	case DOWN_INVERTED: return 11;
 		break;
 	default:
 		cout << "not an acceptable turn" << endl;
@@ -240,21 +241,21 @@ int CubeSolver::getIndex1(MoveInstruction mi)
 int CubeSolver::getIndex2(MoveInstruction mi)
 {
 	switch (mi) {
-	case MoveInstruction::FRONT_2: return 0;
+	case FRONT_2: return 0;
 		break;
-	case MoveInstruction::RIGHT: return 1;
+	case RIGHT: return 1;
 		break;
-	case MoveInstruction::BACK_2: return 2;
+	case BACK_2: return 2;
 		break;
-	case MoveInstruction::LEFT: return 3;
+	case LEFT: return 3;
 		break;
-	case MoveInstruction::UP_2: return 4;
+	case UP_2: return 4;
 		break;
-	case MoveInstruction::DOWN_2: return 5;
+	case DOWN_2: return 5;
 		break;
-	case MoveInstruction::RIGHT_INVERTED: return 6;
+	case RIGHT_INVERTED: return 6;
 		break;
-	case MoveInstruction::LEFT_INVERTED: return 7;
+	case LEFT_INVERTED: return 7;
 		break;
 	default: 
 		cout << "not an acceptable turn" << endl;

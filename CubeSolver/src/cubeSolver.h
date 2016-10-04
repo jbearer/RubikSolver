@@ -32,7 +32,7 @@ const int NUM_EDGE_COLORS2 = 40320; // 8!
 struct CubeNumsStep1 {
 	struct Hash;
 
-		// Constructors
+	// Constructors
 	CubeNumsStep1();
 	CubeNumsStep1(const Cube& cube);
 	CubeNumsStep1(ushort edgeOrients, ushort cornerOrients, ushort edgeOrbits);
@@ -79,7 +79,7 @@ struct CubeNumsStep2{
 
 	/// serialize cubenums
 	template<typename Archive>
-	void serialize(Archive& ar, const unsigned int version __attribute__((unused)))
+	void serialize(Archive& ar, const uint version __attribute__((unused)))
 	{
 		ar & cornerColors_ & edgeColors1_ & edgeColors2_;
 	}
@@ -94,14 +94,14 @@ private:
 
 };
 
-typedef std::unordered_map<CubeNumsStep1, CommProtocol::MoveInstruction, CubeNumsStep1::Hash> EndMap1;
+typedef std::unordered_map<CubeNumsStep1,CommProtocol::MoveInstruction, CubeNumsStep1::Hash> EndMap1;
 typedef std::unordered_map<CubeNumsStep2, CommProtocol::MoveInstruction, CubeNumsStep2::Hash> EndMap2;
 
-	// Solving:
+// Solving:
 std::vector<CommProtocol::MoveInstruction> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2);
 
 
-	/// Hash maps from cube codes to the required turns to solve
+/// Hash maps from cube codes to the required turns to solve
 static std::unordered_map<CubeNumsStep1, CommProtocol::MoveInstruction, CubeNumsStep1::Hash> STEP1MAP;
 static std::unordered_map<CubeNumsStep2, CommProtocol::MoveInstruction, CubeNumsStep2::Hash> STEP2MAP;
 

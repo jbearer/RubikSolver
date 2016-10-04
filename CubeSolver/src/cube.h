@@ -62,8 +62,8 @@ public:
 
 	/// Four-argument parameterized constructor.  Constructs a cube
 	/// out of edgeColors, edgeOrients, cornerColors, and cornerOrients
-	Cube(Edge_t eColors[12], char eOrients[12],
-		Corner_t cColors[8], char cOrients[8]);
+	Cube(Edge_t eColors[12], int eOrients[12],
+		Corner_t cColors[8], int cOrients[8]);
 
 	Cube(const Cube& rhs) = default;
 
@@ -77,9 +77,9 @@ public:
 
 	bool isSolved();
 
-	static Cube turn(Cube cube, MoveInstruction mi);
-	void orientEdges(MoveInstruction);
-	void cycle(MoveInstruction mi);
+	
+	//void orientEdges(MoveInstruction);
+	//void cycle(MoveInstruction mi);
 
 	/**
 	* \brief Turning methods.  Each of the following static methods takes in a
@@ -90,6 +90,7 @@ public:
 	* require corner orientation.
 	*
 	*/
+	/*
 	static Cube front(Cube cube);
 	static Cube right(Cube cube);
 	static Cube back(Cube cube);
@@ -110,6 +111,15 @@ public:
 	static Cube left2(Cube cube);
 	static Cube up2(Cube cube);
 	static Cube down2(Cube cube);
+*/
+	static Cube turn(Cube cube, MoveInstruction mi);
+	void turnRightOrLeft(const Edge_t edges[4], const Corner_t corners[4]);
+	void turnFrontOrBack(const Edge_t edges[4], const Corner_t corners[4]);
+	void turnUpOrDown(const Edge_t edges[4], const Corner_t corners[4]);
+
+	void turn2(MoveInstruction mi);
+	void turnI(MoveInstruction mi);
+
 
 	//////////////////////// CUBE CODES /////////////////////
 
@@ -159,7 +169,7 @@ private:
 	* \fn		turn
 	* \brief	Calls forwardCycle on the data members of Cube.
 	*/
-	void turn(const Edge_t edges[4], const Corner_t corners[4]);
+	void turnCubies(const Edge_t edges[4], const Corner_t corners[4]);
 
 	
 
@@ -167,7 +177,7 @@ private:
 	* \fn		turnI
 	* \brief	Calls backwardCycle on the data members of Cube.
 	*/
-	void turnI(const Edge_t edges[4], const Corner_t corners[4]);
+	//void turnI(const Edge_t edges[4], const Corner_t corners[4]);
 
 	/**
 	* \fn		forwardCycle
@@ -182,8 +192,8 @@ private:
 	* \brief	Cycles the numbers at the given indices backward (i.e. CC on the cube)
 	* \details	For example, then numbers at indices {1,3,5,6} will now be at {3,5,6,1}
 	*/
-	template <typename Index_t, typename Cubie_t>
-	void backwardCycle(const Index_t positions[4], Cubie_t* cubies);
+	//template <typename Index_t, typename Cubie_t>
+	//void backwardCycle(const Index_t positions[4], Cubie_t* cubies);
 
 
 	/**
@@ -208,15 +218,15 @@ private:
 	*			turn on a Cube.
 	* \details	Helper method for front2, right2, etc.
 	*/
-	void turn2(const Edge_t edges[4], const Corner_t corners[4]);
+	//void turn2(const Edge_t edges[4], const Corner_t corners[4]);
 
 
 
 	/// data members set to a solved cube.
 	Edge_t edgeColors_[12] = {YB, YR, YO, YG, RB, OB, RG, OG, WB, WR, WO, WG };	///< Numbers represent colors (see table of consts above)
-	char edgeOrients_[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };  ///< 0 is oriented, 1 is unoriented
+	int edgeOrients_[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };  ///< 0 is oriented, 1 is unoriented
 	Corner_t cornerColors_[8] = { YRB, YOB, YRG, YOG, WRB, WOB, WRG, WOG };	///< Numbers represent colors (see table of consts above)
-	char cornerOrients_[8] = { 0,0,0,0,0,0,0,0 };	///< 0 is oriented, 1 is clockwise, 2 is counterclockwise
+	int cornerOrients_[8] = { 0,0,0,0,0,0,0,0 };	///< 0 is oriented, 1 is clockwise, 2 is counterclockwise
 
 }; // end class Cube
 

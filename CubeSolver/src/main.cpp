@@ -6,6 +6,7 @@ using std::cout;
 using std::endl;
 
 using namespace CubeSolver;
+using namespace CommProtocol;
 
 int main()
 {
@@ -16,12 +17,12 @@ int main()
 	readEndMaps("ser/endMap_big.ser", endMap1, endMap2);
 	
 	std::vector<Turn> allTurns({
-		Turn(MoveInstruction::FRONT), Turn(MoveInstruction::RIGHT),
-		Turn(MoveInstruction::BACK), Turn(MoveInstruction::LEFT),
-		Turn(MoveInstruction::UP), Turn(MoveInstruction::DOWN),
-		Turn(MoveInstruction::FRONT_INVERTED), Turn(MoveInstruction::RIGHT_INVERTED),
-		Turn(MoveInstruction::BACK_INVERTED), Turn(MoveInstruction::LEFT_INVERTED),
-		Turn(MoveInstruction::UP_INVERTED), Turn(MoveInstruction::DOWN_INVERTED)
+		Turn(FRONT), Turn(RIGHT),
+		Turn(BACK), Turn(LEFT),
+		Turn(UP), Turn(DOWN),
+		Turn(FRONT_INVERTED), Turn(RIGHT_INVERTED),
+		Turn(BACK_INVERTED), Turn(LEFT_INVERTED),
+		Turn(UP_INVERTED), Turn(DOWN_INVERTED)
 	});
 
 	cout << "a" << endl;

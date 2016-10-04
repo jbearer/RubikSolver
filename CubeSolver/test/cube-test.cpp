@@ -7,26 +7,25 @@
 #include <iostream>
 #include <cstdlib>
 
-using CommProtocol::MoveInstruction;
 using CubeSolver::Cube;
 using CubeSolver::Turn;
-using std::cin;
 using std::cout;
 using std::endl;
 
 using namespace CubeSolver;
+using namespace CommProtocol;
 
 const std::string ENDMAP_SMALL_PATH = "ser/endMap_small.ser";
 const std::string ENDMAP_BIG_PATH = "ser/endMap_big.ser";
 const std::string TURNTABLES_PATH = "ser/turnTables.ser";
 
 std::vector<Turn> allTurns({
-		Turn(MoveInstruction::FRONT), Turn(MoveInstruction::RIGHT),
-		Turn(MoveInstruction::BACK), Turn(MoveInstruction::LEFT),
-		Turn(MoveInstruction::UP), Turn(MoveInstruction::DOWN),
-		Turn(MoveInstruction::FRONT_INVERTED), Turn(MoveInstruction::RIGHT_INVERTED),
-		Turn(MoveInstruction::BACK_INVERTED), Turn(MoveInstruction::LEFT_INVERTED),
-		Turn(MoveInstruction::UP_INVERTED), Turn(MoveInstruction::DOWN_INVERTED)
+		Turn(FRONT), Turn(RIGHT),
+		Turn(BACK), Turn(LEFT),
+		Turn(UP), Turn(DOWN),
+		Turn(FRONT_INVERTED), Turn(RIGHT_INVERTED),
+		Turn(BACK_INVERTED), Turn(LEFT_INVERTED),
+		Turn(UP_INVERTED), Turn(DOWN_INVERTED)
 	});
 
 int MAP_SIZE_SMALL = 5000;
@@ -79,17 +78,18 @@ class CubeTest : public ::testing::Test {
 TEST_F(CubeTest, operator_equals)
 {
 	Cube cube1, cube2;
+
 	ASSERT_TRUE(cube1 == cube2);
 
-	cube1 = Cube::right(cube1);
+	cube1 = Cube::turn(cube1, RIGHT);
 	ASSERT_FALSE(cube1 == cube2);
 
-	cube2 = Cube::right(cube2);
+	cube2 = Cube::turn(cube2, RIGHT);
 	ASSERT_TRUE(cube1 == cube2);
 
-	cube1 = Cube::front2(cube1);
-	cube2 = Cube::frontI(cube2);
-	cube2 = Cube::frontI(cube2);
+	cube1 = Cube::turn(cube1, FRONT_2);
+	cube2 = Cube::turn(cube2, FRONT_INVERTED);
+	cube2 = Cube::turn(cube2, FRONT_INVERTED);
 	ASSERT_TRUE(cube1 == cube2);
 }
 
@@ -101,10 +101,10 @@ TEST_F(CubeTest, turns)
 
 	// should run R' D' R D exactly 6 times before solved
 	do {
-		cube = Cube::rightI(cube);
-		cube = Cube::downI(cube);
-		cube = Cube::right(cube);
-		cube = Cube::down(cube);
+		cube = Cube::turn(cube, RIGHT_INVERTED);
+		cube = Cube::turn(cube, DOWN_INVERTED);
+		cube = Cube::turn(cube, RIGHT);
+		cube = Cube::turn(cube, DOWN);
 		++numCycles;
 	} while (!cube.isSolved());
 
@@ -243,8 +243,8 @@ TEST_F(CubeSolverTest, trivial)
 TEST_F(CubeSolverTest, find_path_short)
 {
 	Cube cube;
-	cube = Cube::front(cube);
-	cube = Cube::right(cube);
+	cube = Cube::turn(cube, FRONT);
+	cube = Cube::turn(cube, RIGHT);
 
 	solve(cube, EndMap1_trivial(), EndMap2_trivial());
 	ASSERT_TRUE(cube.isSolved());
@@ -254,11 +254,11 @@ TEST_F(CubeSolverTest, find_path_long)
 {
 
 	Cube cube;
-	cube = Cube::front(cube);
-	cube = Cube::right(cube);
-	cube = Cube::back(cube);
-	cube = Cube::upI(cube);
-	cube = Cube::right2(cube);
+	cube = Cube::turn(cube, FRONT);
+	cube = Cube::turn(cube, RIGHT);
+	cube = Cube::turn(cube, BACK);
+	cube = Cube::turn(cube, UP_INVERTED);
+	cube = Cube::turn(cube, RIGHT_2);
 
 	solve(cube, EndMap1_trivial(), EndMap2_trivial());
 	ASSERT_TRUE(cube.isSolved());
@@ -267,9 +267,9 @@ TEST_F(CubeSolverTest, find_path_long)
 TEST_F(CubeSolverTest, lookup_path_short)
 {
 	Cube cube;
-	cube = Cube::front(cube);
-	cube = Cube::back(cube);
-	cube = Cube::up(cube);
+	cube = Cube::turn(cube, FRONT);
+	cube = Cube::turn(cube, BACK);
+	cube = Cube::turn(cube, UP);
 
 	solve(cube, endMap1, endMap2);
 	ASSERT_TRUE(cube.isSolved());
@@ -279,13 +279,13 @@ TEST_F(CubeSolverTest, find_and_lookup_path)
 {
 	Cube cube;
 
-	cube = Cube::down(cube);
-	cube = Cube::right(cube);
-	cube = Cube::frontI(cube);
-	cube = Cube::upI(cube);
-	cube = Cube::frontI(cube);
-	cube = Cube::back(cube);
-	cube = Cube::left(cube);
+	cube = Cube::turn(cube, DOWN);
+	cube = Cube::turn(cube, RIGHT);
+	cube = Cube::turn(cube, FRONT_INVERTED);
+	cube = Cube::turn(cube, UP_INVERTED);
+	cube = Cube::turn(cube, FRONT_INVERTED);
+	cube = Cube::turn(cube, BACK);
+	cube = Cube::turn(cube, LEFT);
 
 	solve(cube, endMap1, endMap2);
 
