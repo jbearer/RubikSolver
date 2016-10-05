@@ -6,6 +6,8 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <iostream>
 
 #include "../../MotorControl/src/arduino-incl/comm-protocol.h"
 
@@ -27,6 +29,13 @@ struct Turn {
 
 	/// Construct a vector of Turns from a vector of MoveInstructions
 	static std::vector<Turn> movesToTurns(std::vector<CommProtocol::MoveInstruction> moves);
+
+	//static std::map<CommProtocol::MoveInstruction, std::string> turnToString;
+	static CommProtocol::MoveInstruction oppMove(CommProtocol::MoveInstruction mi);
 };
+
+std::ostream& operator<<(std::ostream& out, CommProtocol::MoveInstruction mi);
+
+
 
 } // end namespace CubeSolver

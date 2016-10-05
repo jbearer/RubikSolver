@@ -299,12 +299,12 @@ bool Cube::nextCornerColors()
 	return std::next_permutation(cornerColors_, cornerColors_ + NUM_CORNERS);
 }
 
-
+/*
 Cube Cube::turnWith(Turn inputTurn)
 {
 	return turn(*this, inputTurn.repr);
 }
-
+*/
 
 Cube Cube::turn(Cube cube, MoveInstruction mi) {
 	switch (mi) {

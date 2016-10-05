@@ -90,7 +90,7 @@ void CubeSolver::buildEdgeOrientsTable()
 		// iterate through all the turns in step1, add results to table
 		for (size_t j = 0; j < NUM_TURNS_STEP1; ++j) {
 			Turn currTurn = OK_TURNS1[j];
-			Cube newCube = cube.turnWith(currTurn);
+			Cube newCube = Cube::turn(cube, currTurn.repr);
 
 			int newCode = newCube.edgeOrientsCode();
 			assert(newCode < NUM_EDGE_ORIENTS);
@@ -114,7 +114,7 @@ void CubeSolver::buildCornerOrientsTable()
 
 		for (size_t j = 0; j < NUM_TURNS_STEP1; ++j) {
 			Turn currTurn = OK_TURNS1[j];
-			Cube newCube = cube.turnWith(currTurn);
+			Cube newCube = Cube::turn(cube, currTurn.repr);
 
 			int newCode = newCube.cornerOrientsCode();
 			assert(newCode < NUM_CORNER_ORIENTS);
@@ -147,7 +147,7 @@ void CubeSolver::buildEdgeOrbitsTable()
 
 		for (size_t j = 0; j < NUM_TURNS_STEP1; ++j) {
 			Turn currTurn = OK_TURNS1[j];
-			Cube newCube = cube.turnWith(currTurn);
+			Cube newCube = Cube::turn(cube, currTurn.repr);
 
 			TurnTables::EDGE_ORBITS_TABLE[currCode][j] = newCube.edgeOrbitsCode();
 		}
@@ -167,7 +167,7 @@ void CubeSolver::buildCornerColorsTable()
 
 		for (size_t j = 0; j < NUM_TURNS_STEP2; ++j) {
 			Turn currTurn = OK_TURNS2[j];
-			Cube newCube = cube.turnWith(currTurn);
+			Cube newCube = Cube::turn(cube, currTurn.repr);
 
 			TurnTables::CORNER_COLORS_TABLE[currCode][j] = newCube.cornerColorsCode();
 		}
@@ -195,7 +195,7 @@ void CubeSolver::buildEdgeColorsTable1()
 
 		for (size_t j = 0; j < NUM_TURNS_STEP2; ++j) {
 			Turn currTurn = OK_TURNS2[j];
-			Cube newCube = cube.turnWith(currTurn);
+			Cube newCube = Cube::turn(cube, currTurn.repr);
 
 			TurnTables::EDGE_COLORS_TABLE1[currCode][j] = newCube.edgeColorsCode1();
 		}
@@ -222,7 +222,7 @@ void CubeSolver::buildEdgeColorsTable2()
 
 		for (size_t j = 0; j < NUM_TURNS_STEP2; ++j) {
 			Turn currTurn = OK_TURNS2[j];
-			Cube newCube = cube.turnWith(currTurn);
+			Cube newCube = Cube::turn(cube, currTurn.repr);
 
 			TurnTables::EDGE_COLORS_TABLE2[currCode][j] = newCube.edgeColorsCode2();
 		}

@@ -191,12 +191,12 @@ std::vector<MoveInstruction> CubeSolver::solve(Cube& cube, EndMap1* endMap1, End
 	// apply turns found in first turns
 	
 	for (auto turn : firstTurns) {
-		cube = cube.turnWith(turn);
+		cube = Cube::turn(cube, turn.repr);
 	}
 	std::deque<Turn> lastTurns = solveStep2DFS(cube, endMap2);
 	
 	for (auto turn : lastTurns) {
-		cube = cube.turnWith(turn);
+		cube = Cube::turn(cube, turn.repr);
 	}
 
 	std::vector<MoveInstruction> instructions;	

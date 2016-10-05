@@ -46,7 +46,7 @@ int main()
 		for (int j = 0; j < MANEUVER_SIZE; ++j) {
 			std::vector<Turn>::iterator randIt = allTurns.begin();
 			advance(randIt, rand() % allTurns.size());
-			cube = cube.turnWith(*randIt);
+			cube = turn(cube, randIt->repr);
 			cout << randIt->toString << " ";
 		}
 		cout << endl;

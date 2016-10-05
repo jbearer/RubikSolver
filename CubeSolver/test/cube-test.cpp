@@ -46,7 +46,7 @@ Cube scramble(std::vector<MoveInstruction> turns)
 	Cube cube;
 
 	for (auto mi: turns)
-		cube = cube.turnWith(Turn(mi));
+		cube = Cube::turn(cube, mi);
 
 	return cube;
 }
@@ -118,7 +118,7 @@ TEST_F(CubeTest, cube_nums)
 
 	CubeNumsStep1 cubeNums1 = CubeNumsStep1(cube);
 	for (int i = 0; i < NUM_TURNS_STEP1; ++i) {
-		Cube newCube = cube.turnWith(OK_TURNS1[i]);
+		Cube newCube = Cube::turn(cube, OK_TURNS1[i].repr);
 		CubeNumsStep1 newCubeNums1 = CubeNumsStep1(newCube);
 		
 		EXPECT_TRUE(newCubeNums1 == cubeNums1.turn(i));
@@ -126,7 +126,7 @@ TEST_F(CubeTest, cube_nums)
 
 	CubeNumsStep2 cubeNums2 = CubeNumsStep2(cube);
 	for (int i = 0; i < NUM_TURNS_STEP2; ++i) {
-		Cube newCube = cube.turnWith(OK_TURNS2[i]);
+		Cube newCube = Cube::turn(cube, OK_TURNS2[i].repr);
 		CubeNumsStep2 newCubeNums2 = CubeNumsStep2(newCube);
 		
 		EXPECT_TRUE(newCubeNums2 == cubeNums2.turn(i));
@@ -143,7 +143,7 @@ TEST_F(CubeTest, cube_nums_sequence1)
 
 	for (size_t i = 0; i < numTurns; ++i) {
 		Turn turn = randomTurn1();
-		cube = cube.turnWith(turn);
+		cube = Cube::turn(cube, turn.repr);
 		cubeNums = cubeNums.turn(getIndex1(turn.repr));
 		ASSERT_EQ(CubeNumsStep1(cube), cubeNums) 
 			<< "failed turn: " << turn.toString << endl;
@@ -158,7 +158,7 @@ TEST_F(CubeTest, cube_nums_sequence2)
 
 	for (size_t i = 0; i < numTurns; ++i) {
 		Turn turn = randomTurn2();
-		cube = cube.turnWith(turn);
+		cube = Cube::turn(cube, turn.repr);
 		cubeNums = cubeNums.turn(getIndex2(turn.repr));
 		ASSERT_EQ(CubeNumsStep2(cube), cubeNums) 
 			<< "failed turn: " << turn.toString << endl;
@@ -315,7 +315,7 @@ TEST(CubeSolverPerf, performance)
 		Cube cube;
 
 		for (int j = 0; j < MANEUVER_SIZE; ++j) {
-			cube = cube.turnWith(randomTurn1());
+			cube = Cube::turn(cube, randomTurn1().repr);
 		}
 
 

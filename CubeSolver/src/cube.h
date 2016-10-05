@@ -90,28 +90,7 @@ public:
 	* require corner orientation.
 	*
 	*/
-	/*
-	static Cube front(Cube cube);
-	static Cube right(Cube cube);
-	static Cube back(Cube cube);
-	static Cube left(Cube cube);
-	static Cube up(Cube cube);
-	static Cube down(Cube cube);
 
-	static Cube frontI(Cube cube);
-	static Cube rightI(Cube cube);
-	static Cube backI(Cube cube);
-	static Cube leftI(Cube cube);
-	static Cube upI(Cube cube);
-	static Cube downI(Cube cube);
-
-	static Cube front2(Cube cube);
-	static Cube right2(Cube cube);
-	static Cube back2(Cube cube);
-	static Cube left2(Cube cube);
-	static Cube up2(Cube cube);
-	static Cube down2(Cube cube);
-*/
 	static Cube turn(Cube cube, MoveInstruction mi);
 	void turnRightOrLeft(const Edge_t edges[4], const Corner_t corners[4]);
 	void turnFrontOrBack(const Edge_t edges[4], const Corner_t corners[4]);
@@ -155,7 +134,7 @@ public:
 	bool nextEdgeColors1();
 	bool nextEdgeColors2();
 
-	Cube turnWith(Turn inputTurn);
+	//Cube turnWith(Turn inputTurn);
 
 	// todo: get rid of
 	void setFirstEdgeOrbits();
