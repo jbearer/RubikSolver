@@ -8,12 +8,21 @@
 #include <iostream>
 #include <boost/math/special_functions/binomial.hpp>
 
-using CubeSolver::Turn;
 using boost::math::binomial_coefficient;
 using boost::math::factorial;
 
 using namespace CommProtocol;
 using namespace CubeSolver;
+
+MoveInstruction CubeSolver::OK_TURNS1[NUM_TURNS_STEP1] = {
+	FRONT, RIGHT, BACK, LEFT, UP, DOWN, 
+	FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
+	LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED };
+
+MoveInstruction CubeSolver::OK_TURNS2[NUM_TURNS_STEP2] = {
+	FRONT_2, RIGHT, BACK_2, LEFT, UP_2, DOWN_2, 
+	RIGHT_INVERTED, LEFT_INVERTED };
+
 
 // Vectors containing enums that correspond to faces
 const Cube::Edge_t Cube::FRONT_EDGES[4] = { YG, OG, WG, RG };

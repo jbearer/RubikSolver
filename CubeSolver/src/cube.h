@@ -9,19 +9,12 @@
 #include "turn.h"
 
 using CommProtocol::MoveInstruction;
-using CubeSolver::Turn;
 
 namespace CubeSolver {
 
-static Turn OK_TURNS1[NUM_TURNS_STEP1] = {
-	Turn(MoveInstruction::FRONT), Turn(MoveInstruction::RIGHT), Turn(MoveInstruction::BACK), Turn(MoveInstruction::LEFT),
-	Turn(MoveInstruction::UP), Turn(MoveInstruction::DOWN), Turn(MoveInstruction::FRONT_INVERTED), Turn(MoveInstruction::RIGHT_INVERTED),
-	Turn(MoveInstruction::BACK_INVERTED), Turn(MoveInstruction::LEFT_INVERTED), Turn(MoveInstruction::UP_INVERTED), Turn(MoveInstruction::DOWN_INVERTED) };
-
-static Turn OK_TURNS2[NUM_TURNS_STEP2] = {
-	Turn(MoveInstruction::FRONT_2), Turn(MoveInstruction::RIGHT), Turn(MoveInstruction::BACK_2), Turn(MoveInstruction::LEFT),
-	Turn(MoveInstruction::UP_2), Turn(MoveInstruction::DOWN_2), Turn(MoveInstruction::RIGHT_INVERTED), Turn(MoveInstruction::LEFT_INVERTED) };
-
+// Lists the allowable turns for each step
+extern MoveInstruction OK_TURNS1[NUM_TURNS_STEP1];
+extern MoveInstruction OK_TURNS2[NUM_TURNS_STEP2];
 
 class Cube
 {

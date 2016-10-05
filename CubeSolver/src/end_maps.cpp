@@ -105,7 +105,7 @@ std::queue<CubeNumsStep1> CubeSolver::buildMap1(size_t mapSize)
 				cubeQueue.push(turnedCube);
 
 				// Push back the inverse of the turn used to get there
-				MAKE_STEP1MAP[turnedCube] = OK_TURNS1[j].oppTurn;
+				MAKE_STEP1MAP[turnedCube] = oppMove(OK_TURNS1[j]);
 
 				// To show the map loading...
 				if (MAKE_STEP1MAP.size() % (mapSize / 10) == 0) {
@@ -148,7 +148,7 @@ void CubeSolver::buildMap2(size_t mapSize)
 				cubeQueue.push(turnedCube);
 				
 				// Add this list of moves to the hash tables
-				MAKE_STEP2MAP[turnedCube] = OK_TURNS2[j].oppTurn;
+				MAKE_STEP2MAP[turnedCube] = oppMove(OK_TURNS2[j]);
 				
 				// To show the map loading...
 				if (MAKE_STEP2MAP.size() % (mapSize / 10) == 0) {

@@ -16,13 +16,10 @@ int main()
 
 	readEndMaps("ser/endMap_big.ser", endMap1, endMap2);
 	
-	std::vector<Turn> allTurns({
-		Turn(FRONT), Turn(RIGHT),
-		Turn(BACK), Turn(LEFT),
-		Turn(UP), Turn(DOWN),
-		Turn(FRONT_INVERTED), Turn(RIGHT_INVERTED),
-		Turn(BACK_INVERTED), Turn(LEFT_INVERTED),
-		Turn(UP_INVERTED), Turn(DOWN_INVERTED)
+	std::vector<Move> allTurns({
+		FRONT, RIGHT, BACK, LEFT, UP, DOWN,
+		FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
+		LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED
 	});
 
 	cout << "a" << endl;
@@ -44,10 +41,10 @@ int main()
 		cout << "scramble: ";
 
 		for (int j = 0; j < MANEUVER_SIZE; ++j) {
-			std::vector<Turn>::iterator randIt = allTurns.begin();
+			std::vector<Move>::iterator randIt = allTurns.begin();
 			advance(randIt, rand() % allTurns.size());
-			cube = turn(cube, randIt->repr);
-			cout << randIt->toString << " ";
+			cube = Cube::turn(cube, *randIt);
+			cout << *randIt << " ";
 		}
 		cout << endl;
 

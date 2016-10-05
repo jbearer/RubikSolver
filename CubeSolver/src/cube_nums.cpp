@@ -7,7 +7,6 @@
 #include "cubeSolver.h"
 
 using CubeSolver::Cube;
-using CubeSolver::Turn;
 using namespace CubeSolver;
 
 const std::string TURN_TABLES_PATH = "ser/turn_tables.ser";

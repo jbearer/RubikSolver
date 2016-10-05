@@ -8,7 +8,6 @@
 #include <cstdlib>
 
 using CubeSolver::Cube;
-using CubeSolver::Turn;
 using std::cout;
 using std::endl;
 
@@ -19,24 +18,21 @@ const std::string ENDMAP_SMALL_PATH = "ser/endMap_small.ser";
 const std::string ENDMAP_BIG_PATH = "ser/endMap_big.ser";
 const std::string TURNTABLES_PATH = "ser/turnTables.ser";
 
-std::vector<Turn> allTurns({
-		Turn(FRONT), Turn(RIGHT),
-		Turn(BACK), Turn(LEFT),
-		Turn(UP), Turn(DOWN),
-		Turn(FRONT_INVERTED), Turn(RIGHT_INVERTED),
-		Turn(BACK_INVERTED), Turn(LEFT_INVERTED),
-		Turn(UP_INVERTED), Turn(DOWN_INVERTED)
+std::vector<Move> allTurns({
+		FRONT, RIGHT, BACK, LEFT, UP, DOWN,
+		FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
+		LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED
 	});
 
 int MAP_SIZE_SMALL = 5000;
 int MAP_SIZE_BIG = 10000000;
 
-Turn randomTurn1() {
+Move randomTurn1() {
 	int i = rand() % NUM_TURNS_STEP1;
 	return OK_TURNS1[i];		
 }
 
-Turn randomTurn2() {
+Move randomTurn2() {
 	int i = rand() % NUM_TURNS_STEP2;
 	return OK_TURNS2[i];		
 }
@@ -118,7 +114,7 @@ TEST_F(CubeTest, cube_nums)
 
 	CubeNumsStep1 cubeNums1 = CubeNumsStep1(cube);
 	for (int i = 0; i < NUM_TURNS_STEP1; ++i) {
-		Cube newCube = Cube::turn(cube, OK_TURNS1[i].repr);
+		Cube newCube = Cube::turn(cube, OK_TURNS1[i]);
 		CubeNumsStep1 newCubeNums1 = CubeNumsStep1(newCube);
 		
 		EXPECT_TRUE(newCubeNums1 == cubeNums1.turn(i));
@@ -126,7 +122,7 @@ TEST_F(CubeTest, cube_nums)
 
 	CubeNumsStep2 cubeNums2 = CubeNumsStep2(cube);
 	for (int i = 0; i < NUM_TURNS_STEP2; ++i) {
-		Cube newCube = Cube::turn(cube, OK_TURNS2[i].repr);
+		Cube newCube = Cube::turn(cube, OK_TURNS2[i]);
 		CubeNumsStep2 newCubeNums2 = CubeNumsStep2(newCube);
 		
 		EXPECT_TRUE(newCubeNums2 == cubeNums2.turn(i));
@@ -142,11 +138,11 @@ TEST_F(CubeTest, cube_nums_sequence1)
 	CubeNumsStep1 cubeNums;
 
 	for (size_t i = 0; i < numTurns; ++i) {
-		Turn turn = randomTurn1();
-		cube = Cube::turn(cube, turn.repr);
-		cubeNums = cubeNums.turn(getIndex1(turn.repr));
+		Move turn = randomTurn1();
+		cube = Cube::turn(cube, turn);
+		cubeNums = cubeNums.turn(getIndex1(turn));
 		ASSERT_EQ(CubeNumsStep1(cube), cubeNums) 
-			<< "failed turn: " << turn.toString << endl;
+			<< "failed turn: " << turn << endl;
 	}
 }
 
@@ -157,11 +153,11 @@ TEST_F(CubeTest, cube_nums_sequence2)
 	CubeNumsStep2 cubeNums;
 
 	for (size_t i = 0; i < numTurns; ++i) {
-		Turn turn = randomTurn2();
-		cube = Cube::turn(cube, turn.repr);
-		cubeNums = cubeNums.turn(getIndex2(turn.repr));
+		Move turn = randomTurn2();
+		cube = Cube::turn(cube, turn);
+		cubeNums = cubeNums.turn(getIndex2(turn));
 		ASSERT_EQ(CubeNumsStep2(cube), cubeNums) 
-			<< "failed turn: " << turn.toString << endl;
+			<< "failed turn: " << turn << endl;
 	}
 }
 
@@ -315,7 +311,7 @@ TEST(CubeSolverPerf, performance)
 		Cube cube;
 
 		for (int j = 0; j < MANEUVER_SIZE; ++j) {
-			cube = Cube::turn(cube, randomTurn1().repr);
+			cube = Cube::turn(cube, randomTurn1());
 		}
 
 

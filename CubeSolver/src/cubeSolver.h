@@ -18,6 +18,8 @@
 
 namespace CubeSolver {
 
+
+
 const int NUM_EDGE_ORIENTS = 4096; // 2^12
 const int NUM_CORNER_ORIENTS = 6561; // 3^8
 const int NUM_CORNER_COLORS = 40320; // 8!
@@ -94,33 +96,35 @@ private:
 
 };
 
-typedef std::unordered_map<CubeNumsStep1,CommProtocol::MoveInstruction, CubeNumsStep1::Hash> EndMap1;
-typedef std::unordered_map<CubeNumsStep2, CommProtocol::MoveInstruction, CubeNumsStep2::Hash> EndMap2;
+typedef CommProtocol::MoveInstruction Move;
+
+typedef std::unordered_map<CubeNumsStep1, Move, CubeNumsStep1::Hash> EndMap1;
+typedef std::unordered_map<CubeNumsStep2, Move, CubeNumsStep2::Hash> EndMap2;
 
 // Solving:
-std::vector<CommProtocol::MoveInstruction> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2);
+std::vector<Move> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2);
 
 
 /// Hash maps from cube codes to the required turns to solve
-static std::unordered_map<CubeNumsStep1, CommProtocol::MoveInstruction, CubeNumsStep1::Hash> STEP1MAP;
-static std::unordered_map<CubeNumsStep2, CommProtocol::MoveInstruction, CubeNumsStep2::Hash> STEP2MAP;
+static std::unordered_map<CubeNumsStep1, Move, CubeNumsStep1::Hash> STEP1MAP;
+static std::unordered_map<CubeNumsStep2, Move, CubeNumsStep2::Hash> STEP2MAP;
 
 
 void readEndMaps(std::string pathToFile, EndMap1*& endMap1, EndMap2*& endMap2);
 
 
-std::deque<Turn> solveStep1DFS(Cube cube, EndMap1* endMap1);
-bool solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1* endMap1, std::deque<Turn>& result);
+std::deque<Move> solveStep1DFS(Cube cube, EndMap1* endMap1);
+bool solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1* endMap1, std::deque<Move>& result);
 
-std::deque<Turn> solveStep2DFS(Cube cube, EndMap2* endMap2);
-bool solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2* endMap2, std::deque<Turn>& result);
+std::deque<Move> solveStep2DFS(Cube cube, EndMap2* endMap2);
+bool solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2* endMap2, std::deque<Move>& result);
 
-std::deque<Turn> turnsFromEndMap1(CubeNumsStep1 start, EndMap1* endMap1);
-std::deque<Turn> turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endMap2);
+std::deque<Move> turnsFromEndMap1(CubeNumsStep1 start, EndMap1* endMap1);
+std::deque<Move> turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endMap2);
 
 
-int getIndex1(CommProtocol::MoveInstruction);
-int getIndex2(CommProtocol::MoveInstruction);
+int getIndex1(Move m);
+int getIndex2(Move m);
 
 /// Turn tables
 namespace TurnTables{
