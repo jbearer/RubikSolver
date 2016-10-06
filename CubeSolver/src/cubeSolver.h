@@ -10,6 +10,7 @@
 
 #include "comm-protocol.h"
 #include "cube.h"
+#include "cubeEncoder.h"
 #include "turn.h"
 
 #include <vector>

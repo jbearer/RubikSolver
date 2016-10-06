@@ -94,47 +94,12 @@ public:
 	void turnI(MoveInstruction mi);
 
 
-	//////////////////////// CUBE CODES /////////////////////
-
-	/**
-	* \fn		step1Code
-	* \brief	Hashes the cube into an integer
-	* \details	Cubes had unique codes based only on edge orientation.
-	* \return	int
-	*/
-	ushort edgeOrientsCode() const;
-
-	/// same as edgeOrientsCode, but for corners
-	ushort cornerOrientsCode() const;
-
-	ushort cornerColorsCode() const;
-
-	ushort edgeOrbitsCode() const;
-
-	ushort edgeColorsCode1() const;
-	ushort edgeColorsCode2() const;
-
-	/// increments edge orientation to easily loop through them.  Returns false
-	/// if the edgeOrients was {1,1,1...}, i.e. the "last" orientation.
-	bool nextEdgeOrients();
-
-	/// increments corner orientation to easily loop through them.  Returns false
-	/// if the cornerOrients was {2,2,2...}, i.e. the "last" orientation.
-	bool nextCornerOrients();
-
-	bool nextEdgeOrbits();
-	bool nextCornerColors();
-
-	bool nextEdgeColors1();
-	bool nextEdgeColors2();
-
-	//Cube turnWith(Turn inputTurn);
-
-	// todo: get rid of
-	void setFirstEdgeOrbits();
+	
 
 
 private:
+
+	friend class CubeEncoder;
 
 	/////////////////// TURN METHODS ////////////////
 

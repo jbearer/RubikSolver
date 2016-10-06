@@ -7,6 +7,7 @@
 #include "cubeSolver.h"
 
 using CubeSolver::Cube;
+
 using namespace CubeSolver;
 
 const std::string TURN_TABLES_PATH = "ser/turn_tables.ser";
@@ -38,17 +39,17 @@ CubeNumsStep2::CubeNumsStep2(ushort in1, ushort in2, ushort in3) :
 }
 
 CubeNumsStep1::CubeNumsStep1(const Cube& cube) :
-	edgeOrients_{ cube.edgeOrientsCode() },
-	cornerOrients_{ cube.cornerOrientsCode() },
-	edgeOrbits_{ cube.edgeOrbitsCode() }
+	edgeOrients_{ CubeEncoder::edgeOrientsCode(cube) },
+	cornerOrients_{ CubeEncoder::cornerOrientsCode(cube) },
+	edgeOrbits_{ CubeEncoder::edgeOrbitsCode(cube) }
 {
 	// nothing else to do
 }
 
 CubeNumsStep2::CubeNumsStep2(const Cube& cube) :
-	cornerColors_{ cube.cornerColorsCode() },
-	edgeColors1_{ cube.edgeColorsCode1() },
-	edgeColors2_{ cube.edgeColorsCode2() }
+	cornerColors_{ CubeEncoder::cornerColorsCode(cube) },
+	edgeColors1_{ CubeEncoder::edgeColorsCode1(cube) },
+	edgeColors2_{ CubeEncoder::edgeColorsCode2(cube) }
 {
 	// nothing else to do
 }

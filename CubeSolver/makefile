@@ -9,13 +9,13 @@ CXXFLAGS += $(INCL)
 ARDCXXFLAGS += $(ARDINCL)
 
 TARGETS = Cube.exe CubeTest.exe
-OBJS = obj/cube.o obj/turn.o obj/cube_nums.o obj/cubeSolver.o obj/turn_tables.o obj/end_maps.o
+OBJS = obj/cube.o obj/turn.o obj/cube_nums.o obj/cubeSolver.o obj/turn_tables.o obj/end_maps.o obj/cubeEncoder.o
 TEST_OBJS = $(OBJS) obj/cube-test.o $(TEST_OBJ)/gtest_main.a
 SRC_PATH = src
 TEST_PATH = test
 GTEST_DIR = /usr/src/gtest/googletest
 
-SOLVER_OBJS = obj/cube.o obj/turn.o obj/cube_nums.o obj/cubeSolver.o
+SOLVER_OBJS = obj/cube.o obj/turn.o obj/cube_nums.o obj/cubeSolver.o obj/cubeEncoder.o
 TEST_OBJS = $(OBJS) obj/turn_tables.o obj/end_maps.o obj/cube-test.o $(TEST_OBJ)/gtest_main.a
 
 
@@ -57,6 +57,10 @@ again: clean all
 #######################################
 
 obj/cube.o: $(SRC_PATH)/cube.cpp $(SRC_PATH)/cube.h
+	@mkdir -p $(@D)
+	$(CXX) -c $(CXXFLAGS) $< -o $@
+
+obj/cubeEncoder.o: $(SRC_PATH)/cubeEncoder.cpp $(SRC_PATH)/cubeEncoder.h
 	@mkdir -p $(@D)
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
