@@ -26,27 +26,28 @@ public:
 
 	/// Some useful constants
 	static const int NUM_EDGES = 12;
-	static const int NUM_CORNERS = 8;	
+	static const int NUM_CORNERS = 8;
+	static const int EDGES_PER_FACE = 4;
+	static const int CORNERS_PER_FACE = 4;
+		
 
-	/// vectors containing numbers that correspond to faces
-	static const Edge_t FRONT_EDGES[4];
-	static const Edge_t RIGHT_EDGES[4];
-	static const Edge_t LEFT_EDGES[4];
-	static const Edge_t BACK_EDGES[4];
-	static const Edge_t UP_EDGES[4];
-	static const Edge_t DOWN_EDGES[4];
+	/// arrays containing numbers that correspond to faces
+	static const Edge_t FRONT_EDGES[EDGES_PER_FACE];
+	static const Edge_t RIGHT_EDGES[EDGES_PER_FACE];
+	static const Edge_t LEFT_EDGES[EDGES_PER_FACE];
+	static const Edge_t BACK_EDGES[EDGES_PER_FACE];
+	static const Edge_t UP_EDGES[EDGES_PER_FACE];
+	static const Edge_t DOWN_EDGES[EDGES_PER_FACE];
 
-	static const Corner_t FRONT_CORNERS[4];
-	static const Corner_t RIGHT_CORNERS[4];
-	static const Corner_t LEFT_CORNERS[4];
-	static const Corner_t BACK_CORNERS[4];
-	static const Corner_t UP_CORNERS[4];
-	static const Corner_t DOWN_CORNERS[4];
+	static const Corner_t FRONT_CORNERS[CORNERS_PER_FACE];
+	static const Corner_t RIGHT_CORNERS[CORNERS_PER_FACE];
+	static const Corner_t LEFT_CORNERS[CORNERS_PER_FACE];
+	static const Corner_t BACK_CORNERS[CORNERS_PER_FACE];
+	static const Corner_t UP_CORNERS[CORNERS_PER_FACE];
+	static const Corner_t DOWN_CORNERS[CORNERS_PER_FACE];
 
-	/// Vectors corresponding to specific edge orbits
-	static const Edge_t UD_SLICE[4];
-	static const Edge_t FB_SLICE[4];
-	static const Edge_t LR_SLICE[4];
+	/// The four edges in the left-right slice (meridian of the cube)
+	static const Edge_t LR_SLICE[EDGES_PER_FACE];
 
 	///////// Constructors //////////
 
@@ -55,8 +56,8 @@ public:
 
 	/// Four-argument parameterized constructor.  Constructs a cube
 	/// out of edgeColors, edgeOrients, cornerColors, and cornerOrients
-	Cube(Edge_t eColors[12], int eOrients[12],
-		Corner_t cColors[8], int cOrients[8]);
+	Cube(Edge_t eColors[NUM_EDGES], int eOrients[NUM_EDGES],
+		Corner_t cColors[NUM_CORNERS], int cOrients[NUM_CORNERS]);
 
 	Cube(const Cube& rhs) = default;
 
@@ -67,7 +68,7 @@ public:
 	/// Prints the cube in the form edgeColors, edgeOrients, cornerColors, cornerOrients
 	void print() const;
 
-
+	/// Returns true if this is a solved cube
 	bool isSolved();
 
 	
@@ -85,9 +86,9 @@ public:
 	*/
 
 	static Cube turn(Cube cube, MoveInstruction mi);
-	void turnRightOrLeft(const Edge_t edges[4], const Corner_t corners[4]);
-	void turnFrontOrBack(const Edge_t edges[4], const Corner_t corners[4]);
-	void turnUpOrDown(const Edge_t edges[4], const Corner_t corners[4]);
+	void turnRightOrLeft(const Edge_t edges[EDGES_PER_FACE], const Corner_t corners[CORNERS_PER_FACE]);
+	void turnFrontOrBack(const Edge_t edges[EDGES_PER_FACE], const Corner_t corners[CORNERS_PER_FACE]);
+	void turnUpOrDown(const Edge_t edges[EDGES_PER_FACE], const Corner_t corners[CORNERS_PER_FACE]);
 
 	void turn2(MoveInstruction mi);
 	void turnI(MoveInstruction mi);
@@ -141,7 +142,7 @@ private:
 	* \fn		turn
 	* \brief	Calls forwardCycle on the data members of Cube.
 	*/
-	void turnCubies(const Edge_t edges[4], const Corner_t corners[4]);
+	void turnCubies(const Edge_t edges[EDGES_PER_FACE], const Corner_t corners[CORNERS_PER_FACE]);
 
 	
 
@@ -173,7 +174,7 @@ private:
 	* \brief	Inverts the orientation of the edges at a given face.
 	* \details	Used in the turning methods up and down.
 	*/
-	void orientEdges(const Edge_t edges[4]);
+	void orientEdges(const Edge_t edges[EDGES_PER_FACE]);
 
 	/**
 	* \fn		orientCorners
@@ -182,7 +183,7 @@ private:
 	*			the orientations for respective pieces changes in the same way for
 	*			each of these turns.
 	*/
-	void orientCorners(const Corner_t corners[4]);
+	void orientCorners(const Corner_t corners[CORNERS_PER_FACE]);
 
 	/**
 	* \fn		turn2
@@ -195,10 +196,10 @@ private:
 
 
 	/// data members set to a solved cube.
-	Edge_t edgeColors_[12] = {YB, YR, YO, YG, RB, OB, RG, OG, WB, WR, WO, WG };	///< Numbers represent colors (see table of consts above)
-	int edgeOrients_[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };  ///< 0 is oriented, 1 is unoriented
-	Corner_t cornerColors_[8] = { YRB, YOB, YRG, YOG, WRB, WOB, WRG, WOG };	///< Numbers represent colors (see table of consts above)
-	int cornerOrients_[8] = { 0,0,0,0,0,0,0,0 };	///< 0 is oriented, 1 is clockwise, 2 is counterclockwise
+	Edge_t edgeColors_[NUM_EDGES] = {YB, YR, YO, YG, RB, OB, RG, OG, WB, WR, WO, WG };	///< Numbers represent colors (see table of consts above)
+	int edgeOrients_[NUM_EDGES] = { 0,0,0,0,0,0,0,0,0,0,0,0 };  ///< 0 is oriented, 1 is unoriented
+	Corner_t cornerColors_[NUM_CORNERS] = { YRB, YOB, YRG, YOG, WRB, WOB, WRG, WOG };	///< Numbers represent colors (see table of consts above)
+	int cornerOrients_[NUM_CORNERS] = { 0,0,0,0,0,0,0,0 };	///< 0 is oriented, 1 is clockwise, 2 is counterclockwise
 
 }; // end class Cube
 

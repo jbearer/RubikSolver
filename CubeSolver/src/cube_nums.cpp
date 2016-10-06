@@ -28,13 +28,13 @@ CubeNumsStep2::CubeNumsStep2() : // initialize with solved cube
 CubeNumsStep1::CubeNumsStep1(ushort in1, ushort in2, ushort in3) :
 	edgeOrients_{ in1 }, cornerOrients_{ in2 }, edgeOrbits_{ in3 }
 {
-	// NOTHING TO DO
+	// nothing to do
 }
 
 CubeNumsStep2::CubeNumsStep2(ushort in1, ushort in2, ushort in3) :
 	cornerColors_{ in1 }, edgeColors1_{ in2 }, edgeColors2_{ in3 }
 {
-	// NOTHING TO DO
+	// nothing to do
 }
 
 CubeNumsStep1::CubeNumsStep1(const Cube& cube) :

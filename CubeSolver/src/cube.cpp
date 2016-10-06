@@ -41,9 +41,6 @@ const Cube::Corner_t Cube::DOWN_CORNERS[4] = { WRG, WOG, WOB, WRB };
 
 // Corresponding edges in the slices
 const Cube::Edge_t Cube::LR_SLICE[4] = { YB, YG, WB, WG };
-const Cube::Edge_t Cube::FB_SLICE[4] = { YR, YO, WR, WO };
-const Cube::Edge_t Cube::UD_SLICE[4] = { RB, OB, RG, OG };
-
 
 // Cube constructor
 Cube::Cube(Edge_t edgeColors[NUM_EDGES], int edgeOrients[NUM_EDGES],
