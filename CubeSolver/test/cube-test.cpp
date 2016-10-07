@@ -6,6 +6,8 @@
 #include <ctime>
 #include <iostream>
 #include <cstdlib>
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics.hpp>
 
 using CubeSolver::Cube;
 using std::cout;
@@ -13,6 +15,7 @@ using std::endl;
 
 using namespace CubeSolver;
 using namespace CommProtocol;
+using namespace boost::accumulators;
 
 const std::string ENDMAP_SMALL_PATH = "ser/endMap_small.ser";
 const std::string ENDMAP_BIG_PATH = "ser/endMap_big.ser";
@@ -289,6 +292,16 @@ TEST_F(CubeSolverTest, find_and_lookup_path)
 	ASSERT_TRUE(cube.isSolved());
 }
 
+void calculateStats(std::vector<double> vec, double& max, double& avg, double& stdev)
+{
+	accumulator_set<double, stats<tag::variance>> acc;
+  	for_each(vec.begin(), vec.end(), std::ref(acc));
+
+  	max = *std::max_element(vec.begin(), vec.end());
+  	avg = mean(acc);
+  	stdev = std::sqrt(variance(acc));
+}
+
 TEST(CubeSolverPerf, performance)
 {
 	readTurnTables();
@@ -296,15 +309,13 @@ TEST(CubeSolverPerf, performance)
 	int NUM_TRIALS = 500;
 	int MANEUVER_SIZE = 100;
 
+	std::vector<double> timeVec;
+	std::vector<double> numTurnsVec;
+
 	EndMap1* endMap1_big;
 	EndMap2* endMap2_big;
 
 	readEndMaps(ENDMAP_BIG_PATH, endMap1_big, endMap2_big);
-
-	clock_t t;
-	t = clock();
-
-	float maxTime = 0;
 
 	for (int i = 0; i < NUM_TRIALS; ++i) {
 
@@ -314,27 +325,44 @@ TEST(CubeSolverPerf, performance)
 			cube = Cube::turn(cube, randomTurn1());
 		}
 
-
 		// time each individual solve
 		clock_t cubeTime;
 		cubeTime = clock();
 		
-		solve(cube, endMap1_big, endMap2_big);
-		
-		EXPECT_TRUE(cube.isSolved());
+		std::vector<Turn> turns = solve(cube, endMap1_big, endMap2_big);
+		for (auto t : turns)
+			cout << t << " ";
+		cout << endl;
 
 		cubeTime = clock() - cubeTime;
-		if (float(cubeTime) / CLOCKS_PER_SEC > maxTime) {
-			maxTime = float(cubeTime) / CLOCKS_PER_SEC;
-		}
-		cout << ".";
+
+		timeVec.push_back((float) cubeTime / CLOCKS_PER_SEC);
+		numTurnsVec.push_back((float) turns.size());
+
+		EXPECT_TRUE(cube.isSolved());
 
 	}
 
-	t = clock() - t;
+	cout << endl;
 
-	cout << endl << "max time: " << maxTime << endl;
-	cout << "average time: " << ((float)t / CLOCKS_PER_SEC) / NUM_TRIALS << endl;
+	double max = 0;
+	double mean = 0;
+	double stdev = 0;
+
+	// Calculate stats for how long the solve takes
+	calculateStats(timeVec, max, mean, stdev);
+
+	cout << "max time: " << max << endl;
+	cout << "average time: " << mean << endl;
+	cout << "stdev time: " << stdev << endl;
+
+	// Calculate stats for the number of turns
+	calculateStats(numTurnsVec, max, mean, stdev);
+
+	cout << "max turns: " << max << endl;
+	cout << "average turns: " << mean << endl;
+	cout << "stdev turns: " << stdev << endl;
+
 
 	delete endMap1_big;
 	delete endMap2_big;

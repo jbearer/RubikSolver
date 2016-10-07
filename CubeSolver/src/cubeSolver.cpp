@@ -183,22 +183,23 @@ std::deque<Move> CubeSolver::turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endM
 
 std::vector<MoveInstruction> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2)
 {
+	std::vector<MoveInstruction> allTurns;
+
 	std::deque<Move> firstTurns = solveStep1DFS(cube, endMap1);
 
 	// apply turns found in first turns
-	
 	for (auto turn : firstTurns) {
 		cube = Cube::turn(cube, turn);
+		allTurns.push_back(turn);
 	}
 	std::deque<Move> lastTurns = solveStep2DFS(cube, endMap2);
 	
 	for (auto turn : lastTurns) {
 		cube = Cube::turn(cube, turn);
+		allTurns.push_back(turn);
 	}
-
-	std::vector<MoveInstruction> instructions;	
-
-	return instructions;
+	
+	return allTurns;
 }
 
 //TODO: get rid of this

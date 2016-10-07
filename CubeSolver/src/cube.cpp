@@ -2,17 +2,11 @@
 * \file cube.cpp
 */
 
+#include <iostream>
 #include "cube.h"
 
-#include <utility>
-#include <iostream>
-#include <boost/math/special_functions/binomial.hpp>
-
-using boost::math::binomial_coefficient;
-using boost::math::factorial;
 using std::cout;
 using std::endl;
-
 
 using namespace CommProtocol;
 using namespace CubeSolver;

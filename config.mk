@@ -53,7 +53,7 @@ ARDINCL = -I$(AVR_PATH)/cores/arduino -I$(AVR_PATH)/variants/$(PIN_LAYOUT)
 
 DEBUG = true
 
-OPTIMIZATION = 0
+OPTIMIZATION = 2
 
 STD = c++11
 
