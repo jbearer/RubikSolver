@@ -4,21 +4,23 @@
 * \file turn.h
 */
 
-#include <string>
-#include <vector>
-#include <map>
 #include <iostream>
-
 #include "../../MotorControl/src/arduino-incl/comm-protocol.h"
 
 namespace CubeSolver {
 
-const int NUM_TURNS_STEP1 = 12;
-const int NUM_TURNS_STEP2 = 8;
+	
 
-CommProtocol::MoveInstruction oppMove(CommProtocol::MoveInstruction mi);
-std::ostream& operator<<(std::ostream& out, CommProtocol::MoveInstruction mi);
+	typedef CommProtocol::MoveInstruction Turn;
 
+	/**
+	* \fn 		oppTurn
+	* \detail	Returns the inverse Turn
+	*			For example oppTurn(FRONT) = FRONT_INVERTED
+	*			and oppTurn(FRONT_2) = FRONT_2
+	*/
+	Turn oppTurn(Turn turn);
 
-
-} // end namespace CubeSolver
+	/// Prints on the Turn in standard notation
+	std::ostream& operator<<(std::ostream& out, Turn turn);
+}

@@ -9,13 +9,34 @@
 
 #include "turn.h"
 
-using CommProtocol::MoveInstruction;
-
 using namespace boost::assign;
 using namespace CommProtocol;
 using namespace CubeSolver;
 
-std::map<MoveInstruction, std::string> turnToString = map_list_of
+std::map<Turn, Turn> turnToOppTurn = map_list_of
+	(FRONT, FRONT_INVERTED)
+	(RIGHT, RIGHT_INVERTED)
+	(BACK, BACK_INVERTED)
+	(LEFT, LEFT_INVERTED)
+	(UP, UP_INVERTED)
+	(DOWN, DOWN_INVERTED)
+	(FRONT_INVERTED, FRONT)
+	(RIGHT_INVERTED, RIGHT)
+	(BACK_INVERTED, BACK)
+	(LEFT_INVERTED, LEFT)
+	(UP_INVERTED, UP)
+	(DOWN_INVERTED, DOWN);
+
+Turn CubeSolver::oppTurn(Turn turn)
+{
+	if (turnToOppTurn.count(turn) > 0)
+		return turnToOppTurn[turn];
+	else
+		// Turn is its own inverse (e.g. FRONT_2)
+		return turn;
+}
+
+std::map<Turn, std::string> turnToString = map_list_of
 	(FRONT, "F")
 	(RIGHT, "R")
 	(BACK, "B")
@@ -35,33 +56,12 @@ std::map<MoveInstruction, std::string> turnToString = map_list_of
 	(UP_INVERTED, "U'")
 	(DOWN_INVERTED, "D'");
 
-std::map<MoveInstruction, MoveInstruction> moveToOppMove = map_list_of
-	(FRONT, FRONT_INVERTED)
-	(RIGHT, RIGHT_INVERTED)
-	(BACK, BACK_INVERTED)
-	(LEFT, LEFT_INVERTED)
-	(UP, UP_INVERTED)
-	(DOWN, DOWN_INVERTED)
-	(FRONT_INVERTED, FRONT)
-	(RIGHT_INVERTED, RIGHT)
-	(BACK_INVERTED, BACK)
-	(LEFT_INVERTED, LEFT)
-	(UP_INVERTED, UP)
-	(DOWN_INVERTED, DOWN);
-
-std::ostream& CubeSolver::operator<<(std::ostream& out, MoveInstruction mi)
+std::ostream& CubeSolver::operator<<(std::ostream& out, Turn turn)
 {
-	out << turnToString[mi] << " ";
+	out << turnToString[turn] << " ";
 	return out;
 }
 
-MoveInstruction CubeSolver::oppMove(MoveInstruction mi)
-{
-	if (moveToOppMove.count(mi) > 0)
-		return moveToOppMove[mi];
-	else
-		// MoveInstruction is its own inverse (e.g. FRONT_2)
-		return mi;
-}
+
 
 

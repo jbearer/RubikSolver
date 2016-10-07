@@ -29,12 +29,12 @@ int MAP_SIZE_BIG = 10000000;
 
 Move randomTurn1() {
 	int i = rand() % NUM_TURNS_STEP1;
-	return OK_TURNS1[i];		
+	return TURNS_STEP1[i];		
 }
 
 Move randomTurn2() {
 	int i = rand() % NUM_TURNS_STEP2;
-	return OK_TURNS2[i];		
+	return TURNS_STEP2[i];		
 }
 
 Cube scramble(std::vector<MoveInstruction> turns)
@@ -114,7 +114,7 @@ TEST_F(CubeTest, cube_nums)
 
 	CubeNumsStep1 cubeNums1 = CubeNumsStep1(cube);
 	for (int i = 0; i < NUM_TURNS_STEP1; ++i) {
-		Cube newCube = Cube::turn(cube, OK_TURNS1[i]);
+		Cube newCube = Cube::turn(cube, TURNS_STEP1[i]);
 		CubeNumsStep1 newCubeNums1 = CubeNumsStep1(newCube);
 		
 		EXPECT_TRUE(newCubeNums1 == cubeNums1.turn(i));
@@ -122,7 +122,7 @@ TEST_F(CubeTest, cube_nums)
 
 	CubeNumsStep2 cubeNums2 = CubeNumsStep2(cube);
 	for (int i = 0; i < NUM_TURNS_STEP2; ++i) {
-		Cube newCube = Cube::turn(cube, OK_TURNS2[i]);
+		Cube newCube = Cube::turn(cube, TURNS_STEP2[i]);
 		CubeNumsStep2 newCubeNums2 = CubeNumsStep2(newCube);
 		
 		EXPECT_TRUE(newCubeNums2 == cubeNums2.turn(i));

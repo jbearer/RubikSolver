@@ -10,37 +10,38 @@
 
 using boost::math::binomial_coefficient;
 using boost::math::factorial;
+using std::cout;
+using std::endl;
+
 
 using namespace CommProtocol;
 using namespace CubeSolver;
 
-MoveInstruction CubeSolver::OK_TURNS1[NUM_TURNS_STEP1] = {
+Turn CubeSolver::TURNS_STEP1[NUM_TURNS_STEP1] = {
 	FRONT, RIGHT, BACK, LEFT, UP, DOWN, 
 	FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
 	LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED };
 
-MoveInstruction CubeSolver::OK_TURNS2[NUM_TURNS_STEP2] = {
+Turn CubeSolver::TURNS_STEP2[NUM_TURNS_STEP2] = {
 	FRONT_2, RIGHT, BACK_2, LEFT, UP_2, DOWN_2, 
 	RIGHT_INVERTED, LEFT_INVERTED };
 
 
 // Vectors containing enums that correspond to faces
-const Cube::Edge_t Cube::FRONT_EDGES[4] = { YG, OG, WG, RG };
-const Cube::Edge_t Cube::RIGHT_EDGES[4] = { YO, OB, WO, OG };
-const Cube::Edge_t Cube::BACK_EDGES[4] = { YB, RB, WB, OB };
-const Cube::Edge_t Cube::LEFT_EDGES[4] = { YR, RG, WR, RB };
-const Cube::Edge_t Cube::UP_EDGES[4] = { YB, YO, YG, YR };
-const Cube::Edge_t Cube::DOWN_EDGES[4] = { WG, WO, WB, WR };
+const Cube::Edge_t Cube::FRONT_EDGES[EDGES_PER_FACE] = { YG, OG, WG, RG };
+const Cube::Edge_t Cube::RIGHT_EDGES[EDGES_PER_FACE] = { YO, OB, WO, OG };
+const Cube::Edge_t Cube::BACK_EDGES[EDGES_PER_FACE] = { YB, RB, WB, OB };
+const Cube::Edge_t Cube::LEFT_EDGES[EDGES_PER_FACE] = { YR, RG, WR, RB };
+const Cube::Edge_t Cube::UP_EDGES[EDGES_PER_FACE] = { YB, YO, YG, YR };
+const Cube::Edge_t Cube::DOWN_EDGES[EDGES_PER_FACE] = { WG, WO, WB, WR };
 
-const Cube::Corner_t Cube::FRONT_CORNERS[4] = { YRG, YOG, WOG, WRG };
-const Cube::Corner_t Cube::RIGHT_CORNERS[4] = { YOG, YOB, WOB, WOG };
-const Cube::Corner_t Cube::BACK_CORNERS[4] = { YOB, YRB, WRB, WOB };
-const Cube::Corner_t Cube::LEFT_CORNERS[4] = { YRB, YRG, WRG, WRB };
-const Cube::Corner_t Cube::UP_CORNERS[4] = { YRB, YOB, YOG, YRG };
-const Cube::Corner_t Cube::DOWN_CORNERS[4] = { WRG, WOG, WOB, WRB };
+const Cube::Corner_t Cube::FRONT_CORNERS[CORNERS_PER_FACE] = { YRG, YOG, WOG, WRG };
+const Cube::Corner_t Cube::RIGHT_CORNERS[CORNERS_PER_FACE] = { YOG, YOB, WOB, WOG };
+const Cube::Corner_t Cube::BACK_CORNERS[CORNERS_PER_FACE] = { YOB, YRB, WRB, WOB };
+const Cube::Corner_t Cube::LEFT_CORNERS[CORNERS_PER_FACE] = { YRB, YRG, WRG, WRB };
+const Cube::Corner_t Cube::UP_CORNERS[CORNERS_PER_FACE] = { YRB, YOB, YOG, YRG };
+const Cube::Corner_t Cube::DOWN_CORNERS[CORNERS_PER_FACE] = { WRG, WOG, WOB, WRB };
 
-// Corresponding edges in the slices
-const Cube::Edge_t Cube::LR_SLICE[4] = { YB, YG, WB, WG };
 
 // Cube constructor
 Cube::Cube(Edge_t edgeColors[NUM_EDGES], int edgeOrients[NUM_EDGES],
@@ -76,24 +77,26 @@ bool Cube::operator!=(const Cube& rhs)
 	return !(*this == rhs);
 }
 
-void Cube::print() const
+std::ostream& CubeSolver::operator<<(std::ostream& out, const Cube& cube)
 {
-	std::cout << "//// EDGES ////" << std::endl;
+	out << "//// EDGES ////" << endl;
 
-	for (size_t i = 0; i < NUM_EDGES; ++i) {
-		std::cout << edgeColors_[i] << "   ";
-		std::cout << edgeOrients_[i] << std::endl;
+	for (size_t i = 0; i < Cube::NUM_EDGES; ++i) {
+		out << cube.edgeColors_[i] << "   ";
+		out << cube.edgeOrients_[i] << endl;
 
 	}
-	std::cout << std::endl;
+	out << endl;
 
-	std::cout << " /// CORNERS ////" << std::endl;
-	for (size_t i = 0; i < NUM_CORNERS; ++i) {
-		std::cout << cornerColors_[i] << "   ";
-		std::cout << cornerOrients_[i] << std::endl;
+	out << " /// CORNERS ////" << endl;
+	for (size_t i = 0; i < Cube::NUM_CORNERS; ++i) {
+		out << cube.cornerColors_[i] << "   ";
+		out << cube.cornerOrients_[i] << endl;
 	}
 
-	std::cout << std::endl << std::endl;
+	out << endl << endl;
+
+	return out;
 }
 
 bool Cube::isSolved()
@@ -102,15 +105,9 @@ bool Cube::isSolved()
 	return *this == solvedCube;
 }
 
-/*
-Cube Cube::turnWith(Turn inputTurn)
-{
-	return turn(*this, inputTurn.repr);
-}
-*/
 
-Cube Cube::turn(Cube cube, MoveInstruction mi) {
-	switch (mi) {
+Cube Cube::turn(Cube cube, Turn inputTurn) {
+	switch (inputTurn) {
 		case FRONT: cube.turnFrontOrBack(FRONT_EDGES, FRONT_CORNERS); 
 			break;
 		case RIGHT: cube.turnRightOrLeft(RIGHT_EDGES, RIGHT_CORNERS); 
@@ -156,38 +153,41 @@ Cube Cube::turn(Cube cube, MoveInstruction mi) {
 	return cube;
 }
 
-void Cube::turn2(MoveInstruction mi)
+void Cube::turn2(Turn inputTurn)
 {
-	*this = turn(*this, mi);
-	*this = turn(*this, mi);
+	*this = turn(*this, inputTurn);
+	*this = turn(*this, inputTurn);
 }
 
-void Cube::turnI(MoveInstruction mi)
+void Cube::turnI(Turn inputTurn)
 {
-	*this = turn(*this, mi);
-	*this = turn(*this, mi);
-	*this = turn(*this, mi);
+	for (size_t i = 0; i < 3; ++i)
+		*this = turn(*this, inputTurn);
 }
 
-void Cube::turnFrontOrBack(const Edge_t edges[4], const Corner_t corners[4])
+void Cube::turnFrontOrBack(const Edge_t edges[EDGES_PER_FACE],
+						   const Corner_t corners[CORNERS_PER_FACE])
 {
 	turnCubies(edges, corners);
 	orientCorners(corners);
 }
 
-void Cube::turnRightOrLeft(const Edge_t edges[4], const Corner_t corners[4])
+void Cube::turnRightOrLeft(const Edge_t edges[EDGES_PER_FACE],
+						   const Corner_t corners[CORNERS_PER_FACE])
 {
 	turnCubies(edges, corners);
 }
 
-void Cube::turnUpOrDown(const Edge_t edges[4], const Corner_t corners[4])
+void Cube::turnUpOrDown(const Edge_t edges[EDGES_PER_FACE],
+						const Corner_t corners[CORNERS_PER_FACE])
 {
 	turnCubies(edges, corners);
 	orientEdges(edges);
 	orientCorners(corners);
 }
 
-void Cube::turnCubies(const Edge_t faceEdges[4], const Corner_t faceCorners[4])
+void Cube::turnCubies(const Edge_t faceEdges[EDGES_PER_FACE],
+					  const Corner_t faceCorners[CORNERS_PER_FACE])
 {
 	forwardCycle(faceEdges, edgeColors_);
 	forwardCycle(faceEdges, edgeOrients_);
@@ -206,15 +206,15 @@ void Cube::forwardCycle(const Index_t positions[4], Cubie_t* cubies)
 	cubies[positions[0]] = temp;
 }
 
-void Cube::orientEdges(const Edge_t edges[4])
+void Cube::orientEdges(const Edge_t pos[EDGES_PER_FACE])
 {
 	// edge orientations are changed identically (wrt the face) for U,D,U',D'
-	for (int i = 0; i < 4; ++i) {
-		edgeOrients_[edges[i]] = !edgeOrients_[edges[i]];
+	for (int i = 0; i < EDGES_PER_FACE; ++i) {
+		edgeOrients_[pos[i]] = !edgeOrients_[pos[i]];
 	}
 }
 
-void Cube::orientCorners(const Corner_t pos[4])
+void Cube::orientCorners(const Corner_t pos[CORNERS_PER_FACE])
 {
 	// corner orientations also change the same for U,D,U',D',L,R,L',R'
 	cornerOrients_[pos[0]] = (cornerOrients_[pos[0]] + 1) % 3;

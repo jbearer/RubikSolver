@@ -10,6 +10,7 @@
 
 using namespace CubeSolver;
 
+using CommProtocol::MoveInstruction;
 using std::cout;
 using std::endl;
 
@@ -105,7 +106,7 @@ std::queue<CubeNumsStep1> CubeSolver::buildMap1(size_t mapSize)
 				cubeQueue.push(turnedCube);
 
 				// Push back the inverse of the turn used to get there
-				MAKE_STEP1MAP[turnedCube] = oppMove(OK_TURNS1[j]);
+				MAKE_STEP1MAP[turnedCube] = oppTurn(TURNS_STEP1[j]);
 
 				// To show the map loading...
 				if (MAKE_STEP1MAP.size() % (mapSize / 10) == 0) {
@@ -123,7 +124,7 @@ void CubeSolver::buildMap2(size_t mapSize)
 	// ensure tables have been initialized
 	//assert(EDGE_COLORS_TABLE2[3000][3] == 13466);
 
-	//size_t MAP2SIZE = 5000;	// MUST BE GREATER THAN OK_TURNS2!!!
+	//size_t MAP2SIZE = 5000;	// MUST BE GREATER THAN TURNS_STEP2!!!
 
 	Cube solvedCube;
 	CubeNumsStep2 solvedCubeNums;
@@ -148,7 +149,7 @@ void CubeSolver::buildMap2(size_t mapSize)
 				cubeQueue.push(turnedCube);
 				
 				// Add this list of moves to the hash tables
-				MAKE_STEP2MAP[turnedCube] = oppMove(OK_TURNS2[j]);
+				MAKE_STEP2MAP[turnedCube] = oppTurn(TURNS_STEP2[j]);
 				
 				// To show the map loading...
 				if (MAKE_STEP2MAP.size() % (mapSize / 10) == 0) {

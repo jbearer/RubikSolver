@@ -67,7 +67,7 @@ bool CubeSolver::solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1*
 			CubeNumsStep1 turned = curr.turn(i);
 			// cube found: push back current move and return true
 			if (solveStep1Helper(depth - 1, turned, endMap1, result)) {
-				Move currTurn = OK_TURNS1[i];
+				Move currTurn = TURNS_STEP1[i];
 
 				result.push_front(currTurn);
 				return true;
@@ -128,7 +128,7 @@ bool CubeSolver::solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2*
 
 			// cube found: push back current move and return true
 			if (solveStep2Helper(depth - 1, turnedCube, endMap2, result)) {
-				Move currTurn = OK_TURNS2[i];
+				Move currTurn = TURNS_STEP2[i];
 
 				result.push_front(currTurn);
 				return true;
