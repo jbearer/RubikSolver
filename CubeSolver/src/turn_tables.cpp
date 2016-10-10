@@ -141,7 +141,6 @@ void CubeSolver::buildEdgeOrbitsTable()
 	}
 */
 	CubeEncoder::setFirstEdgeOrbits(cube);
-
 	do {
 		int currCode = CubeEncoder::edgeOrbitsCode(cube);
 
@@ -152,7 +151,6 @@ void CubeSolver::buildEdgeOrbitsTable()
 			TurnTables::EDGE_ORBITS_TABLE[currCode][j] = CubeEncoder::edgeOrbitsCode(newCube);
 		}
 	} while (CubeEncoder::nextEdgeOrbits(cube));
-
 	// debugging to make sure it iterated through edges correctly
 	//for (int i = 0; i < Cube::NUM_EDGES; ++i) {
 	//	assert(cube.edgeColors_[i] == newEdgeColors[i]);

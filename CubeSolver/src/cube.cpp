@@ -37,7 +37,6 @@ const Cube::Corner_t Cube::UP_CORNERS[CORNERS_PER_FACE] = { YRB, YOB, YOG, YRG }
 const Cube::Corner_t Cube::DOWN_CORNERS[CORNERS_PER_FACE] = { WRG, WOG, WOB, WRB };
 
 
-// Cube constructor
 Cube::Cube(Edge_t edgeColors[NUM_EDGES], int edgeOrients[NUM_EDGES],
 	Corner_t cornerColors[NUM_CORNERS], int cornerOrients[NUM_CORNERS])
 {
@@ -69,28 +68,6 @@ bool Cube::operator==(const Cube& rhs)
 bool Cube::operator!=(const Cube& rhs)
 {
 	return !(*this == rhs);
-}
-
-std::ostream& CubeSolver::operator<<(std::ostream& out, const Cube& cube)
-{
-	out << "//// EDGES ////" << endl;
-
-	for (size_t i = 0; i < Cube::NUM_EDGES; ++i) {
-		out << cube.edgeColors_[i] << "   ";
-		out << cube.edgeOrients_[i] << endl;
-
-	}
-	out << endl;
-
-	out << " /// CORNERS ////" << endl;
-	for (size_t i = 0; i < Cube::NUM_CORNERS; ++i) {
-		out << cube.cornerColors_[i] << "   ";
-		out << cube.cornerOrients_[i] << endl;
-	}
-
-	out << endl << endl;
-
-	return out;
 }
 
 bool Cube::isSolved()
@@ -216,3 +193,26 @@ void Cube::orientCorners(const Corner_t pos[CORNERS_PER_FACE])
 	cornerOrients_[pos[2]] = (cornerOrients_[pos[2]] + 1) % 3;
 	cornerOrients_[pos[3]] = (cornerOrients_[pos[3]] + 2) % 3;
 }
+
+std::ostream& CubeSolver::operator<<(std::ostream& out, const Cube& cube)
+{
+	out << "//// EDGES ////" << endl;
+
+	for (size_t i = 0; i < Cube::NUM_EDGES; ++i) {
+		out << cube.edgeColors_[i] << "   ";
+		out << cube.edgeOrients_[i] << endl;
+
+	}
+	out << endl;
+
+	out << " /// CORNERS ////" << endl;
+	for (size_t i = 0; i < Cube::NUM_CORNERS; ++i) {
+		out << cube.cornerColors_[i] << "   ";
+		out << cube.cornerOrients_[i] << endl;
+	}
+
+	out << endl << endl;
+
+	return out;
+}
+

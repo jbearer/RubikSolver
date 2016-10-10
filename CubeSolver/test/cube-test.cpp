@@ -307,7 +307,7 @@ TEST(CubeSolverPerf, performance)
 	readTurnTables();
 
 	int NUM_TRIALS = 500;
-	int MANEUVER_SIZE = 100;
+	int MANEUVER_SIZE = 300;
 
 	std::vector<double> timeVec;
 	std::vector<double> numTurnsVec;
@@ -345,9 +345,7 @@ TEST(CubeSolverPerf, performance)
 
 	cout << endl;
 
-	double max = 0;
-	double mean = 0;
-	double stdev = 0;
+	double max = 0, mean = 0, stdev = 0;
 
 	// Calculate stats for how long the solve takes
 	calculateStats(timeVec, max, mean, stdev);
