@@ -31,7 +31,7 @@ void CubeSolver::readTurnTables()
 	iarch >> TurnTables::EDGE_ORIENTS_TABLE;
 	iarch >> TurnTables::CORNER_ORIENTS_TABLE;
 	iarch >> TurnTables::EDGE_ORBITS_TABLE;
-	
+
 	// turn tables for step 2
 	iarch >> TurnTables::CORNER_COLORS_TABLE;
 	iarch >> TurnTables::EDGE_COLORS_TABLE1;
@@ -47,7 +47,7 @@ void CubeSolver::buildTurnTables()
 
 	cout << "building CORNER_ORIENTS_TABLE (2/6)" << endl;
 	buildCornerOrientsTable();
-	
+
 	cout << "building EDGE_ORBITS_TABLE (3/6)" << endl;
 	buildEdgeOrbitsTable();
 

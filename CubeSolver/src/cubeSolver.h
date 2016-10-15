@@ -1,26 +1,27 @@
 #pragma once
 
-/** cubeSovler.h
-* \brief	Contains methods to solve a Rubiks Cube
-* \details	Solves the cube in two steps.  First, does a iterative deepening DFS
+/**
+* @brief	Contains methods to solve a Rubiks Cube
+*
+* @details	Solves the cube in two steps.  First, does a iterative deepening DFS
 *			to "orient" the edges and corners.  Then uses a subset of the possible moves
 *			which preserve the orientations to place the pieces in the proper places,
 *			another iterative deepening DFS.
 */
+
+#include <vector>
+#include <unordered_map>
+#include <queue>
 
 #include "comm-protocol.h"
 #include "cube.h"
 #include "cubeEncoder.h"
 #include "turn.h"
 
-#include <vector>
-#include <unordered_map>
-#include <queue>
-
 namespace CubeSolver {
 
 
-
+/// Useful constants for generating Turn Tables
 const int NUM_EDGE_ORIENTS = 4096; // 2^12
 const int NUM_CORNER_ORIENTS = 6561; // 3^8
 const int NUM_CORNER_COLORS = 40320; // 8!
@@ -32,10 +33,18 @@ const int NUM_EDGE_COLORS2 = 40320; // 8!
 //// Cube nums/////////////////////
 ///////////////////////////////////
 
+/**
+ * @brief      Store a cube as a set of three shorts: edgeOrients,
+ * 			   cornerOrients, and edgeOrbits.  These three numbers do not
+ * 			   Uniquely identify a cube, but are sufficient to distinguish all
+ * 			   cubes during step one of the algorithm.  They are used to compute
+ * 			   turns more quickly (the results can be easily serialized) and
+ * 			   because they are smaller in memory.
+ */
 struct CubeNumsStep1 {
 	struct Hash;
 
-	// Constructors
+	/// Constructors: Default initialize to a solved cube.
 	CubeNumsStep1();
 	CubeNumsStep1(const Cube& cube);
 	CubeNumsStep1(ushort edgeOrients, ushort cornerOrients, ushort edgeOrbits);
@@ -49,14 +58,14 @@ struct CubeNumsStep1 {
 		size_t operator()(const CubeNumsStep1& cube) const;
 	};
 
-	/// serialize cubenums.  Unused attribute gets rid of compiler warnings
+	/// Serialize cubenums.  Unused attribute gets rid of compiler warnings
 	template<typename Archive>
 	void serialize(Archive& ar, const unsigned int version __attribute__((unused)))
 	{
 		ar & edgeOrients_ & cornerOrients_ & edgeOrbits_;
 	}
 
-	CubeNumsStep1 turn(int i) const;
+	static CubeNumsStep1 turn(const CubeNumsStep1& cube, int i);
 
 private:
 
@@ -65,9 +74,15 @@ private:
 	ushort edgeOrbits_;
 };
 
+/**
+ * @brief      Like CubeNumsStep1, store the cube as a set of three integers:
+ * 			   cornerColors, edgeColors1, and edgeColors2.  Uniquely determine a
+ * 			   cube for step 2.
+ */
 struct CubeNumsStep2{
 	struct Hash;
 
+	/// Default construct to a solved cube.
 	CubeNumsStep2();
 	CubeNumsStep2(const Cube& cube);
 	CubeNumsStep2(ushort cornerColors, ushort edgeColors1, ushort edgeColors2);
@@ -87,7 +102,7 @@ struct CubeNumsStep2{
 		ar & cornerColors_ & edgeColors1_ & edgeColors2_;
 	}
 
-	CubeNumsStep2 turn(int i) const;
+	static CubeNumsStep2 turn(const CubeNumsStep2& cube, int i);
 
 private:
 
@@ -100,7 +115,7 @@ private:
 typedef std::unordered_map<CubeNumsStep1, Turn, CubeNumsStep1::Hash> EndMap1;
 typedef std::unordered_map<CubeNumsStep2, Turn, CubeNumsStep2::Hash> EndMap2;
 
-// Solving:
+
 std::vector<Turn> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2);
 
 

@@ -69,7 +69,7 @@ void CubeSolver::archiveEndMaps(std::string pathToFile)
 	boost::archive::binary_oarchive oarch(os);
 
 	oarch << MAKE_STEP1MAP << MAKE_STEP2MAP;
-	
+
 	os.close();
 }
 
@@ -98,7 +98,7 @@ std::queue<CubeNumsStep1> CubeSolver::buildMap1(size_t mapSize)
 		// Loop through all the allowable turns in this step to use a breadth
 		// first search to generate all possible cubes
 		for (int j = 0; j < NUM_TURNS_STEP1; ++j) {
-			CubeNumsStep1 turnedCube = cube.turn(j);
+			CubeNumsStep1 turnedCube = CubeNumsStep1::turn(cube, j);
 
 			// only add if this cube has never been seen before
 			if (MAKE_STEP1MAP.count(turnedCube) == 0) {
@@ -141,7 +141,7 @@ void CubeSolver::buildMap2(size_t mapSize)
 		// Loop through all the allowable turns in this step to use a breadth
 		// first search to generate all possible cubes
 		for (int j = 0; j < NUM_TURNS_STEP2; ++j) {
-			CubeNumsStep2 turnedCube = cube.turn(j);
+			CubeNumsStep2 turnedCube = CubeNumsStep2::turn(cube, j);
 
 			// only add if this cube has never been seen before
 			if (MAKE_STEP2MAP.count(turnedCube) == 0) {

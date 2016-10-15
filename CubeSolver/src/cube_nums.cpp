@@ -1,12 +1,9 @@
-/**
-* \file cube_nums.cpp
-*/
-
 #include <iostream>
 
 #include "cubeSolver.h"
 
 using CubeSolver::Cube;
+using CommProtocol::MoveInstruction;
 
 using namespace CubeSolver;
 using namespace CubeSolver::TurnTables;
@@ -15,13 +12,13 @@ const std::string TURN_TABLES_PATH = "ser/turn_tables.ser";
 
 
 CubeNumsStep1::CubeNumsStep1() : // initialize with solved cube
-edgeOrients_{0}, cornerOrients_{0}, edgeOrbits_{105} //TODO: FIX EDGE ORBITS
+edgeOrients_{ 0 }, cornerOrients_{ 0 }, edgeOrbits_{ 105 }
 {
 	//	nothing to do
 }
 
 CubeNumsStep2::CubeNumsStep2() : // initialize with solved cube
-	cornerColors_{ 0 }, edgeColors1_{ 0 }, edgeColors2_{ 0 } //TODO: FIX EDGE ORBITS
+	cornerColors_{ 0 }, edgeColors1_{ 0 }, edgeColors2_{ 0 }
 {
 	//	nothing to do
 }
@@ -100,21 +97,20 @@ size_t CubeNumsStep2::Hash::operator()(const CubeNumsStep2& cube) const
 		cube.edgeColors2_ * NUM_CORNER_COLORS;
 }
 
-
-CubeNumsStep1 CubeNumsStep1::turn(int i) const
+CubeNumsStep1 CubeNumsStep1::turn(const CubeNumsStep1& cube, int i)
 {
 	return CubeNumsStep1(
-		TurnTables::EDGE_ORIENTS_TABLE[edgeOrients_][i],
-		TurnTables::CORNER_ORIENTS_TABLE[cornerOrients_][i],
-		TurnTables::EDGE_ORBITS_TABLE[edgeOrbits_][i]);
+		TurnTables::EDGE_ORIENTS_TABLE[cube.edgeOrients_][i],
+		TurnTables::CORNER_ORIENTS_TABLE[cube.cornerOrients_][i],
+		TurnTables::EDGE_ORBITS_TABLE[cube.edgeOrbits_][i]);
 }
 
-CubeNumsStep2 CubeNumsStep2::turn(int i) const
+CubeNumsStep2 CubeNumsStep2::turn(const CubeNumsStep2& cube, int i)
 {
 	return CubeNumsStep2(
-		TurnTables::CORNER_COLORS_TABLE[cornerColors_][i],
-		TurnTables::EDGE_COLORS_TABLE1[edgeColors1_][i],
-		TurnTables::EDGE_COLORS_TABLE2[edgeColors2_][i]);
+		TurnTables::CORNER_COLORS_TABLE[cube.cornerColors_][i],
+		TurnTables::EDGE_COLORS_TABLE1[cube.edgeColors1_][i],
+		TurnTables::EDGE_COLORS_TABLE2[cube.edgeColors2_][i]);
 }
 
 void CubeNumsStep1::print()
