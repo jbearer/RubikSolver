@@ -19,7 +19,7 @@ const std::string END_TABLES_PATH = "ser/end_maps.ser";
 std::unordered_map<CubeNumsStep1,
 	MoveInstruction,
 	CubeNumsStep1::Hash> MAKE_STEP1MAP;
-	
+
 std::unordered_map<CubeNumsStep2,
 	MoveInstruction,
 	CubeNumsStep2::Hash> MAKE_STEP2MAP;
@@ -80,7 +80,7 @@ std::queue<CubeNumsStep1> CubeSolver::buildMap1(size_t mapSize)
 
 	// ensure tables have been initialized
 	//assert(Cube::EDGE_COLORS_TABLE2[3000][3] == 13466);
-	
+
 	Cube solvedCube;
 	CubeNumsStep1 solvedCubeNums;
 
@@ -92,17 +92,17 @@ std::queue<CubeNumsStep1> CubeSolver::buildMap1(size_t mapSize)
 	while (MAKE_STEP1MAP.size() < mapSize) {
 		// Retrive the first cube nums and its corresponding moves
 		CubeNumsStep1 cube = cubeQueue.front();
-		
+
 		cubeQueue.pop();
-		
+
 		// Loop through all the allowable turns in this step to use a breadth
 		// first search to generate all possible cubes
 		for (int j = 0; j < NUM_TURNS_STEP1; ++j) {
 			CubeNumsStep1 turnedCube = cube.turn(j);
-			
+
 			// only add if this cube has never been seen before
 			if (MAKE_STEP1MAP.count(turnedCube) == 0) {
-				
+
 				cubeQueue.push(turnedCube);
 
 				// Push back the inverse of the turn used to get there
@@ -137,20 +137,20 @@ void CubeSolver::buildMap2(size_t mapSize)
 		// Retrive the first cube nums and its corresponding moves
 		CubeNumsStep2 cube = cubeQueue.front();
 		cubeQueue.pop();
-		
+
 		// Loop through all the allowable turns in this step to use a breadth
 		// first search to generate all possible cubes
 		for (int j = 0; j < NUM_TURNS_STEP2; ++j) {
 			CubeNumsStep2 turnedCube = cube.turn(j);
-			
+
 			// only add if this cube has never been seen before
 			if (MAKE_STEP2MAP.count(turnedCube) == 0) {
-				
+
 				cubeQueue.push(turnedCube);
-				
+
 				// Add this list of moves to the hash tables
 				MAKE_STEP2MAP[turnedCube] = oppTurn(TURNS_STEP2[j]);
-				
+
 				// To show the map loading...
 				if (MAKE_STEP2MAP.size() % (mapSize / 10) == 0) {
 					cout << ".";

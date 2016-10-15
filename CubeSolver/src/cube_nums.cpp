@@ -9,6 +9,7 @@
 using CubeSolver::Cube;
 
 using namespace CubeSolver;
+using namespace CubeSolver::TurnTables;
 
 const std::string TURN_TABLES_PATH = "ser/turn_tables.ser";
 

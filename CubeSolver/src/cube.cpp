@@ -12,12 +12,12 @@ using namespace CommProtocol;
 using namespace CubeSolver;
 
 Turn CubeSolver::TURNS_STEP1[NUM_TURNS_STEP1] = {
-	FRONT, RIGHT, BACK, LEFT, UP, DOWN, 
+	FRONT, RIGHT, BACK, LEFT, UP, DOWN,
 	FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
 	LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED };
 
 Turn CubeSolver::TURNS_STEP2[NUM_TURNS_STEP2] = {
-	FRONT_2, RIGHT, BACK_2, LEFT, UP_2, DOWN_2, 
+	FRONT_2, RIGHT, BACK_2, LEFT, UP_2, DOWN_2,
 	RIGHT_INVERTED, LEFT_INVERTED };
 
 
@@ -79,17 +79,17 @@ bool Cube::isSolved()
 
 Cube Cube::turn(Cube cube, Turn inputTurn) {
 	switch (inputTurn) {
-		case FRONT: cube.turnFrontOrBack(FRONT_EDGES, FRONT_CORNERS); 
+		case FRONT: cube.turnFrontOrBack(FRONT_EDGES, FRONT_CORNERS);
 			break;
-		case RIGHT: cube.turnRightOrLeft(RIGHT_EDGES, RIGHT_CORNERS); 
+		case RIGHT: cube.turnRightOrLeft(RIGHT_EDGES, RIGHT_CORNERS);
 			break;
-		case BACK: cube.turnFrontOrBack(BACK_EDGES, BACK_CORNERS); 
+		case BACK: cube.turnFrontOrBack(BACK_EDGES, BACK_CORNERS);
 			break;
-		case LEFT: cube.turnRightOrLeft(LEFT_EDGES, LEFT_CORNERS); 
+		case LEFT: cube.turnRightOrLeft(LEFT_EDGES, LEFT_CORNERS);
 			break;
-		case UP: cube.turnUpOrDown(UP_EDGES, UP_CORNERS); 
+		case UP: cube.turnUpOrDown(UP_EDGES, UP_CORNERS);
 			break;
-		case DOWN: cube.turnUpOrDown(DOWN_EDGES, DOWN_CORNERS); 
+		case DOWN: cube.turnUpOrDown(DOWN_EDGES, DOWN_CORNERS);
 			break;
 
 		case FRONT_2: cube.turn2(FRONT);
@@ -162,7 +162,7 @@ void Cube::turnCubies(const Edge_t faceEdges[EDGES_PER_FACE],
 {
 	forwardCycle(faceEdges, edgeColors_);
 	forwardCycle(faceEdges, edgeOrients_);
-	
+
 	forwardCycle(faceCorners, cornerColors_);
 	forwardCycle(faceCorners, cornerOrients_);
 }

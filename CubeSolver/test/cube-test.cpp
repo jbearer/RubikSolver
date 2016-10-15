@@ -21,7 +21,7 @@ const std::string ENDMAP_SMALL_PATH = "ser/endMap_small.ser";
 const std::string ENDMAP_BIG_PATH = "ser/endMap_big.ser";
 const std::string TURNTABLES_PATH = "ser/turnTables.ser";
 
-std::vector<Move> allTurns({
+std::vector<Turn> allTurns({
 		FRONT, RIGHT, BACK, LEFT, UP, DOWN,
 		FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
 		LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED
@@ -30,17 +30,17 @@ std::vector<Move> allTurns({
 int MAP_SIZE_SMALL = 5000;
 int MAP_SIZE_BIG = 10000000;
 
-Move randomTurn1() {
+Turn randomTurn1() {
 	int i = rand() % NUM_TURNS_STEP1;
 	return TURNS_STEP1[i];		
 }
 
-Move randomTurn2() {
+Turn randomTurn2() {
 	int i = rand() % NUM_TURNS_STEP2;
 	return TURNS_STEP2[i];		
 }
 
-Cube scramble(std::vector<MoveInstruction> turns)
+Cube scramble(std::vector<Turn> turns)
 {
 	Cube cube;
 
@@ -141,7 +141,7 @@ TEST_F(CubeTest, cube_nums_sequence1)
 	CubeNumsStep1 cubeNums;
 
 	for (size_t i = 0; i < numTurns; ++i) {
-		Move turn = randomTurn1();
+		Turn turn = randomTurn1();
 		cube = Cube::turn(cube, turn);
 		cubeNums = cubeNums.turn(getIndex1(turn));
 		ASSERT_EQ(CubeNumsStep1(cube), cubeNums) 
@@ -156,7 +156,7 @@ TEST_F(CubeTest, cube_nums_sequence2)
 	CubeNumsStep2 cubeNums;
 
 	for (size_t i = 0; i < numTurns; ++i) {
-		Move turn = randomTurn2();
+		Turn turn = randomTurn2();
 		cube = Cube::turn(cube, turn);
 		cubeNums = cubeNums.turn(getIndex2(turn));
 		ASSERT_EQ(CubeNumsStep2(cube), cubeNums) 

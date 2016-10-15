@@ -8,14 +8,36 @@ using std::endl;
 using namespace CubeSolver;
 using namespace CommProtocol;
 
+/** Find how many cycles it takes to make DRFBLU*/
+size_t cycleLength()
+{
+	// create a solved cube
+	Cube cube, solvedCube;
+
+	std::vector<Turn> turns = {FRONT_INVERTED, RIGHT_INVERTED, DOWN_INVERTED};
+	size_t num_cycles = 0;
+
+	do {
+		for (auto inputTurn : turns) {
+			cube = Cube::turn(cube, inputTurn);
+		}
+		++num_cycles;
+	} while (cube != solvedCube);
+
+	return num_cycles;
+}
+
 int main()
 {
+
+	std::cout << cycleLength() << std::endl;
+	/*
 	readTurnTables();
 	EndMap1* endMap1;
 	EndMap2* endMap2;
 
 	readEndMaps("ser/endMap_big.ser", endMap1, endMap2);
-	
+
 	std::vector<Move> allTurns({
 		FRONT, RIGHT, BACK, LEFT, UP, DOWN,
 		FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
@@ -53,11 +75,11 @@ int main()
 		// time each individual solve
 		clock_t cubeTime;
 		cubeTime = clock();
-		
+
 		cout << "d" << i << endl;
 
 		solve(cube, endMap1, endMap2);
-		
+
 		cout << "e" << i << endl;
 
 		cubeTime = clock() - cubeTime;
@@ -76,4 +98,5 @@ int main()
 
 	delete endMap1;
 	delete endMap2;
+	*/
 }
