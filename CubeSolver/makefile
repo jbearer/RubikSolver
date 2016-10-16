@@ -3,7 +3,7 @@ ROOT = ../
 include $(ROOT)config.mk
 
 INCL += -I$(ROOT)MotorControl/src/arduino-incl -Isrc -isystem $(GTEST_DIR)/include
-ARDINCL += 
+ARDINCL +=
 
 CXXFLAGS += $(INCL)
 ARDCXXFLAGS += $(ARDINCL)

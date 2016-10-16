@@ -113,10 +113,20 @@ CubeNumsStep2 CubeNumsStep2::turn(const CubeNumsStep2& cube, int i)
 		TurnTables::EDGE_COLORS_TABLE2[cube.edgeColors2_][i]);
 }
 
-void CubeNumsStep1::print()
+std::ostream& CubeSolver::operator<<(std::ostream& out, const CubeNumsStep1& cube)
 {
-	std::cout << edgeOrients_ << " ";
-	std::cout << cornerOrients_ << " ";
-	std::cout << edgeOrbits_ << std::endl;
+    out << cube.edgeOrients_ << " ";
+    out << cube.cornerOrients_ << " ";
+    out << cube.edgeOrbits_ << " ";
+
+    return out;
 }
 
+std::ostream& CubeSolver::operator<<(std::ostream& out, const CubeNumsStep2& cube)
+{
+    out << cube.cornerColors_ << " ";
+    out << cube.edgeColors1_ << " ";
+    out << cube.edgeColors2_ << " ";
+
+    return out;
+}

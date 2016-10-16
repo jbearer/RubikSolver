@@ -213,7 +213,7 @@ void CubeSolver::buildEdgeColorsTable2()
 	// Make lrSliceColors equal to LR_SLICE
 	//Edge_t fb_ud_colors[ORBIT_SIZE2] = { YR, YO, RB, OB, RG, OG, WR, WO };
 	//Edge_t currPermutation[ORBIT_SIZE2] = { YR, YO, RB, OB, RG, OG, WR, WO };
-	
+
 	do {
 		// set the edges in the LR_SLICE equal to the current permutation
 		//for (int i = 0; i < ORBIT_SIZE2; ++i) {

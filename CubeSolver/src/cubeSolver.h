@@ -68,11 +68,15 @@ struct CubeNumsStep1 {
 	static CubeNumsStep1 turn(const CubeNumsStep1& cube, int i);
 
 private:
+	friend std::ostream& operator<<(std::ostream& out, const CubeNumsStep1& cube);
 
 	ushort edgeOrients_;
 	ushort cornerOrients_;
 	ushort edgeOrbits_;
 };
+
+std::ostream& operator<<(std::ostream& out, const CubeNumsStep1& cube);
+
 
 /**
  * @brief      Like CubeNumsStep1, store the cube as a set of three integers:
@@ -106,11 +110,16 @@ struct CubeNumsStep2{
 
 private:
 
+	friend std::ostream& operator<<(std::ostream& out, const CubeNumsStep2& cube);
+
 	ushort cornerColors_;
 	ushort edgeColors1_;
 	ushort edgeColors2_;
 
 };
+
+std::ostream& operator<<(std::ostream& out, const CubeNumsStep2& cube);
+
 
 typedef std::unordered_map<CubeNumsStep1, Turn, CubeNumsStep1::Hash> EndMap1;
 typedef std::unordered_map<CubeNumsStep2, Turn, CubeNumsStep2::Hash> EndMap2;
@@ -127,8 +136,9 @@ static std::unordered_map<CubeNumsStep2, Turn, CubeNumsStep2::Hash> STEP2MAP;
 void readEndMaps(std::string pathToFile, EndMap1*& endMap1, EndMap2*& endMap2);
 
 
-std::deque<Turn> solveStep1DFS(Cube cube, EndMap1* endMap1);
-bool solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1* endMap1, std::deque<Turn>& result);
+std::vector<Turn> solveStep1DFS(Cube cube, EndMap1* endMap1);
+bool solveStep1Helper(int depth, int maxDepth, const CubeNumsStep1& curr,
+	EndMap1* endMap1, std::vector<Turn>& turnsSoFar, std::vector<CubeNumsStep2>& foundCubes);
 
 std::deque<Turn> solveStep2DFS(Cube cube, EndMap2* endMap2);
 bool solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2* endMap2, std::deque<Turn>& result);
@@ -136,6 +146,16 @@ bool solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2* endMap2, st
 std::deque<Turn> turnsFromEndMap1(CubeNumsStep1 start, EndMap1* endMap1);
 std::deque<Turn> turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endMap2);
 
+/**
+ * @brief      Returns true if the vector of turns results in a cube that has
+ *             already been found.  Else, adds the cube and returns false
+ *
+ * @param[in]  turnsSoFar  The turns so far
+ * @param[in]  foundCubes  The found cubes
+ *
+ * @return     True if the cube exists, false otherwise
+ */
+bool cubeFound(const std::vector<Turn> turnsSoFar, std::vector<CubeNumsStep2>& foundCubes);
 
 int getIndex1(Turn m);
 int getIndex2(Turn m);
@@ -161,7 +181,7 @@ void readTurnTables();
 * it has memoized the results of each turns, and can look it up in a table.
 */
 
-/// Calls the build methods for each turn table, then calls archiveTurnTables 
+/// Calls the build methods for each turn table, then calls archiveTurnTables
 void buildTurnTables();
 
 /// Stores the turn tables in "turnTables.ser"
@@ -192,7 +212,7 @@ void buildCornerOrientsTable();
 * \fn		buildEdgeOrbitsTable
 * \brief	Builds the turn table of edge orbits for step 1
 * \details	Similar to buildEdgeOrients.  Creates a cube with edge colors
-* that will have code 0.  Generates all possible 12 nCr 4 positions for the 
+* that will have code 0.  Generates all possible 12 nCr 4 positions for the
 * edges in the LR slice.  Uses the stl method next_permutation to change
 * the colors and increment the cube code.  In this method, the colors
 * used for calculating the codes are impossible, but represent the

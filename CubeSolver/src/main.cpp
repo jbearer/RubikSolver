@@ -8,6 +8,38 @@ using std::endl;
 using namespace CubeSolver;
 using namespace CommProtocol;
 
+/** thread test */
+void threadTest()
+{
+	readTurnTables();
+	EndMap1* endMap1;
+	EndMap2* endMap2;
+
+	readEndMaps("ser/endMap_big.ser", endMap1, endMap2);
+
+	Cube cube;
+	std::vector<Turn> allTurns =
+		{FRONT, RIGHT, BACK, LEFT, UP, DOWN,
+			FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
+			LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED};
+
+	size_t maneuver_size = 20;
+
+	for (size_t i = 0; i < maneuver_size; ++i) {
+		int r = rand() % allTurns.size();
+		cout << allTurns[r] << " ";
+		cube = Cube::turn(cube, allTurns[r]);
+	}
+	cout << endl;
+
+	std::vector<Turn> turns = solve(cube, endMap1, endMap2);
+
+	cout << (cube.isSolved() ? "solved!" : "sadness") << endl;
+
+	delete endMap1;
+	delete endMap2;
+}
+
 /** Find how many cycles it takes to make DRFBLU*/
 size_t cycleLength()
 {
@@ -29,8 +61,8 @@ size_t cycleLength()
 
 int main()
 {
-
-	std::cout << cycleLength() << std::endl;
+	threadTest();
+	//std::cout << cycleLength() << std::endl;
 	/*
 	readTurnTables();
 	EndMap1* endMap1;

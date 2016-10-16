@@ -53,7 +53,7 @@ ARDINCL = -I$(AVR_PATH)/cores/arduino -I$(AVR_PATH)/variants/$(PIN_LAYOUT)
 
 DEBUG = true
 
-OPTIMIZATION = 2
+OPTIMIZATION = 0
 
 STD = c++11
 
@@ -69,7 +69,7 @@ INCL = -isystem $(BOOST_PATH)
 
 LIB_FLAG = -L$(BOOST_PATH)
 
-LIBS = -lboost_serialization
+LIBS = -lboost_serialization -lboost_system
 
 ################################################################################
 # DO NOT CHANGE THE FOLLOWING - Generates variables based on above settings
@@ -78,7 +78,7 @@ LIBS = -lboost_serialization
 ifeq ($(DEBUG), true)
 DEBUG_FLAG = -g
 else
-DEBUG_FLAG = 
+DEBUG_FLAG =
 endif
 
 ARDCXXFLAGS = $(ARDWARNINGS) -O$(ARDOPT) -DF_CPU=$(F_CPU) -std=$(ARDSTD) -mmcu=$(MCU)

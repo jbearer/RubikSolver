@@ -3,9 +3,11 @@
 #include <iostream>
 #include <queue>
 #include <fstream>
+#include <ctime>
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/thread.hpp>
 #include <vector>
 
 using std::cout;
@@ -16,45 +18,57 @@ using namespace CommProtocol;
 
 const std::string END_TABLES_PATH = "ser/end_maps.ser";
 
-int SOLVE_STEP_1_COUNTER = 1;
-std::deque<Turn> CubeSolver::solveStep1DFS(Cube cube, EndMap1* endMap1)
+std::vector<Turn> CubeSolver::solveStep1DFS(Cube cube, EndMap1* endMap1)
 {
-	SOLVE_STEP_1_COUNTER = 1;
-
 	// TODO: assert tables have been loaded
 
 	CubeNumsStep1 currCube(cube);
 
-
 	int MIN_DEPTH = 0;
-	int MAX_DEPTH = 10;
+	int MAX_DEPTH = 8;
 
-	std::deque<Turn> result;
+	std::vector<CubeNumsStep2> foundCubes;
 
 	for (int depth = MIN_DEPTH; depth < MAX_DEPTH; ++depth) {
 
-		if (solveStep1Helper(depth, currCube, endMap1, result)) {
-			return result;
+		std::vector<Turn> turns(depth);
+
+		if (solveStep1Helper(0, depth, currCube, endMap1, turns, foundCubes)) {
+			return turns;
 		}
 	}
+
 	cout << "path not found :(" << endl;
-	return std::deque<Turn>();
+	return std::vector<Turn>();
 }
 
 
-bool CubeSolver::solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1* endMap1, std::deque<Turn>& result)
+
+bool CubeSolver::solveStep1Helper(
+	int depth,
+	int maxDepth,
+	const CubeNumsStep1& curr,
+	EndMap1* endMap1,
+	std::vector<Turn>& turnsSoFar,
+	std::vector<CubeNumsStep2>& foundCubes)
 {
-	if (SOLVE_STEP_1_COUNTER % 100000 == 0) {
-		cout << "step 1: " << SOLVE_STEP_1_COUNTER << endl;
-		++SOLVE_STEP_1_COUNTER;
-	}
-
-	if (depth == 0) {
+	if (depth == maxDepth) {
 		if (endMap1->count(curr) > 0) {
-			//cout << "found it" << endl;
-			result = turnsFromEndMap1(curr, endMap1);
 
-			return true;
+			// build up the result of the turns so far and the turns from the end map
+			std::deque<Turn> lastTurns = turnsFromEndMap1(curr, endMap1);
+			std::vector<Turn> result(turnsSoFar);
+
+			result.insert(result.end(), lastTurns.begin(), lastTurns.end());
+
+			if (!cubeFound(result, foundCubes)) {
+				//change to initialize step to with result and keep turnsSoFar as is
+				turnsSoFar = result;
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 		else {
 			// not found, so return false
@@ -64,15 +78,34 @@ bool CubeSolver::solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1*
 	else {
 		// iterate through all the ok turns
 		for (int i = 0; i < NUM_TURNS_STEP1; ++i) {
-			CubeNumsStep1 turned = CubeNumsStep1::turn(curr, i);
-			// cube found: push back current move and return true
-			if (solveStep1Helper(depth - 1, turned, endMap1, result)) {
-				Turn currTurn = TURNS_STEP1[i];
 
-				result.push_front(currTurn);
+			CubeNumsStep1 turned = CubeNumsStep1::turn(curr, i);
+			Turn currTurn = TURNS_STEP1[i];
+			turnsSoFar[depth] = currTurn;
+
+			// cube found: push back current move and return true
+			if (solveStep1Helper(depth + 1, maxDepth, turned, endMap1, turnsSoFar, foundCubes)) {
 				return true;
 			}
 		}
+		return false;
+	}
+}
+
+bool CubeSolver::cubeFound(const std::vector<Turn> turnsSoFar, std::vector<CubeNumsStep2>& foundCubes)
+{
+	Cube cube;
+	for (auto turn : turnsSoFar)
+		cube = Cube::turn(cube, turn);
+
+	CubeNumsStep2 cubeToAdd(cube);
+
+	// if the cube has already been found
+	// list won't be greater than 12, so shouldn't be too computationally intensive
+	if (std::find(foundCubes.begin(), foundCubes.end(), cube) != foundCubes.end())
+		return true;
+	else {
+		foundCubes.push_back(cubeToAdd);
 		return false;
 	}
 }
@@ -87,7 +120,7 @@ std::deque<Turn> CubeSolver::solveStep2DFS(Cube cube, EndMap2* endMap2)
 	CubeNumsStep2 currCube(cube);
 
 	int MIN_DEPTH = 0;
-	int MAX_DEPTH = 10;
+	int MAX_DEPTH = 14;
 
 	std::deque<Turn> result;
 
@@ -185,7 +218,7 @@ std::vector<Turn> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMa
 {
 	std::vector<Turn> allTurns;
 
-	std::deque<Turn> firstTurns = solveStep1DFS(cube, endMap1);
+	std::vector<Turn> firstTurns = solveStep1DFS(cube, endMap1);
 
 	// apply turns found in first turns
 	for (auto turn : firstTurns) {
