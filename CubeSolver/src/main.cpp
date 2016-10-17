@@ -21,7 +21,30 @@ void solve1()
 
 	Cube cube;
 
-	std::vector<Turn> maneuver = {FRONT, RIGHT, BACK};
+	std::vector<Turn> maneuver =
+	{
+		FRONT,
+		RIGHT,
+		UP_INVERTED,
+		LEFT,
+		DOWN_INVERTED,
+		BACK,
+		DOWN_2,
+		LEFT,
+		RIGHT_2,
+		UP,
+		FRONT_2,
+		BACK_2,
+		RIGHT,
+		FRONT_INVERTED,
+		RIGHT_INVERTED,
+		UP,
+		LEFT_INVERTED,
+		UP,
+		FRONT_2,
+		DOWN_2
+	};
+;
 
 	cout << "scrambling maneuver: ";
 	for (auto t: maneuver) {
@@ -56,7 +79,14 @@ size_t cycleLength()
 	// create a solved cube
 	Cube cube, solvedCube;
 
-	std::vector<Turn> turns = { FRONT, RIGHT, UP_INVERTED, LEFT, DOWN_INVERTED };
+	std::vector<Turn> turns =
+	{
+		RIGHT_INVERTED,
+		DOWN_INVERTED,
+		RIGHT,
+		DOWN
+	};
+
 	size_t num_cycles = 0;
 
 	do {
