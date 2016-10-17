@@ -1,5 +1,5 @@
 /**
- * @file constantSpeed5Motor
+ * @file acceleratingMotors
  * @author Austin Chun
  * @date Oct 17, 2016
  * @brief Hello
@@ -7,7 +7,10 @@
  */
 
 /*
-  Fixed Speed 5-Motor Control
+  Accelerating Motors
+
+  Accelerates the stepper motors by gradually decreasing pulse width.
+  Otherwise same as constantSpeed5Motor
 
   Implements two stepping functions, stepTest() and stepFast().
       stepTest() should be used to scramble the Rubiks cube. It is a slower 
@@ -15,8 +18,6 @@
       stepFast() should be used for solving. This is currently the fastest 
   version.
       (Also two turn verions of both functions)
-
-
 
   To specify messUp moves, and solution moves, fill in the global variables
   messUpMoves[] and solution[] with Turn enums (R,Li, D2 etc.).

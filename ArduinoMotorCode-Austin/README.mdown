@@ -1,0 +1,19 @@
+# ArduinoMotorControl
+Arduino Motor Control (Hardware), Fall 2016
+Austin Chun
+
+Collection of my different code versions for the Arduino to step the motors. Uses the Arduino IDE to compile and upload. Experimenting with speed/acceleration functions. 
+
+
+* constantSpeed5Motor.ino  </br>
+  First working version that takes in scramble moves and solution moves. Only uses constant velocity (specifically constant pulse width). Technically can be used with 6 motors, just that I need to change out the sixth driver to a DRV8825.
+
+* acceleratingMotos.ino </br>
+  Second iteration of motor controls. Implements acceleration, meaning gradually decreasing pulse width. IDeally has same implementation as constantSpeed5Motor. Will need to adjust numTurns for each function, along with "deay" incremenetation for acceleration
+
+# External dependencies
+
+* Arduino IDE,  </br>
+  Used to compile and upload sketches to Arduino
+
+
