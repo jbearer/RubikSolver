@@ -18,9 +18,19 @@ void solve1()
 
 	readEndMaps("ser/endMap_big.ser", endMap1_big, endMap2_big);
 
+	int edgeOrients[Cube::NUM_EDGES] = {0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0};
+	int cornerOrients[Cube::NUM_CORNERS] = {1, 0, 2, 2, 1, 1, 0, 2};
+	Cube::Edge_t edgeColors[Cube::NUM_EDGES] =
+		{Cube::RB, Cube::RG, Cube::WR, Cube::YG,
+		 Cube::WG, Cube::YR, Cube::WO, Cube::YO,
+		 Cube::WB, Cube::OB, Cube::YB, Cube::OG};
 
-	Cube cube;
+	Cube::Corner_t cornerColors[Cube::NUM_CORNERS] =
+		{Cube::WRG, Cube::WRB, Cube::YOB, Cube::WOG,
+		Cube::YRB, Cube::WOB, Cube::YRG, Cube::YOG};
 
+	Cube cube(edgeColors, edgeOrients, cornerColors, cornerOrients);
+/*
 	std::vector<Turn> maneuver =
 	{
 		FRONT,
@@ -44,7 +54,6 @@ void solve1()
 		FRONT_2,
 		DOWN_2
 	};
-;
 
 	cout << "scrambling maneuver: ";
 	for (auto t: maneuver) {
@@ -52,7 +61,7 @@ void solve1()
 		cube = Cube::turn(cube, t);
 	}
 	cout << endl;
-
+*/
 	// time each individual solve
 	clock_t cubeTime;
 	cubeTime = clock();
