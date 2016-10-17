@@ -1,6 +1,7 @@
 #include "cubeSolver.h"
 
 #include <iostream>
+#include <vector>
 
 using std::cout;
 using std::endl;
@@ -8,37 +9,46 @@ using std::endl;
 using namespace CubeSolver;
 using namespace CommProtocol;
 
-/** thread test */
-void threadTest()
+void solve1()
 {
 	readTurnTables();
-	EndMap1* endMap1;
-	EndMap2* endMap2;
 
-	readEndMaps("ser/endMap_big.ser", endMap1, endMap2);
+	EndMap1* endMap1_big;
+	EndMap2* endMap2_big;
+
+	readEndMaps("ser/endMap_big.ser", endMap1_big, endMap2_big);
+
 
 	Cube cube;
-	std::vector<Turn> allTurns =
-		{FRONT, RIGHT, BACK, LEFT, UP, DOWN,
-			FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
-			LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED};
 
-	size_t maneuver_size = 20;
+	std::vector<Turn> maneuver = {FRONT, RIGHT, BACK};
 
-	for (size_t i = 0; i < maneuver_size; ++i) {
-		int r = rand() % allTurns.size();
-		cout << allTurns[r] << " ";
-		cube = Cube::turn(cube, allTurns[r]);
+	cout << "scrambling maneuver: ";
+	for (auto t: maneuver) {
+		cout << t << " ";
+		cube = Cube::turn(cube, t);
 	}
 	cout << endl;
 
-	std::vector<Turn> turns = solve(cube, endMap1, endMap2);
+	// time each individual solve
+	clock_t cubeTime;
+	cubeTime = clock();
 
-	cout << (cube.isSolved() ? "solved!" : "sadness") << endl;
+	std::vector<Turn> turns = solve(cube, endMap1_big, endMap2_big);
 
-	delete endMap1;
-	delete endMap2;
+	for (auto t : turns)
+		cout << t << " ";
+	cout << endl;
+
+	cubeTime = clock() - cubeTime;
+
+	cout << "solve took " << (float) cubeTime / CLOCKS_PER_SEC;
+	cout << " seconds" << endl;
+
+	delete endMap1_big;
+	delete endMap2_big;
 }
+
 
 /** Find how many cycles it takes to make DRFBLU*/
 size_t cycleLength()
@@ -61,8 +71,9 @@ size_t cycleLength()
 
 int main()
 {
-	cycleLength();
-	std::cout << cycleLength() << std::endl;
+	solve1();
+	//cycleLength();
+	//std::cout << cycleLength() << std::endl;
 	/*
 	readTurnTables();
 	EndMap1* endMap1;

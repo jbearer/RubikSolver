@@ -30,22 +30,15 @@ std::vector<Turn> allTurns({
 int MAP_SIZE_SMALL = 5000;
 int MAP_SIZE_BIG = 10000000;
 
-Turn allTurnsStep1[12] = {FRONT, RIGHT, BACK, LEFT, UP, DOWN,
-FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED, LEFT_INVERTED,
-UP_INVERTED, DOWN_INVERTED};
-
 Turn randomTurn1() {
-	int i = rand() % 12;
-	return allTurnsStep1[i];
+	int i = rand() % NUM_TURNS_STEP1;
+	return TURNS_STEP1[i];
 }
-
-Turn allTurnsStep2[8] = {FRONT_2, RIGHT, BACK_2, LEFT, UP_2, DOWN_2,
-RIGHT_INVERTED, LEFT_INVERTED};
 
 
 Turn randomTurn2() {
-	int i = rand() % 8;
-	return allTurnsStep2[i];
+	int i = rand() % NUM_TURNS_STEP2;
+	return TURNS_STEP2[i];
 }
 
 Cube scramble(std::vector<Turn> turns)
@@ -264,7 +257,6 @@ TEST_F(CubeSolverTest, find_path_long)
 	Cube cube;
 	cube = Cube::turn(cube, FRONT);
 	cube = Cube::turn(cube, RIGHT);
-	cube = Cube::turn(cube, BACK);
 	cube = Cube::turn(cube, UP_INVERTED);
 	cube = Cube::turn(cube, RIGHT_2);
 
@@ -292,7 +284,6 @@ TEST_F(CubeSolverTest, find_and_lookup_path)
 	cube = Cube::turn(cube, FRONT_INVERTED);
 	cube = Cube::turn(cube, UP_INVERTED);
 	cube = Cube::turn(cube, FRONT_INVERTED);
-	cube = Cube::turn(cube, BACK);
 	cube = Cube::turn(cube, LEFT);
 
 	solve(cube, endMap1, endMap2);
@@ -313,6 +304,11 @@ void calculateStats(std::vector<double> vec, double& max, double& avg, double& s
 
 TEST(CubeSolverPerf, performance)
 {
+
+	Turn allTurns[12] = {FRONT, RIGHT, BACK, LEFT, UP, DOWN,
+		FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED, LEFT_INVERTED,
+		UP_INVERTED, DOWN_INVERTED};
+
 	readTurnTables();
 
 	int NUM_TRIALS = 500;
@@ -331,7 +327,7 @@ TEST(CubeSolverPerf, performance)
 		Cube cube;
 		cout << "TESTCASE " << i << endl;
 		for (int j = 0; j < MANEUVER_SIZE; ++j) {
-			Turn t = randomTurn1();
+			Turn t = allTurns[rand() % 12];
 			cout << t << " ";
 			cube = Cube::turn(cube, t);
 		}
