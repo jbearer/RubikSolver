@@ -1,16 +1,22 @@
 /*
-   Custom Acceleration Stationayr Motors
+  Fixed Speed 5-Motor Control
 
-   two functions, step1 and step2, that correspond to
-   quarter and half rotations
+  Implements two stepping functions, stepTest() and stepFast().
+      stepTest() should be used to scramble the Rubiks cube. It is a slower 
+  stepping function, and thus less prone to mistakes.
+      stepFast() should be used for solving. This is currently the fastest 
+  version.
+      (Also two turn verions of both functions)
 
-   custom "acceleration" is achieved by shortening the
-   duration of the pulses (ie. smaller 'deay' = faster
-   motor)
 
-   Only for three motors now, but easilly scalable to six
+
+  To specify messUp moves, and solution moves, fill in the global variables
+  messUpMoves[] and solution[] with Turn enums (R,Li, D2 etc.).
+
 
 */
+
+
 
 ////////////////////// Define Constants ///////////////////////////////
 
@@ -71,6 +77,14 @@ turnInfo solutionInfo[solutionLength];
 
 
 // Helper Function, switch-case statement
+
+/**
+ * @brief      case-switch statement to designate appropriate stepPin and sleepPin
+ *
+ * @param[in]  motor  The motor number
+ *
+ * @return     struct with stepPin and sleepPin
+ */
 pins choosePins(int motor) {
   int stepPin;
   int sleepPin;
