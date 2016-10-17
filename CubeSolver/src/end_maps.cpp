@@ -88,7 +88,7 @@ std::queue<CubeNumsStep1> CubeSolver::buildMap1(size_t mapSize)
 
 	std::queue<CubeNumsStep1> cubeQueue;
 	cubeQueue.push(solvedCubeNums);
-
+	cout << "ok1" << endl;
 	while (MAKE_STEP1MAP.size() < mapSize) {
 		// Retrive the first cube nums and its corresponding moves
 		CubeNumsStep1 cube = cubeQueue.front();

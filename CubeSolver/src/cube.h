@@ -4,8 +4,8 @@
 
 namespace CubeSolver {
 
-	const int NUM_TURNS_STEP1 = 12;
-	const int NUM_TURNS_STEP2 = 8;
+	const int NUM_TURNS_STEP1 = 10;
+	const int NUM_TURNS_STEP2 = 7;
 
 	// Lists the allowable turns for each step
 	extern Turn TURNS_STEP1[NUM_TURNS_STEP1];

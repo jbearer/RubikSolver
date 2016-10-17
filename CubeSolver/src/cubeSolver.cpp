@@ -25,7 +25,7 @@ std::vector<Turn> CubeSolver::solveStep1DFS(Cube cube, EndMap1* endMap1)
 	CubeNumsStep1 currCube(cube);
 
 	int MIN_DEPTH = 0;
-	int MAX_DEPTH = 8;
+	int MAX_DEPTH = 12;
 
 	std::vector<CubeNumsStep2> foundCubes;
 
@@ -62,7 +62,10 @@ bool CubeSolver::solveStep1Helper(
 			result.insert(result.end(), lastTurns.begin(), lastTurns.end());
 
 			if (!cubeFound(result, foundCubes)) {
-				//change to initialize step to with result and keep turnsSoFar as is
+				// check interruption
+				// add result to the vector of solved cubes
+				// signal to main thread to interrupt
+				// do not make turnsSoFar = result
 				turnsSoFar = result;
 				return true;
 			}
@@ -120,7 +123,7 @@ std::deque<Turn> CubeSolver::solveStep2DFS(Cube cube, EndMap2* endMap2)
 	CubeNumsStep2 currCube(cube);
 
 	int MIN_DEPTH = 0;
-	int MAX_DEPTH = 14;
+	int MAX_DEPTH = 18;
 
 	std::deque<Turn> result;
 
@@ -214,8 +217,38 @@ std::deque<Turn> CubeSolver::turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endM
 	return path;
 }
 
+/*
+ * Still looking for solution:
+ * 	numThreads < solutionsFound.size() &&
+ * 	numThreads < MAX_THREADS &&
+ * 	!solution_found
+ */
+
 std::vector<Turn> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2)
 {
+	// create thread run through step 1
+
+	// thread_group step2threads
+	/* bool still looking for solution
+	/* while(still looking for solution && thread == mainThread) {
+	 *	sleep(wait for solution found from step1 or step 2)
+	 *
+	 *	if(woken by step1) {
+	 *		if (numThreads == max_threads) {
+	 *		   signal step1 to stop}
+	 *		extract step1paths_[numThreads]
+	 *		cube = turn(cube)
+	 *		boost::thread(step2, cube, endmap2)
+	 *		increment numThreads
+	 *
+	 * }
+	 *
+	 * still looking for solution = false
+	 * join thread_group
+	 * join step 1 thread
+	 * print hello, make sure it only prints once
+	*/
+
 	std::vector<Turn> allTurns;
 
 	std::vector<Turn> firstTurns = solveStep1DFS(cube, endMap1);

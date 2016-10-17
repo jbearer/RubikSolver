@@ -125,7 +125,6 @@ typedef std::unordered_map<CubeNumsStep1, Turn, CubeNumsStep1::Hash> EndMap1;
 typedef std::unordered_map<CubeNumsStep2, Turn, CubeNumsStep2::Hash> EndMap2;
 
 
-std::vector<Turn> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2);
 
 
 /// Hash maps from cube codes to the required turns to solve
@@ -135,6 +134,7 @@ static std::unordered_map<CubeNumsStep2, Turn, CubeNumsStep2::Hash> STEP2MAP;
 
 void readEndMaps(std::string pathToFile, EndMap1*& endMap1, EndMap2*& endMap2);
 
+std::vector<Turn> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2);
 
 std::vector<Turn> solveStep1DFS(Cube cube, EndMap1* endMap1);
 bool solveStep1Helper(int depth, int maxDepth, const CubeNumsStep1& curr,

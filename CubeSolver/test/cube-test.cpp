@@ -30,14 +30,22 @@ std::vector<Turn> allTurns({
 int MAP_SIZE_SMALL = 5000;
 int MAP_SIZE_BIG = 10000000;
 
+Turn allTurnsStep1[12] = {FRONT, RIGHT, BACK, LEFT, UP, DOWN,
+FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED, LEFT_INVERTED,
+UP_INVERTED, DOWN_INVERTED};
+
 Turn randomTurn1() {
-	int i = rand() % NUM_TURNS_STEP1;
-	return TURNS_STEP1[i];
+	int i = rand() % 12;
+	return allTurnsStep1[i];
 }
 
+Turn allTurnsStep2[8] = {FRONT_2, RIGHT, BACK_2, LEFT, UP_2, DOWN_2,
+RIGHT_INVERTED, LEFT_INVERTED};
+
+
 Turn randomTurn2() {
-	int i = rand() % NUM_TURNS_STEP2;
-	return TURNS_STEP2[i];
+	int i = rand() % 8;
+	return allTurnsStep2[i];
 }
 
 Cube scramble(std::vector<Turn> turns)
@@ -321,10 +329,13 @@ TEST(CubeSolverPerf, performance)
 	for (int i = 0; i < NUM_TRIALS; ++i) {
 
 		Cube cube;
-
+		cout << "TESTCASE " << i << endl;
 		for (int j = 0; j < MANEUVER_SIZE; ++j) {
-			cube = Cube::turn(cube, randomTurn1());
+			Turn t = randomTurn1();
+			cout << t << " ";
+			cube = Cube::turn(cube, t);
 		}
+		cout << endl;
 
 		// time each individual solve
 		clock_t cubeTime;

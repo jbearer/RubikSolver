@@ -46,7 +46,7 @@ size_t cycleLength()
 	// create a solved cube
 	Cube cube, solvedCube;
 
-	std::vector<Turn> turns = {FRONT_INVERTED, RIGHT_INVERTED, DOWN_INVERTED};
+	std::vector<Turn> turns = { FRONT, RIGHT, UP_INVERTED, LEFT, DOWN_INVERTED };
 	size_t num_cycles = 0;
 
 	do {
@@ -61,8 +61,8 @@ size_t cycleLength()
 
 int main()
 {
-	threadTest();
-	//std::cout << cycleLength() << std::endl;
+	cycleLength();
+	std::cout << cycleLength() << std::endl;
 	/*
 	readTurnTables();
 	EndMap1* endMap1;
