@@ -287,14 +287,25 @@ void stepTest(int motor, int dir, int next, int turns) {
   // Set the direction
   digitalWrite(dirPin, dir);
   delay(1);
-  int deay = 600;
-  // Pulse motor high-low
-  // deay indicates pulse width = speed
+
+  // Play with this
+  int deay = 800;
+
+  // Pulse motor stepNum times
   for (int i = 0; i < stepNum; i++) {
-    digitalWrite(stepPin, HIGH);
-    delayMicroseconds(deay);
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(deay);
+    // Pulse HIGH-LOW
+    digitalWrite(stepPin, HIGH); delayMicroseconds(deay);
+    digitalWrite(stepPin, LOW);  delayMicroseconds(deay);
+    // Accelerate (gradually decrease pulse width)
+    if(deay > 240){
+      deay = deay - 10;
+    }
+    else if (deay > 220){
+      deay = deay - 2;
+    }
+    else if (deay > 200){
+      deay = deay - 1;
+    }
   }
   // TODO: FIX THIS
   if(next == 2) delay(100);
@@ -317,11 +328,20 @@ void stepFast(int motor, int dir, int next, int turns) {
   int stepPin = p.stepPin;
   int sleepPin = p.sleepPin;
   int stepNum;
+
+  int accelTurns;
+  int decelTurns;
  
   // Determine appropriate stepNum
   if (next == 1){ // Same direction = overturn
-    if(turns == 1) stepNum = 47; // Single turn
-    else stepNum = 95;           // Double turn
+    if(turns == 1){
+      //stepNum = 47; // Single turn
+      accelTurns = 35;
+      decelTurns = 10;
+    }
+    else{
+      //stepNum = 95;           // Double turn
+    }
   }
   else if (next == 0){ // Diff direction = underturn
     if(turns == 1) stepNum = 39;
@@ -338,14 +358,79 @@ void stepFast(int motor, int dir, int next, int turns) {
   digitalWrite(dirPin, dir);
   delay(1);
   int deay = 500;
-  // Pulse high-low to move motor
-  // deay indicates pulse width = speed
+
+  // Acceleration phase
   for (int i = 0; i < stepNum; i++) {
+    // Pulse HIGH-LOW
+    digitalWrite(stepPin, HIGH); delayMicroseconds(deay);
+    digitalWrite(stepPin, LOW);  delayMicroseconds(deay);
+    // Accelerate (gradually decrease pulse width)
+    if(deay > 400){
+      deay = deay - 20;
+    }
+    else if (deay > 220){
+      deay = deay - 2;
+    }
+    else if (deay > 200){
+      deay = deay - 1;
+    }
+  }
+  
+  // Deceleration phase
+   for (int counter = 0; counter < 10; counter++){
+     digitalWrite(stepPin,HIGH); delayMicroseconds(deay);
+     digitalWrite(stepPin,LOW); delayMicroseconds(deay);
+     if (deay < 250){
+       deay = deay + 5;
+     }
+     else if (deay < 300){
+       deay = deay + 10;
+     }
+    // else if (deay < 320){
+      // deay = deay + 20;
+     //}
+   }
+
+
+  // Turn off motor
+  digitalWrite(sleepPin, LOW);
+}
+
+
+void stepTopSpeed(int motor, int dir) {
+
+  // Define pins to use
+  pins p = choosePins(motor);
+  int stepPin = p.stepPin;
+  int sleepPin = p.sleepPin;
+
+  // Turn on the motor
+  digitalWrite(sleepPin, HIGH);
+  // Set the direction
+  digitalWrite(dirPin, dir);
+  delay(1);
+
+  int deay = 500;
+  // Find max speed
+  for (int i = 0; i < 400; i++) {
     digitalWrite(stepPin, HIGH);
     delayMicroseconds(deay);
     digitalWrite(stepPin, LOW);
     delayMicroseconds(deay);
+
+    if(deay > 135) deay = deay - 1;
   }
+
+  // // Slowly decelerate
+  // for (int i = 0; i < 500; i++) {
+  //   digitalWrite(stepPin, HIGH);
+  //   delayMicroseconds(deay);
+  //   digitalWrite(stepPin, LOW);
+  //   delayMicroseconds(deay);
+
+  //   if(deay < 600) deay = deay + 1;
+  // }
+
   // Turn off motor
   digitalWrite(sleepPin, LOW);
 }
@@ -388,25 +473,31 @@ void setup() {
  * @brief      Loops continuously on Arduino
  */
 void loop() {
-
-  // FINAL TEST (w/ only 5 motors)
-
   delay(6000);
-  // Scrambles the cube
-  stepList();
-  delay(5000);
+  // stepTest(4, HIGH, 1, 1);
+  // stepTest(5, HIGH, 0, 1);
+  // stepTest(6, LOW, 1, 1);
+  stepTopSpeed(2, HIGH );
+  delay(3000);
 
-  // Setup timer
-  unsigned long time1 = millis();
+  // // FINAL TEST (w/ only 5 motors)
+
+  // delay(6000);
+  // // Scrambles the cube
+  // stepList();
+  // delay(5000);
+
+  // // Setup timer
+  // unsigned long time1 = millis();
   
-  // SOLVE THE CUBE (with solution moves)
-  solve();
+  // // SOLVE THE CUBE (with solution moves)
+  // solve();
   
-  // Print the execution time
-  unsigned long time2 = millis();
-  Serial.println(time2-time1);
-  // Turn me off now :)
-  delay(20000);
+  // // Print the execution time
+  // unsigned long time2 = millis();
+  // Serial.println(time2-time1);
+  // // Turn me off now :)
+  // delay(20000);
 
 }
 
