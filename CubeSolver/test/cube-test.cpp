@@ -292,6 +292,26 @@ TEST_F(CubeSolverTest, find_and_lookup_path)
 	ASSERT_TRUE(cube.isSolved());
 }
 
+/** proof that you can solve any cube with five faces*/
+TEST_F(CubeSolverTest, back)
+{
+	Cube cube;
+	cube = Cube::turn(cube, BACK);
+
+	std::vector<Turn> turns = solve(cube, endMap1, endMap2);
+
+	for (auto t : turns) {
+		cout << t << " ";
+	} cout << endl;
+
+	// produces
+	// R2 U2 D2 L2 F' U2 R2 U2 D2 F2 D2 R' L' F2 U2 L' R'
+	// This produces an equivalent turn to B', so any back turn
+	// could hypothetically be replaced with the above string
+
+	ASSERT_TRUE(cube.isSolved());
+}
+
 void calculateStats(std::vector<double> vec, double& max, double& avg, double& stdev)
 {
 	accumulator_set<double, stats<tag::variance>> acc;
