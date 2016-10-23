@@ -320,6 +320,11 @@ void stepTest(int motor, int dir, int next, int turns) {
  * @param[in]  motor  The motor number
  * @param[in]  dir    The direction
  * @param[in]  next   A boolean used for over/under biasing turn
+ * 
+ * Constant acceleration function
+ *    Given dw/dt = A
+ *    t_n+1 = 10^5 / (A*10^-6*t_n + C) + t_n  (where C = initial TPS, eg 20)
+ *    deay = t_n+1 - t_n
  */
 void stepFast(int motor, int dir, int next, int turns) {
 
@@ -357,44 +362,52 @@ void stepFast(int motor, int dir, int next, int turns) {
   // Set direction
   digitalWrite(dirPin, dir);
   delay(1);
-  int deay = 500;
+
+  int t_n = 0; // start at 0 s
+  int t_n_1;
+  int deay; // half width of pulse
+  const int plusC_a = 20; // integration constant, corresponds to initial deay = 500
+  const int accel = 6000; // [Turns per sec^2]
+  const int minDeay = 135;
 
   // Acceleration phase
-  for (int i = 0; i < stepNum; i++) {
+  for (int i = 0; i < accelTurns; i++) {
+    // Accelerate up till top speed
+    if(deay > minDeay){
+      // Calculate appropriate deay value
+      // Use recurence relation to find next time step
+      t_n_1 = 10000/(accel*10^-6*t_n + plusC_a) + t_n; 
+      deay = t_n_1 - t_n;
+      t_n = t_n_1; // Update for next cycle
+    }
+
     // Pulse HIGH-LOW
     digitalWrite(stepPin, HIGH); delayMicroseconds(deay);
     digitalWrite(stepPin, LOW);  delayMicroseconds(deay);
-    // Accelerate (gradually decrease pulse width)
-    if(deay > 400){
-      deay = deay - 20;
-    }
-    else if (deay > 220){
-      deay = deay - 2;
-    }
-    else if (deay > 200){
-      deay = deay - 1;
-    }
   }
+
+  // Reset timer for decceleration
+  t_n = 0;
+
+  const int plusC_d = 10^4 / deay; // Calculate integration constant from current deay
+  const int decel = 10000;
   
   // Deceleration phase
-   for (int counter = 0; counter < 10; counter++){
-     digitalWrite(stepPin,HIGH); delayMicroseconds(deay);
-     digitalWrite(stepPin,LOW); delayMicroseconds(deay);
-     if (deay < 250){
-       deay = deay + 5;
-     }
-     else if (deay < 300){
-       deay = deay + 10;
-     }
-    // else if (deay < 320){
-      // deay = deay + 20;
-     //}
-   }
+  for (int counter = 0; counter < decelTurns; counter++){
+    
+    t_n_1 = 10000/(-decel*10^-6*t_n + plusC_d) + t_n; 
+    deay = t_n_1 - t_n;
+    t_n = t_n_1;
+
+    digitalWrite(stepPin,HIGH); delayMicroseconds(deay);
+    digitalWrite(stepPin,LOW); delayMicroseconds(deay);
+  }
 
 
   // Turn off motor
   digitalWrite(sleepPin, LOW);
 }
+
 
 
 void stepTopSpeed(int motor, int dir) {
