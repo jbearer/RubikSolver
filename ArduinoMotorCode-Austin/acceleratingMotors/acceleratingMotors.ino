@@ -409,20 +409,19 @@ void stepTopSpeed(int motor, int dir) {
   // Set the direction
   digitalWrite(dirPin, dir);
   delay(1);
-
-  int deay = 500;
+  int deay = 600;
   // Find max speed
-  for (int i = 0; i < 400; i++) {
+  for (int i = 0; i < 200; i++) {
     digitalWrite(stepPin, HIGH);
     delayMicroseconds(deay);
     digitalWrite(stepPin, LOW);
     delayMicroseconds(deay);
 
-    if(deay > 135) deay = deay - 1;
+//    if(deay > 50) deay = deay - 1;
   }
 
   // // Slowly decelerate
-  // for (int i = 0; i < 500; i++) {
+  // for (int i = 0; i < 200; i++) {
   //   digitalWrite(stepPin, HIGH);
   //   delayMicroseconds(deay);
   //   digitalWrite(stepPin, LOW);
@@ -473,11 +472,11 @@ void setup() {
  * @brief      Loops continuously on Arduino
  */
 void loop() {
-  delay(6000);
+  delay(3000);
   // stepTest(4, HIGH, 1, 1);
   // stepTest(5, HIGH, 0, 1);
   // stepTest(6, LOW, 1, 1);
-  stepTopSpeed(2, HIGH );
+  stepTopSpeed(6, HIGH);
   delay(3000);
 
   // // FINAL TEST (w/ only 5 motors)

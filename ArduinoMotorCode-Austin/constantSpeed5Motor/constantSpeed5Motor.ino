@@ -82,11 +82,13 @@ Turn messUpMoves[messUpLength] =
 turnInfo messUpInfo[messUpLength];
 
 // Store the solution
-const int solutionLength = 29;
+const int solutionLength = 6;
 Turn solution[solutionLength] = 
-{Ri, Di, R, Li, U, D, R, Fi, Ri, D, U, 
-  Li, F, D2, Li, U2, F2, U2, Ri, D2, R, 
-  U2, R, D2, Li, D2, Li, D2, F2};
+{B, R, F2, B2, Li, Bi};
+// 29
+// {Ri, Di, R, Li, U, D, R, Fi, Ri, D, U, 
+//   Li, F, D2, Li, U2, F2, U2, Ri, D2, R, 
+//   U2, R, D2, Li, D2, Li, D2, F2};
 // Initialize turnInfo for solution
 turnInfo solutionInfo[solutionLength];
 
@@ -392,8 +394,8 @@ void loop() {
 
   delay(6000);
   // Scrambles the cube
-  stepList();
-  delay(5000);
+  // stepList();
+  // delay(5000);
 
   // Setup timer
   unsigned long time1 = millis();
