@@ -326,8 +326,9 @@ void stepTest(int motor, int dir, int next, int turns) {
  *    t_n+1 = 10^5 / (A*10^-6*t_n + C) + t_n  (where C = initial TPS, eg 20)
  *    deay = t_n+1 - t_n
  */
-void stepFast(int motor, int dir, int next, int turns) {
 
+void stepFast(int motor, int dir, int next, int turns) {
+/*
   // Define pins to use
   pins p = choosePins(motor);
   int stepPin = p.stepPin;
@@ -406,9 +407,85 @@ void stepFast(int motor, int dir, int next, int turns) {
 
   // Turn off motor
   digitalWrite(sleepPin, LOW);
+*/
 }
 
 
+/**
+ * @brief      test Acceleration function
+ *
+ * @param[in]  motor  The motor
+ * @param[in]  dir    The dir
+ */
+void stepAccelerationTest (int motor, int dir) {
+  // Define pins to use
+  pins p = choosePins(motor);
+  int stepPin = p.stepPin;
+  int sleepPin = p.sleepPin;
+ // int stepNum;
+
+  int accelTurns;
+  int decelTurns;
+
+  accelTurns = 35;
+  decelTurns = 15;
+  //stepNum = 400; 
+
+
+  // Turn motor on
+  digitalWrite(sleepPin, HIGH);
+  // Set direction
+  digitalWrite(dirPin, dir);
+  delay(1);
+
+  float t_n = 0; // start at 0 s
+  float t_n_1;
+  float deay = 500; // half width of pulse
+  const float plusC_a = 20.0; // integration constant, corresponds to initial deay = 500
+  const float accel = 6000.0; // [Turns per sec^2]
+  const float minDeay = 135.0;
+  const float maxDeay = 500.0;
+
+  // Acceleration phase
+  for (int i = 0; i < accelTurns; i++) {
+    // Accelerate up till top speed
+    if(deay > minDeay){
+      // Calculate appropriate deay value
+      // Use recurence relation to find next time step
+      t_n_1 = 10000/(accel*pow(10,-6)*t_n + plusC_a) + t_n; 
+      deay = t_n_1 - t_n;
+      t_n = t_n_1; // Update for next cycle
+    }
+    Serial.println(deay);
+    // Pulse HIGH-LOW
+    digitalWrite(stepPin, HIGH); delayMicroseconds((int)deay);
+    digitalWrite(stepPin, LOW);  delayMicroseconds((int)deay);
+  }
+
+  // Reset timer for decceleration
+  t_n = 0;
+
+  const float plusC_d = pow(10,4) / deay; // Calculate integration constant from current deay
+  const float decel = 10000.0;
+  
+  // Deceleration phase
+  for (int counter = 0; counter < decelTurns; counter++){
+    if(deay < maxDeay){
+      t_n_1 = 10000/(-decel*pow(10,-6)*t_n + plusC_d) + t_n; 
+      deay = t_n_1 - t_n;
+      t_n = t_n_1;
+    }
+
+    Serial.println(deay);
+    digitalWrite(stepPin,HIGH); delayMicroseconds(deay);
+    digitalWrite(stepPin,LOW); delayMicroseconds(deay);
+  }
+
+
+  // Turn off motor
+  digitalWrite(sleepPin, LOW);
+
+}
 
 void stepTopSpeed(int motor, int dir) {
 
@@ -486,10 +563,8 @@ void setup() {
  */
 void loop() {
   delay(3000);
-  // stepTest(4, HIGH, 1, 1);
-  // stepTest(5, HIGH, 0, 1);
-  // stepTest(6, LOW, 1, 1);
-  stepTopSpeed(6, HIGH);
+  stepAccelerationTest(2,HIGH);
+
   delay(3000);
 
   // // FINAL TEST (w/ only 5 motors)
