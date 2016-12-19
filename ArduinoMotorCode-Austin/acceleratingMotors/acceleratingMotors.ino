@@ -31,6 +31,8 @@
 ///////////////////////////////////////////////////////////////////////
 
 // Define Arduino pins
+const int dirPin = 0;
+const int microStep = 1;
 const int stepPin1 = 2;
 const int sleepPin1 = 3;
 const int stepPin2 = 4;
@@ -43,7 +45,11 @@ const int stepPin5 = 10;
 const int sleepPin5 = 11;
 const int stepPin6 = 12;
 const int sleepPin6 = 13;
-const int dirPin = 0;
+
+const int randMoveNum = 30;
+int randFaces[randMoveNum];
+int randDir[randMoveNum];
+int randSteps[randMoveNum];
 
 
 
@@ -91,6 +97,61 @@ Turn solution[solutionLength] =
 // Initialize turnInfo for solution
 turnInfo solutionInfo[solutionLength];
 
+///////////////////////////////////////////////////////////////////////
+////////////////////// Create Random Moves ////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+void generateRandomMoves(){
+  for(int i = 0; i < randMoveNum; ++i){
+    randFaces[i] = random(6) + 1;
+    randDir[i] = random(2);
+    randSteps[i] = random(2) + 1;
+  }
+}
+
+void randomMixUp(){
+  for(int i = 0; i < randMoveNum; ++i){
+    stepSlow(randFaces[i], randDir[i], randSteps[i]);
+  }
+}
+
+void randomSolve(){
+  for(int i = randMoveNum - 1; i >= 0; --i){
+    stepSlow(randFaces[i], (randDir[i]+1)%2 , randSteps[i]);
+    Serial.println((randDir[i]+1)%2);
+  }
+}
+
+// void randomSolveFast(){
+//   for(int i = randMoveNum - 1; i >= 0; --i){
+//     stepSlow(randFaces[i], (randDir[i]+1)%2 , randSteps[i]);
+//     Serial.println((randDir[i]+1)%2);
+//   }
+// }
+
+void printRandomMoves(){
+  for(int i = 0; i < randMoveNum; ++i){
+    Serial.print(randDir[i]);
+    Serial.print(", ");
+  } 
+  Serial.print("\n");
+  // for(int i = 0; i < randMoveNum; ++i){
+  //   Serial.print(randDir[i],", ");
+  // } 
+  // Serial.print("\n");
+  // for(int i = 0; i < randMoveNum; ++i){
+  //   Serial.print(randDir[i],", ");
+  // } 
+
+  for(int i = randMoveNum - 1; i >= 0; --i){
+  // for(int i = 0; i < randMoveNum; ++i){
+    Serial.print((randDir[i]+1)%2);
+    Serial.print(", ");
+  }
+  Serial.print("\n");
+
+
+}
 ///////////////////////////////////////////////////////////////////////
 //////////////////////////// Methods //////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -487,7 +548,13 @@ void stepAccelerationTest (int motor, int dir) {
 
 }
 
-void stepTopSpeed(int motor, int dir) {
+/**
+ * @brief      run motor as fast as possible (find top speed)
+ *
+ * @param[in]  motor  The motor
+ * 
+ */
+void stepTopSpeed(int motor) {
 
   // Define pins to use
   pins p = choosePins(motor);
@@ -497,9 +564,11 @@ void stepTopSpeed(int motor, int dir) {
   // Turn on the motor
   digitalWrite(sleepPin, HIGH);
   // Set the direction
-  digitalWrite(dirPin, dir);
+  digitalWrite(dirPin, HIGH);
   delay(1);
-  int deay = 600;
+
+  int deay = 350;
+  int minDeay = 150;
   // Find max speed
   for (int i = 0; i < 200; i++) {
     digitalWrite(stepPin, HIGH);
@@ -507,20 +576,107 @@ void stepTopSpeed(int motor, int dir) {
     digitalWrite(stepPin, LOW);
     delayMicroseconds(deay);
 
-//    if(deay > 50) deay = deay - 1;
+   if(deay > minDeay) deay = deay - 1;
   }
 
-  // // Slowly decelerate
-  // for (int i = 0; i < 200; i++) {
-  //   digitalWrite(stepPin, HIGH);
-  //   delayMicroseconds(deay);
-  //   digitalWrite(stepPin, LOW);
-  //   delayMicroseconds(deay);
+  for (int i = 0; i < 200; i++) {
+    digitalWrite(stepPin, HIGH);
+    delayMicroseconds(deay);
+    digitalWrite(stepPin, LOW);
+    delayMicroseconds(deay);
 
-  //   if(deay < 600) deay = deay + 1;
-  // }
+   if(deay > 500) deay = deay + 1;
+  }
 
   // Turn off motor
+  delay(50);
+  digitalWrite(sleepPin, LOW);
+}
+void maxStopSpeed(int motor){
+
+  // Define pins to use
+  pins p = choosePins(motor);
+  int stepPin = p.stepPin;
+  int sleepPin = p.sleepPin;
+
+  // Turn on the motor
+  digitalWrite(sleepPin, HIGH);
+  // Set the direction
+  digitalWrite(dirPin, HIGH);
+  delay(1);
+
+  int deay = 350;
+  int maxStopSpeed = 200;
+  // Find max speed
+  for (int i = 0; i < 200; i++) {
+    digitalWrite(stepPin, HIGH);
+    delayMicroseconds(deay);
+    digitalWrite(stepPin, LOW);
+    delayMicroseconds(deay);
+
+   if(deay > maxStopSpeed) deay = deay - 1;
+  }
+
+  // Turn off motor
+  delay(50);
+  digitalWrite(sleepPin, LOW);
+}
+
+/**
+ * @brief      Simple stepping function (should always work)
+ *
+ * @param[in]  motor  The motor
+ * @param[in]  dir    The dir
+ * @param[in]  turns  The turns
+ * 
+ * @note ~0.1s per quarter turn
+ */
+void stepSlow(int motor, int dir, int turns) {
+
+  // Define pins to use
+  pins p = choosePins(motor);
+  int stepPin = p.stepPin;
+  int sleepPin = p.sleepPin;
+  int stepNum;
+  int accelSteps;
+
+  // Define num steps and num accelSteps
+  if(turns == 1) {
+    stepNum = 50;
+    accelSteps = 40;
+  }
+  else{
+    stepNum = 100;
+    accelSteps = 85;
+  }
+  
+  // Wake up motor
+  digitalWrite(sleepPin, HIGH);
+  // Set the direction
+  digitalWrite(dirPin, dir);
+  delay(1);
+
+  // Play with this
+  int deay = 100;
+
+  // Pulse motor stepNum times
+  for (int i = 0; i < stepNum*32 + 2; i++) {
+    // Pulse HIGH-LOW
+    digitalWrite(stepPin, HIGH); delayMicroseconds(deay);
+    digitalWrite(stepPin, LOW);  delayMicroseconds(deay);
+
+    if(deay > 25 && i < accelSteps*32){
+      deay = deay - 1;
+    }
+    else if(deay > 100){
+      deay = deay + 2;
+    }
+
+  }
+
+  delay(1);
+
+  // Turn off motor(s)  
   digitalWrite(sleepPin, LOW);
 }
 
@@ -533,8 +689,13 @@ void stepTopSpeed(int motor, int dir) {
  */
 void setup() {
   // Allow serial print (to serial monitor) of time
-  Serial.begin(9600);
+  // Serial.begin(9600);
+  // CAN'T DO IF USING Pin 0 and Pin 1
+  
   // Set all pins as outputs
+  pinMode(dirPin, OUTPUT);
+  pinMode(microStep, OUTPUT);
+
   pinMode(stepPin1, OUTPUT);
   pinMode(sleepPin1, OUTPUT);
   pinMode(stepPin2, OUTPUT);
@@ -547,7 +708,7 @@ void setup() {
   pinMode(sleepPin5, OUTPUT);
   pinMode(stepPin6, OUTPUT);
   pinMode(sleepPin6, OUTPUT);
-  pinMode(dirPin, OUTPUT);
+
 
   // Start with motor off
   digitalWrite(sleepPin1, LOW);
@@ -556,16 +717,72 @@ void setup() {
   digitalWrite(sleepPin4, LOW);
   digitalWrite(sleepPin5, LOW);
   digitalWrite(sleepPin6, LOW);
+  digitalWrite(microStep, LOW);
+
+  // Randomly seed with analog read to unconnected pin
+  randomSeed(analogRead(0));
+  generateRandomMoves();
 }
 
 /**
  * @brief      Loops continuously on Arduino
  */
 void loop() {
-  delay(3000);
-  stepAccelerationTest(2,HIGH);
 
   delay(3000);
+
+////////////////////////////////
+/// Slow, Random Mix & Solve ///
+////////////////////////////////
+
+  // // Initialize microstepping
+  // digitalWrite(microStep, HIGH);
+  // // Random mix and solve
+  // randomMixUp();
+  // delay(3000);
+  // randomSolve();  
+
+////////////////////////////////
+/// Test Slow Turning Speed  ///
+//////////////////////////////// 
+
+  // // Initialize microstepping
+  // digitalWrite(microStep, HIGH);
+
+  // for(int i = 0; i < 100; ++i){
+  //   stepSlow(random(6)+1 , random(2), 1);
+  //   stepSlow(4,HIGH,2);
+  //   // delay(100);
+  // }
+
+////////////////////////////
+/// Determine Top Speed  ///
+//////////////////////////// 
+  
+  // Test a motors top speed
+  // stepTopSpeed(2);  
+  // stepTopSpeed(5);
+  // stepTopSpeed(3);
+  
+  /// Start Speed: 300, when perfect (maybe 350, or 400 if safe...
+  /// Top Runnign speed : 150
+
+/////////////////////////////////
+/// Determine Max Stop Speed  ///
+/////////////////////////////////
+
+  maxStopSpeed(6);
+
+  /// Max Stop Speed: 200 
+
+//////////////////////////////////
+/// Test Acceleration function ///
+////////////////////////////////// 
+
+
+
+
+//  delay(3000);
 
   // // FINAL TEST (w/ only 5 motors)
 
@@ -587,5 +804,6 @@ void loop() {
   // delay(20000);
 
 }
+
 
 
