@@ -83,6 +83,13 @@ namespace CubeSolver {
 		bool operator==(const Cube& rhs);
 		bool operator!=(const Cube& rhs);
 
+		/// serialize cube
+		template<typename Archive>
+		void serialize(Archive& ar, const uint version __attribute__((unused)))
+		{
+			ar & edgeColors_ & edgeOrients_ & cornerColors_ & cornerOrients_;
+		}
+
 		/// Returns true if this is a solved cube
 		bool isSolved();
 
