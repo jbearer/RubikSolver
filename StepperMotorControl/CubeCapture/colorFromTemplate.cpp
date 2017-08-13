@@ -51,7 +51,6 @@ Color parseColor(string s){
     for(char& c : s){
         s2 += toupper(c);
     }
-    cout << "s2: " << s2 << endl;
 
     if(s2 == "R") return RED;
     else if(s2 == "G") return GREEN;
@@ -60,7 +59,7 @@ Color parseColor(string s){
     else if(s2 == "BL") return BLUE;
     else if(s2 == "BK") return BLACK;
     else{
-        cerr << "ERROR: Unknown color imput. Only acceptable values are: R,O,Y,G,BL,BK" << endl;
+        cerr << "  ERROR: Unknown color imput. Only acceptable values are: R,O,Y,G,BL,BK" << endl;
         return NONE;
     }
 }
@@ -90,7 +89,7 @@ Scalar averageColor(const Mat src, const int points[4][2])
     fillPoly(mask, corner_list, &num_points, 1, Scalar(255,255,255));
     // Calculate the average color
     Scalar avg = mean(src, mask);
-    cout<<avg<<endl;
+    // cout<<avg<<endl;
 
     // Showing the mask (an outline version, and true masked version)
     Mat maskPic0(src.rows, src.cols, CV_8UC3, Scalar(0,0,0)); // outline version
@@ -140,9 +139,14 @@ void findFaceColors(const Mat src0, const Mat src1)
             waitKey(500);
             // Wait for user input to determine the color
             std::string color;
-            cout << "What color is this?: ";
-            cin >> color;
-            faceColors[row*9 + col] = parseColor(color);
+            Color colorEnum;
+            while(true){
+                cout << "What color is this?: ";
+                cin >> color;
+                colorEnum = parseColor(color);
+                if(colorEnum!=NONE) break;
+            }
+            faceColors[row*9 + col] = colorEnum;
         }
     }
 

@@ -3,6 +3,7 @@
  * 
  * Simple list of all coordinates of the faces
  * 
+ * Aug 2017
  */
 
 // Image 0 (640x480)
