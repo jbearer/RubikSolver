@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "cube_nums.h"
 #include "cubeSolver.h"
 
 using CubeSolver::Cube;

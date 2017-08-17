@@ -189,7 +189,6 @@ std::vector<Turn> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMa
 	std::vector<Turn> allTurns;
 
 	if (cube == Cube()){
-		std::cout << "already solved" << std::endl;
 		return allTurns;
 	}
 
