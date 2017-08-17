@@ -1,0 +1,26 @@
+Todo:
+
+* create `Solver` class that automatically reads turn tables and end maps
+* `solve` take cube reference and modify it
+* Check if even permutation
+
+
+Testing
+	Add ASSERT_SOLVED
+
+Makefile
+	Use variables to condense makefile
+
+CubeNums
+	Template
+
+
+
+
+
+
+
+
+
+
+

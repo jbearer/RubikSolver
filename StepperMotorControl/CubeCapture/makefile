@@ -3,7 +3,7 @@ TARGETS =  CubeCapture.exe ColorFromTemplate.exe
 OBJS = cubeCapture.o colorFromTemplate.o
 
 CPPFLAGS=-g -std=c++11 -Wall -Wextra -pedantic
-LDLIBS=-I/usr/local/include/opencv2 -I/usr/local/include 
+LDLIBS=-I/usr/local/include/opencv2 -I/usr/local/include
 
 all: $(TARGETS)
 

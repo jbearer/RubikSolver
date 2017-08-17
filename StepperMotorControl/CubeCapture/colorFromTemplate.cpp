@@ -1,16 +1,17 @@
 /**
  * colorFromTemplate.cpp
- * 
+ *
  * Experiment with getting avergae color from a pre-captured image
- * 
+ *
  */
 
 #include <opencv.hpp>
-#include <highgui.hpp> 
+#include <highgui.hpp>
 #include <unistd.h>
 #include <stdio.h>
 #include "faceCoords.hpp" // defines face pixel coordinates
 #include <string>
+#include <vector>
 
 using namespace cv;
 using namespace std;
@@ -65,9 +66,9 @@ Color parseColor(string s){
 }
 
 /**
- * @brief      Calculate the avergae color given a predefined quadrilateral using a 
+ * @brief      Calculate the avergae color given a predefined quadrilateral using a
  *             mask method. Also displays the mask image
- * 
+ *
  * @param[in]  src     src image
  * @param[in]  points  coordinates of the corners (quadrilateral only)
  *
@@ -98,7 +99,7 @@ Scalar averageColor(const Mat src, const int points[4][2])
     bitwise_or(src, maskPic0, result0); // bitwise_or to keep rest of img
     imshow("masked0",result0);
 
-    Mat maskPic1(src.rows, src.cols, CV_8UC3, Scalar(0,0,0)); // true mask version    
+    Mat maskPic1(src.rows, src.cols, CV_8UC3, Scalar(0,0,0)); // true mask version
     fillPoly(maskPic1, corner_list, &num_points, 1, Scalar(255,255,255));
     Mat result1;
     bitwise_and(src, maskPic1, result1); // bitwise_and to mask the image
@@ -110,9 +111,9 @@ Scalar averageColor(const Mat src, const int points[4][2])
 }
 
 /**
- * @brief      Loops through face coordinates, calculates the average color, 
- *             and asks for user input to map between BGR vlau and user defined 
- *             color. 
+ * @brief      Loops through face coordinates, calculates the average color,
+ *             and asks for user input to map between BGR vlau and user defined
+ *             color.
  *
  * @param[in]  src0  camera0 (holed)
  * @param[in]  src1  camera1 (stand)
@@ -123,7 +124,7 @@ void findFaceColors(const Mat src0, const Mat src1)
     int tileSize = 60; // size of tiles when showing the pallete
 
     // Image 0
-    Scalar faceAvgColors0 [27];  
+    Scalar faceAvgColors0 [27];
     Mat avgColorPic0(3*tileSize,9*tileSize, CV_8UC3, Scalar(0,0,0));
 
     Color faceColors [27];
@@ -178,6 +179,16 @@ void findFaceColors(const Mat src0, const Mat src1)
 
 }
 
+vector<vector<Scalar>> getFaceColors(const Mat& src)
+{
+    vector<vector<Scalar>> faceColors(3,vector<Scalar>(9));
+    for (size_t face = 0; face < 3; ++face) {
+        for (size_t facelet = 0; facelet < 9; ++facelet) {
+            faceColors[face][facelet] = averageColor(src, allFaces0[9*face+facelet]);
+        }
+    }
+    return faceColors;
+}
 
 int main(void)
 {
@@ -187,7 +198,7 @@ int main(void)
     img1 = imread("template1.jpg"); //, CV_LOAD_IMAGE_COLOR);
 
     // Make sure img aren't empty
-    if((!img0.data) || (!img1.data)) 
+    if((!img0.data) || (!img1.data))
     {
         std::cout <<  "Could not open or find the image" << std::endl ;
         return -1;
@@ -199,8 +210,8 @@ int main(void)
     waitKey(1);
 
     // Do all the processing here
-    findFaceColors(img0, img1);
-
+    //findFaceColors(img0, img1);
+    getFaceColors(img0);
 
 
 
@@ -233,7 +244,7 @@ int main(void)
     bitwise_and(img0, mask2, result);
     imshow("masked",result);
 
-    // Mat s1 (img0, Rect(100,100,104,104)); 
+    // Mat s1 (img0, Rect(100,100,104,104));
 */
 
     waitKey(0);

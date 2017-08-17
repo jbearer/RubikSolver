@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <queue>
+#include <algorithm>
 #include <fstream>
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/archive/binary_iarchive.hpp>
@@ -38,7 +39,8 @@ std::deque<Turn> CubeSolver::solveStep1DFS(Cube cube, EndMap1* endMap1)
 		}
 	}
 	cout << "path not found :(" << endl;
-	return std::deque<Turn>();
+	throw std::exception();
+	//return std::deque<Turn>();
 }
 
 
@@ -98,6 +100,7 @@ std::deque<Turn> CubeSolver::solveStep2DFS(Cube cube, EndMap2* endMap2)
 	}
 
 	cout << "path not found :(" << endl;
+	throw std::exception();
 	return std::deque<Turn>();
 }
 
@@ -185,6 +188,11 @@ std::vector<Turn> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMa
 {
 	std::vector<Turn> allTurns;
 
+	if (cube == Cube()){
+		std::cout << "already solved" << std::endl;
+		return allTurns;
+	}
+
 	std::deque<Turn> firstTurns = solveStep1DFS(cube, endMap1);
 
 	// apply turns found in first turns
@@ -192,6 +200,7 @@ std::vector<Turn> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMa
 		cube = Cube::turn(cube, turn);
 		allTurns.push_back(turn);
 	}
+
 	std::deque<Turn> lastTurns = solveStep2DFS(cube, endMap2);
 
 	for (auto turn : lastTurns) {
@@ -200,6 +209,27 @@ std::vector<Turn> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMa
 	}
 
 	return allTurns;
+}
+
+std::vector<Turn> CubeSolver::solveToCube(Cube& start, Cube end, EndMap1* endMap1, EndMap2* endMap2)
+{
+	// turns to get from start to solved;
+	std::vector<Turn> allTurns = solve(start, endMap1, endMap2);
+
+	// get from solved to end
+	std::vector<Turn> turnsToEnd = solve(end, endMap1, endMap2);
+	for (int i = 0; i < turnsToEnd.size(); ++i) {
+		allTurns.push_back(oppTurn(turnsToEnd[turnsToEnd.size() - i - 1]));
+	}
+
+	// Condense the result, so we don't have to go through solved
+	Cube newCube;
+	for (int i = 0; i < allTurns.size(); ++i) {
+		newCube = Cube::turn(newCube, oppTurn(allTurns[allTurns.size() - i - 1]));
+	}
+
+	return solve(newCube, endMap1, endMap2);
+
 }
 
 int CubeSolver::getIndex1(Turn mi)

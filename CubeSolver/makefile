@@ -3,13 +3,13 @@ ROOT = ../
 include $(ROOT)config.mk
 
 INCL += -I$(ROOT)MotorControl/src/arduino-incl -Isrc -isystem $(GTEST_DIR)/include
-ARDINCL += 
+ARDINCL +=
 
 CXXFLAGS += $(INCL)
 ARDCXXFLAGS += $(ARDINCL)
 
 TARGETS = Cube.exe CubeTest.exe
-OBJS = obj/cube.o obj/turn.o obj/cube_nums.o obj/cubeSolver.o obj/turn_tables.o obj/end_maps.o obj/cubeEncoder.o
+OBJS = obj/cube.o obj/turn.o obj/cube_nums.o obj/cubeSolver.o obj/turn_tables.o obj/end_maps.o obj/cubeEncoder.o obj/translate.o
 TEST_OBJS = $(OBJS) obj/cube-test.o $(TEST_OBJ)/gtest_main.a
 SRC_PATH = src
 TEST_PATH = test
@@ -81,6 +81,10 @@ obj/end_maps.o: $(SRC_PATH)/end_maps.cpp $(SRC_PATH)/cubeSolver.h
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
 obj/cube_nums.o: $(SRC_PATH)/cube_nums.cpp $(SRC_PATH)/cubeSolver.h
+	@mkdir -p $(@D)
+	@$(CXX) -c $(CXXFLAGS) $< -o $@
+
+obj/translate.o: $(SRC_PATH)/translate.cpp $(SRC_PATH)/translate.h
 	@mkdir -p $(@D)
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 

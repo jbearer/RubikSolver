@@ -17,6 +17,7 @@
 #include "cube.h"
 #include "cubeEncoder.h"
 #include "turn.h"
+#include "translate.h"
 
 namespace CubeSolver {
 
@@ -118,6 +119,8 @@ typedef std::unordered_map<CubeNumsStep2, Turn, CubeNumsStep2::Hash> EndMap2;
 
 std::vector<Turn> solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2);
 
+std::vector<Turn> solveToCube(Cube& start, Cube end, EndMap1* endMap1, EndMap2* endMap2);
+
 
 /// Hash maps from cube codes to the required turns to solve
 static std::unordered_map<CubeNumsStep1, Turn, CubeNumsStep1::Hash> STEP1MAP;
@@ -161,7 +164,7 @@ void readTurnTables();
 * it has memoized the results of each turns, and can look it up in a table.
 */
 
-/// Calls the build methods for each turn table, then calls archiveTurnTables 
+/// Calls the build methods for each turn table, then calls archiveTurnTables
 void buildTurnTables();
 
 /// Stores the turn tables in "turnTables.ser"
@@ -192,7 +195,7 @@ void buildCornerOrientsTable();
 * \fn		buildEdgeOrbitsTable
 * \brief	Builds the turn table of edge orbits for step 1
 * \details	Similar to buildEdgeOrients.  Creates a cube with edge colors
-* that will have code 0.  Generates all possible 12 nCr 4 positions for the 
+* that will have code 0.  Generates all possible 12 nCr 4 positions for the
 * edges in the LR slice.  Uses the stl method next_permutation to change
 * the colors and increment the cube code.  In this method, the colors
 * used for calculating the codes are impossible, but represent the

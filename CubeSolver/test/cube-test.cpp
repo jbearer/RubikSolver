@@ -346,6 +346,26 @@ TEST(CubeSolverPerf, performance)
 
 	cout << endl;
 
+	cout << "testing translate" << endl;
+	EasyCube c(
+		std::vector<Color>(8, Color::Blue),
+		std::vector<Color>(8, Color::Orange),
+		std::vector<Color>(8, Color::White),
+		std::vector<Color>(8, Color::Yellow),
+		std::vector<Color>(8, Color::Red),
+		std::vector<Color>(8, Color::Green)
+	);
+	Cube cube = translate(c);
+
+	cout << cube << endl;
+
+	std::vector<Turn> turns = solve(cube, endMap1_big, endMap2_big);
+	for (auto t : turns)
+		cout << t << " ";
+	cout << endl;
+
+
+
 	double max = 0, mean = 0, stdev = 0;
 
 	// Calculate stats for how long the solve takes
