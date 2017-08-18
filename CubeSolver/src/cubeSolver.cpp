@@ -4,6 +4,7 @@
 #include <queue>
 #include <algorithm>
 #include <fstream>
+#include <memory>
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
@@ -17,8 +18,30 @@ using namespace CommProtocol;
 
 const std::string END_TABLES_PATH = "ser/end_maps.ser";
 
+
+Solver::Solver()
+{
+	readTurnTables();
+	e1_ = std::move(std::unique_ptr<EndMap1>(new EndMap1));
+	e2_ = std::move(std::unique_ptr<EndMap2>(new EndMap2));
+
+	// HACK to add a destination to the end maps.  FRONT
+	// should be a dummy move instruction
+	(*e1_)[CubeNumsStep1()] = MoveInstruction::FRONT;
+	(*e2_)[CubeNumsStep2()] = MoveInstruction::FRONT;
+
+}
+
+Solver::Solver(std::string file)
+{
+	readTurnTables();
+	e1_ = std::move(std::unique_ptr<EndMap1>(new EndMap1));
+	e2_ = std::move(std::unique_ptr<EndMap2>(new EndMap2));
+	readEndMaps(file, e1_, e2_);
+}
+
 int SOLVE_STEP_1_COUNTER = 1;
-std::deque<Turn> CubeSolver::solveStep1DFS(Cube cube, EndMap1* endMap1)
+std::deque<Turn> Solver::solveStep1DFS(Cube cube)
 {
 	SOLVE_STEP_1_COUNTER = 1;
 
@@ -34,7 +57,7 @@ std::deque<Turn> CubeSolver::solveStep1DFS(Cube cube, EndMap1* endMap1)
 
 	for (int depth = MIN_DEPTH; depth < MAX_DEPTH; ++depth) {
 
-		if (solveStep1Helper(depth, currCube, endMap1, result)) {
+		if (solveStep1Helper(depth, currCube, result)) {
 			return result;
 		}
 	}
@@ -44,7 +67,7 @@ std::deque<Turn> CubeSolver::solveStep1DFS(Cube cube, EndMap1* endMap1)
 }
 
 
-bool CubeSolver::solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1* endMap1, std::deque<Turn>& result)
+bool Solver::solveStep1Helper(int depth, const CubeNumsStep1& curr, std::deque<Turn>& result)
 {
 	if (SOLVE_STEP_1_COUNTER % 100000 == 0) {
 		cout << "step 1: " << SOLVE_STEP_1_COUNTER << endl;
@@ -52,9 +75,9 @@ bool CubeSolver::solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1*
 	}
 
 	if (depth == 0) {
-		if (endMap1->count(curr) > 0) {
+		if (e1_->count(curr) > 0) {
 			//cout << "found it" << endl;
-			result = turnsFromEndMap1(curr, endMap1);
+			result = turnsFromEndMap1(curr, e1_);
 
 			return true;
 		}
@@ -68,7 +91,7 @@ bool CubeSolver::solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1*
 		for (int i = 0; i < NUM_TURNS_STEP1; ++i) {
 			CubeNumsStep1 turned = CubeNumsStep1::turn(curr, i);
 			// cube found: push back current move and return true
-			if (solveStep1Helper(depth - 1, turned, endMap1, result)) {
+			if (solveStep1Helper(depth - 1, turned, result)) {
 				Turn currTurn = TURNS_STEP1[i];
 
 				result.push_front(currTurn);
@@ -80,7 +103,7 @@ bool CubeSolver::solveStep1Helper(int depth, const CubeNumsStep1& curr, EndMap1*
 }
 
 int SOLVE_STEP_2_COUNTER = 1;
-std::deque<Turn> CubeSolver::solveStep2DFS(Cube cube, EndMap2* endMap2)
+std::deque<Turn> Solver::solveStep2DFS(Cube cube)
 {
 	SOLVE_STEP_2_COUNTER = 1;
 
@@ -94,7 +117,7 @@ std::deque<Turn> CubeSolver::solveStep2DFS(Cube cube, EndMap2* endMap2)
 	std::deque<Turn> result;
 
 	for (int depth = MIN_DEPTH; depth < MAX_DEPTH; ++depth) {
-		if (solveStep2Helper(depth, currCube, endMap2, result)) {
+		if (solveStep2Helper(depth, currCube, result)) {
 			return result;
 		}
 	}
@@ -105,7 +128,7 @@ std::deque<Turn> CubeSolver::solveStep2DFS(Cube cube, EndMap2* endMap2)
 }
 
 
-bool CubeSolver::solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2* endMap2, std::deque<Turn>& result)
+bool Solver::solveStep2Helper(int depth, const CubeNumsStep2& curr, std::deque<Turn>& result)
 {
 
 	if (SOLVE_STEP_2_COUNTER % 100000 == 0) {
@@ -114,9 +137,9 @@ bool CubeSolver::solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2*
 	}
 
 	if (depth == 0) {
-		if (endMap2->count(curr) > 0) {
+		if (e2_->count(curr) > 0) {
 
-			result = turnsFromEndMap2(curr, endMap2);
+			result = turnsFromEndMap2(curr, e2_);
 			return true;
 		}
 		else {
@@ -130,7 +153,7 @@ bool CubeSolver::solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2*
 			CubeNumsStep2 turnedCube = CubeNumsStep2::turn(curr, i);
 
 			// cube found: push back current move and return true
-			if (solveStep2Helper(depth - 1, turnedCube, endMap2, result)) {
+			if (solveStep2Helper(depth - 1, turnedCube, result)) {
 				Turn currTurn = TURNS_STEP2[i];
 
 				result.push_front(currTurn);
@@ -141,7 +164,7 @@ bool CubeSolver::solveStep2Helper(int depth, const CubeNumsStep2& curr, EndMap2*
 	}
 }
 
-std::deque<Turn> CubeSolver::turnsFromEndMap1(CubeNumsStep1 start, EndMap1* endMap1)
+std::deque<Turn> CubeSolver::turnsFromEndMap1(CubeNumsStep1 start, std::unique_ptr<EndMap1>& e1)
 {
 	//cout << "end maps" << endl;
 	std::deque<Turn> path;
@@ -151,7 +174,7 @@ std::deque<Turn> CubeSolver::turnsFromEndMap1(CubeNumsStep1 start, EndMap1* endM
 	int pathLength = 0;
 
 	while (currNums != CubeNumsStep1()) {
-		Turn t = (*endMap1)[currNums];
+		Turn t = (*e1)[currNums];
 		path.push_back(t);
 
 		int i = getIndex1(t);
@@ -167,14 +190,14 @@ std::deque<Turn> CubeSolver::turnsFromEndMap1(CubeNumsStep1 start, EndMap1* endM
 	return path;
 }
 
-std::deque<Turn> CubeSolver::turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endMap2)
+std::deque<Turn> CubeSolver::turnsFromEndMap2(CubeNumsStep2 start, std::unique_ptr<EndMap2>& e2)
 {
 	std::deque<Turn> path;
 	CubeNumsStep2 currNums = start;
 
 	while (currNums != CubeNumsStep2()) {
 
-		Turn t = (*endMap2)[currNums];
+		Turn t = (*e2)[currNums];
 		path.push_back(t);
 
 		int i = getIndex2(t);
@@ -184,7 +207,7 @@ std::deque<Turn> CubeSolver::turnsFromEndMap2(CubeNumsStep2 start, EndMap2* endM
 	return path;
 }
 
-std::vector<Turn> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMap2)
+std::vector<Turn> Solver::solve(Cube& cube)
 {
 	std::vector<Turn> allTurns;
 
@@ -192,7 +215,7 @@ std::vector<Turn> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMa
 		return allTurns;
 	}
 
-	std::deque<Turn> firstTurns = solveStep1DFS(cube, endMap1);
+	std::deque<Turn> firstTurns = solveStep1DFS(cube);
 
 	// apply turns found in first turns
 	for (auto turn : firstTurns) {
@@ -200,7 +223,7 @@ std::vector<Turn> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMa
 		allTurns.push_back(turn);
 	}
 
-	std::deque<Turn> lastTurns = solveStep2DFS(cube, endMap2);
+	std::deque<Turn> lastTurns = solveStep2DFS(cube);
 
 	for (auto turn : lastTurns) {
 		cube = Cube::turn(cube, turn);
@@ -210,13 +233,13 @@ std::vector<Turn> CubeSolver::solve(Cube& cube, EndMap1* endMap1, EndMap2* endMa
 	return allTurns;
 }
 
-std::vector<Turn> CubeSolver::solveToCube(Cube& start, Cube end, EndMap1* endMap1, EndMap2* endMap2)
+std::vector<Turn> Solver::solveToCube(Cube& start, Cube end)
 {
 	// turns to get from start to solved;
-	std::vector<Turn> allTurns = solve(start, endMap1, endMap2);
+	std::vector<Turn> allTurns = solve(start);
 
 	// get from solved to end
-	std::vector<Turn> turnsToEnd = solve(end, endMap1, endMap2);
+	std::vector<Turn> turnsToEnd = solve(end);
 	for (int i = 0; i < turnsToEnd.size(); ++i) {
 		allTurns.push_back(oppTurn(turnsToEnd[turnsToEnd.size() - i - 1]));
 	}
@@ -227,7 +250,7 @@ std::vector<Turn> CubeSolver::solveToCube(Cube& start, Cube end, EndMap1* endMap
 		newCube = Cube::turn(newCube, oppTurn(allTurns[allTurns.size() - i - 1]));
 	}
 
-	return solve(newCube, endMap1, endMap2);
+	return solve(newCube);
 
 }
 

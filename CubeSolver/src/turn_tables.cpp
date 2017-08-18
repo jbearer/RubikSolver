@@ -4,6 +4,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <fstream>
 
+#include "turn_tables.h"
 #include "cubeSolver.h"
 
 using std::cout;
@@ -72,7 +73,7 @@ void CubeSolver::archiveTurnTables()
 	boost::archive::binary_oarchive oarch(os);
 
 	// tables for step 1
-	oarch << TurnTables::EDGE_ORIENTS_TABLE; 
+	oarch << TurnTables::EDGE_ORIENTS_TABLE;
 	oarch << TurnTables::CORNER_ORIENTS_TABLE;
 	oarch << TurnTables::EDGE_ORBITS_TABLE;
 
@@ -80,7 +81,7 @@ void CubeSolver::archiveTurnTables()
 	oarch << TurnTables::CORNER_COLORS_TABLE;
 	oarch << TurnTables::EDGE_COLORS_TABLE1;
 	oarch << TurnTables::EDGE_COLORS_TABLE2;
-	
+
 	os.close();
 }
 
@@ -213,7 +214,7 @@ void CubeSolver::buildEdgeColorsTable2()
 	// Make lrSliceColors equal to LR_SLICE
 	//Edge_t fb_ud_colors[ORBIT_SIZE2] = { YR, YO, RB, OB, RG, OG, WR, WO };
 	//Edge_t currPermutation[ORBIT_SIZE2] = { YR, YO, RB, OB, RG, OG, WR, WO };
-	
+
 	do {
 		// set the edges in the LR_SLICE equal to the current permutation
 		//for (int i = 0; i < ORBIT_SIZE2; ++i) {

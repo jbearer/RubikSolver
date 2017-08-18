@@ -166,13 +166,14 @@ TEST_F(CubeTest, cube_nums_sequence2)
 	}
 }
 
-
-class CubeSolverTest : public ::testing::Test {
+/*
+class EndMapTest : public ::testing::Test {
  protected:
   // Per-test-case set-up.
   // Called before the first test in this test case.
   // Can be omitted if not needed.
   static void SetUpTestCase() {
+  	// solver = Solver(ENDMAP_SMALL_PATH);
   	readTurnTables();
   	buildEndMaps(ENDMAP_SMALL_PATH, MAP_SIZE_SMALL, MAP_SIZE_SMALL);
     readEndMaps(ENDMAP_SMALL_PATH, endMap1, endMap2);
@@ -182,75 +183,66 @@ class CubeSolverTest : public ::testing::Test {
   // Called after the last test in this test case.
   // Can be omitted if not needed.
   static void TearDownTestCase() {
-    delete endMap1;
-    delete endMap2;
-  }
+     delete endMap1;
+     delete endMap2;
+  // }
 
   // Some expensive resource shared by all tests.
-  	static EndMap1* endMap1;
-	static EndMap2* endMap2;
-
+    static EndMap1* endMap1;
+    static EndMap2* endMap2;
 };
 
-EndMap1* CubeSolverTest::endMap1 = NULL;
-EndMap2* CubeSolverTest::endMap2 = NULL;
+EndMap1* EndMapTest::endMap1 = NULL;
+EndMap2* EndMapTest::endMap2 = NULL;
+*/
 
-EndMap1* EndMap1_trivial()
+TEST(EndMapTest, endMap)
 {
-	EndMap1* endMap1 = new EndMap1();
+	std::unique_ptr<EndMap1> endMap1(new EndMap1);
+	std::unique_ptr<EndMap2> endMap2(new EndMap2);
+	readEndMaps(ENDMAP_SMALL_PATH, endMap1, endMap2);
 
-	// load with a dummy move instruction
-	(*endMap1)[CubeNumsStep1()] = MoveInstruction::FRONT;
-	return endMap1;
-}
-
-EndMap2* EndMap2_trivial()
-{
-	EndMap2* endMap2 = new EndMap2();
-
-	// load with a dummy move instruction
-	(*endMap2)[CubeNumsStep2()] = MoveInstruction::FRONT;
-	return endMap2;
-}
-
-TEST_F(CubeSolverTest, endMap)
-{
 	std::queue<CubeNumsStep1> cubeQueue = buildMap1(MAP_SIZE_SMALL);
 
-	int size = cubeQueue.size();
-
-	for (int i = 0; i < size; ++i) {
+	for (size_t i = 0; i < cubeQueue.size(); ++i) {
 		CubeNumsStep1 cubeNums = cubeQueue.front();
 		turnsFromEndMap1(cubeNums, endMap1);
 		cubeQueue.pop();
 	}
 }
 
-TEST_F(CubeSolverTest, turnsFromEndMap_trivial)
+TEST(EndMapTest, turnsFromEndMap_trivial)
 {
+	std::unique_ptr<EndMap1> endMap1(new EndMap1);
+	std::unique_ptr<EndMap2> endMap2(new EndMap2);
+	readEndMaps(ENDMAP_SMALL_PATH, endMap1, endMap2);
+
 	Cube cube;
 	CubeNumsStep1 cubeNums(cube);
 	turnsFromEndMap1(cubeNums, endMap1);
 }
 
-TEST_F(CubeSolverTest, trivial)
+TEST(SolverTest, trivial)
 {
 	Cube cube;
-	solve(cube, EndMap1_trivial(), EndMap2_trivial());
+	Solver small_solver;
+	small_solver.solve(cube);
 	ASSERT_TRUE(cube.isSolved());
 }
 
-TEST_F(CubeSolverTest, find_path_short)
+TEST(SolverTest, find_path_short)
 {
 	Cube cube;
 	cube = Cube::turn(cube, FRONT);
 	cube = Cube::turn(cube, RIGHT);
 
-	solve(cube, EndMap1_trivial(), EndMap2_trivial());
+	Solver small_solver;
+	small_solver.solve(cube);
+
 	ASSERT_TRUE(cube.isSolved());
 }
 
-TEST_F(CubeSolverTest, find_path_long)
+TEST(SolverTest, find_path_long)
 {
 
 	Cube cube;
@@ -260,22 +252,26 @@ TEST_F(CubeSolverTest, find_path_long)
 	cube = Cube::turn(cube, UP_INVERTED);
 	cube = Cube::turn(cube, RIGHT_2);
 
-	solve(cube, EndMap1_trivial(), EndMap2_trivial());
+	Solver small_solver;
+	small_solver.solve(cube);
+
 	ASSERT_TRUE(cube.isSolved());
 }
 
-TEST_F(CubeSolverTest, lookup_path_short)
+TEST(SolverTest, lookup_path_short)
 {
 	Cube cube;
 	cube = Cube::turn(cube, FRONT);
 	cube = Cube::turn(cube, BACK);
 	cube = Cube::turn(cube, UP);
 
-	solve(cube, endMap1, endMap2);
+	Solver solver(ENDMAP_SMALL_PATH);
+
+	solver.solve(cube);
 	ASSERT_TRUE(cube.isSolved());
 }
 
-TEST_F(CubeSolverTest, find_and_lookup_path)
+TEST(SolverTest, find_and_lookup_path)
 {
 	Cube cube;
 
@@ -287,7 +283,8 @@ TEST_F(CubeSolverTest, find_and_lookup_path)
 	cube = Cube::turn(cube, BACK);
 	cube = Cube::turn(cube, LEFT);
 
-	solve(cube, endMap1, endMap2);
+	Solver solver(ENDMAP_SMALL_PATH);
+	solver.solve(cube);
 
 	// assert that the cube is now solved
 	ASSERT_TRUE(cube.isSolved());
@@ -313,10 +310,7 @@ TEST(CubeSolverPerf, performance)
 	std::vector<double> timeVec;
 	std::vector<double> numTurnsVec;
 
-	EndMap1* endMap1_big;
-	EndMap2* endMap2_big;
-
-	readEndMaps(ENDMAP_BIG_PATH, endMap1_big, endMap2_big);
+	Solver solver(ENDMAP_BIG_PATH);
 
 	for (int i = 0; i < NUM_TRIALS; ++i) {
 
@@ -330,7 +324,7 @@ TEST(CubeSolverPerf, performance)
 		clock_t cubeTime;
 		cubeTime = clock();
 
-		std::vector<Turn> turns = solve(cube, endMap1_big, endMap2_big);
+		std::vector<Turn> turns = solver.solve(cube);
 		for (auto t : turns)
 			cout << t << " ";
 		cout << endl;
@@ -345,26 +339,6 @@ TEST(CubeSolverPerf, performance)
 	}
 
 	cout << endl;
-
-	cout << "testing translate" << endl;
-	EasyCube c(
-		std::vector<Color>(8, Color::Blue),
-		std::vector<Color>(8, Color::Orange),
-		std::vector<Color>(8, Color::White),
-		std::vector<Color>(8, Color::Yellow),
-		std::vector<Color>(8, Color::Red),
-		std::vector<Color>(8, Color::Green)
-	);
-	Cube cube = translate(c);
-
-	cout << cube << endl;
-
-	std::vector<Turn> turns = solve(cube, endMap1_big, endMap2_big);
-	for (auto t : turns)
-		cout << t << " ";
-	cout << endl;
-
-
 
 	double max = 0, mean = 0, stdev = 0;
 
@@ -382,9 +356,6 @@ TEST(CubeSolverPerf, performance)
 	cout << "average turns: " << mean << endl;
 	cout << "stdev turns: " << stdev << endl;
 
-
-	delete endMap1_big;
-	delete endMap2_big;
 }
 
 

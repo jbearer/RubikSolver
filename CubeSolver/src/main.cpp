@@ -33,6 +33,8 @@ void translate_test(EndMap1* e1, EndMap2* e2)
 	std::vector<Color> colors{Red, Orange, Yellow, Green, Blue, White};
 	size_t good = 0, bad = 0;
 
+	Solver solver(e1, e2);
+
 	do {
 		EasyCube c(
 			std::vector<Color>(8, colors[0]),
@@ -45,7 +47,7 @@ void translate_test(EndMap1* e1, EndMap2* e2)
 		try {
 			Cube cube = translate(c);
 
-			solve(cube, e1, e2);
+			solver.solve(cube);
 			for (auto c : colors)
 				cout << c << " ";
 			cout << endl;
@@ -88,8 +90,10 @@ void solveToCubeTest(EndMap1* e1, EndMap2* e2)
 	end = Cube::turn(end, RIGHT);
 	end = Cube::turn(end, UP);
 
+	Solver solver(e1, e2);
+
 	cout << "about to solve" << endl;
-	std::vector<Turn> turns = solveToCube(start, end, e1, e2);
+	std::vector<Turn> turns = solver.solveToCube(start, end);
 	for (auto t : turns) {
 		cout << t << " ";
 	} cout << endl;
@@ -140,8 +144,10 @@ void allCycles(EndMap1* e1, EndMap2* e2)
 
 	Cube start;
 
+	Solver solver(e1, e2);
+
 	for (auto c : cubes) {
-		std::vector<Turn> result = solveToCube(start, c, e1, e2);
+		std::vector<Turn> result = solver.solveToCube(start, c);
 		for (auto t : result)
 			cout << t << " ";
 		cout << endl;

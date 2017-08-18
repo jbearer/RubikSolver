@@ -72,7 +72,7 @@ obj/turn.o: $(SRC_PATH)/turn.cpp $(SRC_PATH)/cube.h
 	@mkdir -p $(@D)
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
-obj/turn_tables.o: $(SRC_PATH)/turn_tables.cpp $(SRC_PATH)/cubeSolver.h
+obj/turn_tables.o: $(SRC_PATH)/turn_tables.cpp $(SRC_PATH)/cubeSolver.h $(SRC_PATH)/turn_tables.h
 	@mkdir -p $(@D)
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
@@ -80,7 +80,7 @@ obj/end_maps.o: $(SRC_PATH)/end_maps.cpp $(SRC_PATH)/cubeSolver.h
 	@mkdir -p $(@D)
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 
-obj/cube_nums.o: $(SRC_PATH)/cube_nums.cpp $(SRC_PATH)/cubeSolver.h
+obj/cube_nums.o: $(SRC_PATH)/cube_nums.cpp $(SRC_PATH)/cubeSolver.h $(SRC_PATH)/cube_nums.h
 	@mkdir -p $(@D)
 	@$(CXX) -c $(CXXFLAGS) $< -o $@
 

@@ -24,18 +24,18 @@ std::unordered_map<CubeNumsStep2,
 	MoveInstruction,
 	CubeNumsStep2::Hash> MAKE_STEP2MAP;
 
-void CubeSolver::readEndMaps(std::string pathToFile, EndMap1*& endMap1, EndMap2*& endMap2)
+void CubeSolver::readEndMaps(std::string pathToFile, std::unique_ptr<EndMap1>& endMap1, std::unique_ptr<EndMap2>& endMap2)
 {
 	std::ifstream is(pathToFile, std::ios::binary);
 	boost::archive::binary_iarchive iarch(is);
 
-	endMap1 = new EndMap1();
+	//endMap1 = std::move(new EndMap1());
 
 	cout << "reading map 1" << endl;
 	iarch >> *endMap1;
 	cout << endMap1->size() << endl;
 
-	endMap2 = new EndMap2();
+	//endMap2 = std::move(new EndMap2());
 
 	cout << "reading map 2" << endl;
 	iarch >> *endMap2;
