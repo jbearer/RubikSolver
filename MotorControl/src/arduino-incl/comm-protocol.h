@@ -50,7 +50,7 @@ namespace CommProtocol {
 	};
 
   void blinkIndicator();
-  
+
   void indicateError();
 
 }

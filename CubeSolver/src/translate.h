@@ -7,7 +7,8 @@
 #include <memory>
 #include <exception>
 #include <stdexcept>
-#include "cubeSolver.h"
+#include "cube.h"
+//#include "cubeSolver.h"
 
 namespace CubeSolver {
 

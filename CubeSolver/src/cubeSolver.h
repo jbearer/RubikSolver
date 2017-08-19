@@ -39,7 +39,6 @@ public:
 
 	std::vector<Turn> solveToCube(Cube& start, Cube end);
 
-
 private:
 	std::deque<Turn> solveStep1DFS(Cube cube);
 	bool solveStep1Helper(int depth, const CubeNumsStep1& curr, std::deque<Turn>& result);

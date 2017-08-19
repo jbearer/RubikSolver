@@ -28,12 +28,12 @@ size_t cycleLength()
 	return num_cycles;
 }
 
-void translate_test(EndMap1* e1, EndMap2* e2)
+void translate_test()
 {
 	std::vector<Color> colors{Red, Orange, Yellow, Green, Blue, White};
 	size_t good = 0, bad = 0;
 
-	Solver solver(e1, e2);
+	Solver solver("ser/endMap_big.ser");
 
 	do {
 		EasyCube c(
@@ -81,7 +81,7 @@ void translate_test(EndMap1* e1, EndMap2* e2)
 
 }
 
-void solveToCubeTest(EndMap1* e1, EndMap2* e2)
+void solveToCubeTest()
 {
 	Cube start;
 	start = Cube::turn(start, FRONT_INVERTED);
@@ -90,7 +90,7 @@ void solveToCubeTest(EndMap1* e1, EndMap2* e2)
 	end = Cube::turn(end, RIGHT);
 	end = Cube::turn(end, UP);
 
-	Solver solver(e1, e2);
+	Solver solver("ser/endMap_big.ser");
 
 	cout << "about to solve" << endl;
 	std::vector<Turn> turns = solver.solveToCube(start, end);
@@ -111,7 +111,7 @@ Cube makeCube(std::vector<Color> colors) {
 	return translate(c);
 }
 
-void allCycles(EndMap1* e1, EndMap2* e2)
+void allCycles()
 {
 	/* Result: steps to go through a tour, such that every color has been on
 	 * each facelet at least once
@@ -144,7 +144,7 @@ void allCycles(EndMap1* e1, EndMap2* e2)
 
 	Cube start;
 
-	Solver solver(e1, e2);
+	Solver solver("ser/endMap_big.ser");
 
 	for (auto c : cubes) {
 		std::vector<Turn> result = solver.solveToCube(start, c);
@@ -159,14 +159,8 @@ int main()
 {
 	//std::cout << cycleLength() << std::endl;
 
-	readTurnTables();
-	EndMap1* e1;
-	EndMap2* e2;
-
-	readEndMaps("ser/endMap_big.ser", e1, e2);
-
 	//translate_test(e1, e2);
-	allCycles(e1, e2);
+	allCycles();
 
 
 	/*
@@ -228,7 +222,5 @@ int main()
 	cout << "max time: " << maxTime << endl;
 	cout << "average time: " << ((float)t / CLOCKS_PER_SEC) / NUM_TRIALS << endl;
 	*/
-	delete e1;
-	delete e2;
 
 }

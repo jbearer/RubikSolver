@@ -166,36 +166,6 @@ TEST_F(CubeTest, cube_nums_sequence2)
 	}
 }
 
-/*
-class EndMapTest : public ::testing::Test {
- protected:
-  // Per-test-case set-up.
-  // Called before the first test in this test case.
-  // Can be omitted if not needed.
-  static void SetUpTestCase() {
-  	// solver = Solver(ENDMAP_SMALL_PATH);
-  	readTurnTables();
-  	buildEndMaps(ENDMAP_SMALL_PATH, MAP_SIZE_SMALL, MAP_SIZE_SMALL);
-    readEndMaps(ENDMAP_SMALL_PATH, endMap1, endMap2);
-    }
-
-  // Per-test-case tear-down.
-  // Called after the last test in this test case.
-  // Can be omitted if not needed.
-  static void TearDownTestCase() {
-     delete endMap1;
-     delete endMap2;
-  // }
-
-  // Some expensive resource shared by all tests.
-    static EndMap1* endMap1;
-    static EndMap2* endMap2;
-};
-
-EndMap1* EndMapTest::endMap1 = NULL;
-EndMap2* EndMapTest::endMap2 = NULL;
-*/
-
 TEST(EndMapTest, endMap)
 {
 	std::unique_ptr<EndMap1> endMap1(new EndMap1);

@@ -240,13 +240,13 @@ std::vector<Turn> Solver::solveToCube(Cube& start, Cube end)
 
 	// get from solved to end
 	std::vector<Turn> turnsToEnd = solve(end);
-	for (int i = 0; i < turnsToEnd.size(); ++i) {
+	for (size_t i = 0; i < turnsToEnd.size(); ++i) {
 		allTurns.push_back(oppTurn(turnsToEnd[turnsToEnd.size() - i - 1]));
 	}
 
 	// Condense the result, so we don't have to go through solved
 	Cube newCube;
-	for (int i = 0; i < allTurns.size(); ++i) {
+	for (size_t i = 0; i < allTurns.size(); ++i) {
 		newCube = Cube::turn(newCube, oppTurn(allTurns[allTurns.size() - i - 1]));
 	}
 
