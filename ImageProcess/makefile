@@ -11,7 +11,7 @@ ARDCXXFLAGS += $(ARDINCL)
 CUBE_SRC = $(ROOT)CubeSolver/src/
 CUBE_OBJ = $(ROOT)CubeSolver/obj/
 
-TARGETS =  CubeCapture.exe ColorFromTemplate.exe
+TARGETS =  CubeCapture.exe #ColorFromTemplate.exe
 OBJS = cubeCapture.o colorFromTemplate.o startup.o
 
 #CPPFLAGS=-g -std=c++11 -Wall -Wextra -pedantic
@@ -29,14 +29,14 @@ cubeCapture.o: cubeCapture.cpp
 colorFromTemplate.o: colorFromTemplate.hpp colorFromTemplate.cpp faceCoords.hpp
 	g++ $(CXXFLAGS) colorFromTemplate.cpp -c -o colorFromTemplate.o $(LDLIBS)
 
-startup.o: startup.cpp
-	g++ $(CXXFLAGS) startup.cpp -c -o startup.o $(LDLIBS)
+startup.o: startup.hpp startup.cpp
+	g++ $(CXXFLAGS) startup.cpp -c -o startup.o $(LDLIBS) -I$(ROOT)CubeSolver/src
 
 CubeCapture.exe: cubeCapture.o
 	g++ -o CubeCapture.exe cubeCapture.o `pkg-config --cflags --libs opencv` -lncurses
 
-ColorFromTemplate.exe: colorFromTemplate.o
-	g++ -o ColorFromTemplate.exe colorFromTemplate.o $(CUBE_OBJ)cube.o `pkg-config --cflags --libs opencv`
+# ColorFromTemplate.exe: colorFromTemplate.o
+# 	g++ -o ColorFromTemplate.exe colorFromTemplate.o $(CUBE_OBJ)cube.o `pkg-config --cflags --libs opencv`
 
 # Startup.exe: startup.o
 # 	$(MAKE) --directory=$(ROOT)CubeSolver

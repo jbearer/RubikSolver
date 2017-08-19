@@ -195,7 +195,7 @@ vector<vector<Scalar>> getFaceColors(const Mat& src0, const Mat& src1)
 
     return faceColors;
 }
-
+/*
 int main(void)
 {
     Mat img0, img1;
@@ -219,9 +219,6 @@ int main(void)
     //findFaceColors(img0, img1);
     getFaceColors(img0, img1);
 
-
-
-/*
     // Crop polygon
     // Blue square on UL face image 0
     cv::Point cns[1][4];
@@ -251,9 +248,10 @@ int main(void)
     imshow("masked",result);
 
     // Mat s1 (img0, Rect(100,100,104,104));
-*/
 
     waitKey(0);
 
     return 0;
 }
+
+*/

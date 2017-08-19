@@ -34,6 +34,7 @@ namespace CubeSolver {
     public:
         EasyCube() = default;
         EasyCube(Face up, Face back, Face left, Face right, Face front, Face down);
+        EasyCube(std::vector<Face> faces);
 
         // default to a solved easy cube;
         Face up_ = std::vector<Color>(8, Color::Yellow);

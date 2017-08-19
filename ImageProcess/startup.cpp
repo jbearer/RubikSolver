@@ -3,6 +3,7 @@
  *
  */
 #include "colorFromTemplate.hpp"
+#include "startup.hpp"
 #include "../CubeSolver/src/cubeSolver.h"
 #include <iostream>
 #include <fstream>
@@ -12,8 +13,6 @@
 using namespace CommProtocol;
 using namespace CubeSolver;
 using namespace cv;
-
-typedef std::map<Color, cv::Scalar> ColorMap;
 
 Cube makeCube(std::vector<Color> colors) {
     EasyCube c(

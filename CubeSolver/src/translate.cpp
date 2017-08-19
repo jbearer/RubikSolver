@@ -12,10 +12,16 @@ namespace CubeSolver {
 EasyCube::EasyCube(Face up, Face back, Face left, Face right, Face front, Face down) :
     up_{up}, back_{back}, left_{left}, right_{right}, front_{front},
     down_{down}
-    {
-        // Nothing more to do
-    }
+{
+    // Nothing more to do
+}
 
+EasyCube::EasyCube(std::vector<Face> faces) :
+    up_{faces[0]}, back_{faces[1]}, left_{faces[2]},
+    right_{faces[3]}, front_{faces[4]}, down_{faces[5]}
+{
+    // Nothing more to do
+}
 
 Cube translate(EasyCube cube) {
 
