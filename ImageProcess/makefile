@@ -2,7 +2,7 @@ ROOT = ../
 
 include $(ROOT)config.mk
 
-INCL += -I$(ROOT)MotorControl/src/arduino-incl -Isrc -isystem -I$(ROOT)CubeSolver/src
+INCL += -I$(ROOT)MotorControl/src/arduino-incl -Isrc -isystem -I$(ROOT)CubeSolver/src -I$(ROOT)StepperMotorControl
 ARDINCL +=
 
 CXXFLAGS += $(INCL)

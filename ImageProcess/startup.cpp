@@ -9,6 +9,7 @@
 #include <fstream>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include "turnCube.hpp"
 
 using namespace CommProtocol;
 using namespace CubeSolver;
@@ -75,9 +76,9 @@ std::vector<std::vector<ColorMap>> faceColorMap()
     for (size_t i = 0; i < turnsVec.size(); ++i){
         const std::vector<Turn>& turns = turnsVec[i];
         for (auto t : turns) {
-            // TODO: ACTUALLY TURN CUBE SOMEHOW
+            turn(t);
         }
-        // TODO: take picture
+        // TODO: -Austin take picture
         Mat img0, img1;
         std::vector<std::vector<Scalar>> faceColors = getFaceColors(img0, img1);
 
