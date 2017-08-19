@@ -17,6 +17,8 @@
 #include "colorFromTemplate.hpp"
 #include "cubeSolver.h"
 
+#include "turnCube.hpp"
+
 using namespace CommProtocol;
 using namespace CubeSolver;
 using namespace cv;
@@ -85,11 +87,21 @@ int main()
 
     std::vector<Turn> turns = solver.solve(cube);
 
+    // Setup motors
+    pioInit(); // Initialize GPIOs
+    setup(); // Setup pins
+    digitalWrite(sleepPin,HIGH); // Wake up motors
+    sleep(1);
+
     for (auto t : turns) {
         std::cout << t << " ";
         // TODO: actually turn the cube
+        step(motor,dir,numTurns);
     }
     std::cout << std::endl;
+
+    // Turn off motors
+    digitalWrite(sleepPon,LOW);
 
     return 0;
 }
