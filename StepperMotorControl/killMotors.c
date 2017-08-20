@@ -1,6 +1,4 @@
-extern "C" {
-    #include "StepperMotorController.h"
-}
+#include "StepperMotorController.h"
 
 int main(void)
 {

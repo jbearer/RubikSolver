@@ -851,10 +851,15 @@ int digitalReads(int pins[], int numPins) {
 // M0 and M3 are used by the GPU, so we must use M1 or M2
 
 void delayMicros(int micros) {
+    // printf(":");
     SYS_TIMER_C1 = SYS_TIMER_CLO + micros;   // set the compare register
     // 1000 clocks per millisecond
     SYS_TIMER_CSbits.M1 = 1;                 // reset match flag to 0
-    while(SYS_TIMER_CSbits.M1 == 0);         // wait until the match flag is set
+    // printf(";");
+    while(SYS_TIMER_CSbits.M1 == 0){         // wait until the match flag is set
+        // printf(".");
+    }
+    // printf("!");
 }
 
 void delayMillis(int millis) {
