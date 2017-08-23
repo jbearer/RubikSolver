@@ -17,7 +17,7 @@
 #include "colorFromTemplate.hpp"
 #include "cubeSolver.h"
 
-#include "turnCube.hpp"
+#include "StepperMotorControl/turnCube.hpp"
 
 using namespace CommProtocol;
 using namespace CubeSolver;
@@ -47,10 +47,10 @@ Color closestColor(Scalar rgb, ColorMap colorMap)
 
 int main()
 {
-
+    readTurnTables();
     // initialize the cube solver
     std::cout << "initializing solver" << std::endl;
-    Solver solver("CubeSolver/ser/endMap_big.ser");
+    Solver solver("ser/endMap_big");
 
     std::cout << "creating color mappings" << std::endl;
     std::vector<std::vector<ColorMap>> colorMap = faceColorMap();
@@ -94,7 +94,7 @@ int main()
     std::cout << std::endl;
 
     // Turn off motors
-    digitalWrite(sleepPon,LOW);
+    digitalWrite(sleepPin,LOW);
 
     return 0;
 }

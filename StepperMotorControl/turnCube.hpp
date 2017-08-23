@@ -11,10 +11,14 @@ extern "C"{
 
 #include <stdio.h>
 #include <unistd.h>
+// #include "cubeSolver.h"
 #include "turn.h"
 
 #define CW 0
 #define CCW 1
+
+using namespace CubeSolver;
+using namespace CommProtocol;
 
 /**
  * @brief      Slow stepping function (should always work)
@@ -52,21 +56,21 @@ void step(int motor, int dir, int turns) {
   delayMillis(1);
 
   // Play with this
-  int deay = 100;
+  int deay = 400;
+
+  int microStep = 8;
 
   // Pulse motor stepNum times
-  for (i = 0; i < stepNum*32 - 4; i++) {
-    // Pulse HIGH-LOW
+  for (i = 0; i < stepNum*microStep; i++) {
     digitalWrite(stepPin, HIGH); delayMicros(deay);
-    digitalWrite(stepPin, LOW);  delayMicros(deay);
-
-    if(deay > 25 && i < accelSteps*32){
+    digitalWrite(stepPin, LOW); delayMicros(deay);
+    if(deay > 300 && i < accelSteps*microStep){
       deay = deay - 1;
     }
-    else if(deay < 100 && i > accelSteps*32){
-      deay = deay + 2;
+    else if(deay < 400 && i > accelSteps*microStep){
+      deay = deay + 1;
     }
-    // printf("%d\n", deay);
+
   }
 
   delayMillis(1);
@@ -75,12 +79,12 @@ void step(int motor, int dir, int turns) {
   digitalWrite(disablePin, HIGH);
 }
 
-void turn(Turn turn)
+void turn(Turn t)
 {
   // LEFT = clockwise
   // Green = front
   // White = Bottom
-  switch(turn){
+  switch(t){
     case FRONT:
       step(1,CW,1); break;
     case RIGHT:
@@ -93,20 +97,18 @@ void turn(Turn turn)
       step(2,CW,1); break;
     case UP:
       step(0,CW,1); break;
-
-    case FRONT_INEVERTED:
+    case FRONT_INVERTED:
       step(1,CCW,1); break;
-    case RIGHT_INEVERTED:
+    case RIGHT_INVERTED:
       step(5,CCW,1); break;
-    case DOWN_INEVERTED:
+    case DOWN_INVERTED:
       step(3,CCW,1); break;
-    case BACK_INEVERTED:
+    case BACK_INVERTED:
       step(4,CCW,1); break;
-    case LEFT_INEVERTED:
+    case LEFT_INVERTED:
       step(2,CCW,1); break;
-    case UP_INEVERTED:
+    case UP_INVERTED:
       step(0,CCW,1); break;
-
     case FRONT_2:
       step(1,CW,2); break;
     case RIGHT_2:
@@ -119,5 +121,8 @@ void turn(Turn turn)
       step(2,CW,2); break;
     case UP_2:
       step(0,CW,2); break;
+    // default:
+    //   // std::cerr << "ERROR: Invalid Turn enum passed to turn()" << std::endl; 
+    //   break;
   }
 }

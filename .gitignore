@@ -61,3 +61,13 @@ Temporary Items
 *.lastbuildstate
 *.exp
 *Debug*
+
+# Images
+*.png
+*.jpg
+*.exe
+*.o
+StepperMotorControl/KillMotors
+StepperMotorControl/StepInput
+CubeSolver/ser/
+
