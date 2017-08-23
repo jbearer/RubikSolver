@@ -2,12 +2,15 @@
 
 #include <iostream>
 #include <algorithm>
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics.hpp>
 
 using std::cout;
 using std::endl;
 
 using namespace CubeSolver;
 using namespace CommProtocol;
+using namespace boost::accumulators;
 
 /** Find how many cycles it takes to make DRFBLU*/
 size_t cycleLength()
@@ -155,72 +158,111 @@ void allCycles()
 	}
 }
 
-int main()
-{
-	//std::cout << cycleLength() << std::endl;
-
-	//translate_test(e1, e2);
-	allCycles();
-
-
-	/*
-	std::vector<Move> allTurns({
+std::vector<Turn> allTurns({
 		FRONT, RIGHT, BACK, LEFT, UP, DOWN,
 		FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
 		LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED
 	});
 
-	cout << "a" << endl;
+int MAP_SIZE_SMALL = 5000;
+int MAP_SIZE_BIG = 10000000;
 
-	int NUM_TRIALS = 100;
-	int MANEUVER_SIZE = 10;
+Turn randomTurn1() {
+	int i = rand() % NUM_TURNS_STEP1;
+	return TURNS_STEP1[i];
+}
 
-	clock_t t;
-	t = clock();
+Turn randomTurn2() {
+	int i = rand() % NUM_TURNS_STEP2;
+	return TURNS_STEP2[i];
+}
 
-	float maxTime = 0;
+void calculateStats(std::vector<double> vec, double& max, double& avg, double& stdev)
+{
+	accumulator_set<double, stats<tag::variance>> acc;
+  	for_each(vec.begin(), vec.end(), std::ref(acc));
 
-	cout << "b" << endl;
+  	max = *std::max_element(vec.begin(), vec.end());
+  	avg = mean(acc);
+  	stdev = std::sqrt(variance(acc));
+}
+
+int main()
+{
+	//buildTurnTables();
+	//buildEndMaps("ser/endMap_big", 1e7/20, 1e7*2);
+	//std::cout << cycleLength() << std::endl;
+
+	//translate_test(e1, e2);
+	//allCycles();
+
+	Solver solver;
+	Cube c;
+	c = Cube::turn(c, FRONT);
+	c = Cube::turn(c, RIGHT);
+
+	std::vector<Turn> result = solver.solve(c);
+	for (auto t : result) {
+		cout << t << " ";
+	} cout << endl;
+
+
+
+	{
+	readTurnTables();
+
+	int NUM_TRIALS = 500;
+	int MANEUVER_SIZE = 300;
+
+	std::vector<double> timeVec;
+	std::vector<double> numTurnsVec;
+
+	Solver solver("ser/endMap_big");
 
 	for (int i = 0; i < NUM_TRIALS; ++i) {
 
 		Cube cube;
 
-		cout << "scramble: ";
-
 		for (int j = 0; j < MANEUVER_SIZE; ++j) {
-			std::vector<Move>::iterator randIt = allTurns.begin();
-			advance(randIt, rand() % allTurns.size());
-			cube = Cube::turn(cube, *randIt);
-			cout << *randIt << " ";
+			cube = Cube::turn(cube, randomTurn1());
 		}
-		cout << endl;
-
-		cout << "c" << i << endl;
 
 		// time each individual solve
 		clock_t cubeTime;
 		cubeTime = clock();
 
-		cout << "d" << i << endl;
-
-		solve(cube, endMap1, endMap2);
-
-		cout << "e" << i << endl;
+		std::vector<Turn> turns = solver.solve(cube);
+		for (auto t : turns)
+			cout << t << " ";
+		cout << endl;
 
 		cubeTime = clock() - cubeTime;
-		if (float(cubeTime) / CLOCKS_PER_SEC > maxTime) {
-			maxTime = float(cubeTime) / CLOCKS_PER_SEC;
-		}
 
-		cout << "f" << i << endl;
+		timeVec.push_back((float) cubeTime / CLOCKS_PER_SEC);
+		numTurnsVec.push_back((float) turns.size());
+
+		//EXPECT_TRUE(cube.isSolved());
+
 	}
 
-	cout << "g" << endl;
-	t = clock() - t;
+	cout << endl;
 
-	cout << "max time: " << maxTime << endl;
-	cout << "average time: " << ((float)t / CLOCKS_PER_SEC) / NUM_TRIALS << endl;
-	*/
+	double max = 0, mean = 0, stdev = 0;
+
+	// Calculate stats for how long the solve takes
+	calculateStats(timeVec, max, mean, stdev);
+
+	cout << "max time: " << max << endl;
+	cout << "average time: " << mean << endl;
+	cout << "stdev time: " << stdev << endl;
+
+	// Calculate stats for the number of turns
+	calculateStats(numTurnsVec, max, mean, stdev);
+
+	cout << "max turns: " << max << endl;
+	cout << "average turns: " << mean << endl;
+	cout << "stdev turns: " << stdev << endl;
+
+	}
 
 }
