@@ -17,6 +17,8 @@
 #include "colorFromTemplate.hpp"
 #include "cubeSolver.h"
 
+#include "turnCube.hpp"
+
 using namespace CommProtocol;
 using namespace CubeSolver;
 using namespace cv;
@@ -46,13 +48,6 @@ Color closestColor(Scalar rgb, ColorMap colorMap)
 int main()
 {
 
-	#define stringize(x) #x
-    // const char* PORT = stringize(COM_PORT);
-
-    // TODO change this to init the real cube once we have image processing
-    // TODO load a map or something???
-    // TODO initialize this somehow???
-
     // initialize the cube solver
     std::cout << "initializing solver" << std::endl;
     Solver solver("CubeSolver/ser/endMap_big.ser");
@@ -66,7 +61,7 @@ int main()
     std::string input;
     std::cin >> input;
 
-    // TODO:take actual picture
+    // TODO: Austin- take actual picture
     Mat img0, img1;
     // hold the captured BGR values
     std::vector<std::vector<cv::Scalar>> faceColors = getFaceColors(img0, img1);
@@ -75,7 +70,7 @@ int main()
 
     for (size_t face = 0; face < faceColors.size(); ++face) {
         for (size_t facelet = 0; facelet < 8; ++facelet) {
-            // TODO: sync EasyCube facelet order with getFaceColors facelet order
+            // TODO: Austin sync EasyCube facelet order with getFaceColors facelet order
             cubeColors[face][facelet] = closestColor(faceColors[face][facelet], colorMap[face][facelet]);
         }
     }
@@ -85,11 +80,21 @@ int main()
 
     std::vector<Turn> turns = solver.solve(cube);
 
+    // Setup motors
+    pioInit(); // Initialize GPIOs
+    setup(); // Setup pins
+    digitalWrite(sleepPin,HIGH); // Wake up motors
+    sleep(1);
+
     for (auto t : turns) {
         std::cout << t << " ";
         // TODO: actually turn the cube
+        turn(t);
     }
     std::cout << std::endl;
+
+    // Turn off motors
+    digitalWrite(sleepPon,LOW);
 
     return 0;
 }

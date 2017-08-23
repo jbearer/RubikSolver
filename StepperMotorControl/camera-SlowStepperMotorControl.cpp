@@ -27,7 +27,7 @@ void stepSlow(int motor, int dir, int turns);
 ///////////////////////////////////////////////////////////////////////
 ////////////////////// Create Random Moves ////////////////////////////
 ///////////////////////////////////////////////////////////////////////
-#define randMoveNum 40
+#define randMoveNum 10
 int randFaces[randMoveNum];
 int randDir[randMoveNum];
 int randSteps[randMoveNum];
@@ -37,7 +37,7 @@ void generateRandomMoves(){
   int prevMotor = -1;
   for(i = 0; i < randMoveNum; ++i){
     // Choose random motor (not the same as previous)
-    randFaces[i] = (prevMotor + rand()%5 + 1) % 6;
+    randFaces[i] = (prevMotor + rand()%6 + 1) % 6;
     prevMotor = randFaces[i];
     // Choose random direction and step number
     randDir[i] = rand()%2;
@@ -49,6 +49,8 @@ void randomMixUp(){
   int i = 0; 
   for(i = 0; i < randMoveNum; ++i){
     stepSlow(randFaces[i], randDir[i], randSteps[i]);
+    printf("Face: %d, Dir: %d, steps: %d\n", 
+      randFaces[i], randDir[i], randSteps[i]);
   }
 }
 
@@ -56,6 +58,8 @@ void randomSolve(){
   int i = 0; 
   for(i = randMoveNum - 1; i >= 0; --i){
     stepSlow(randFaces[i], (randDir[i]+1)%2, randSteps[i]);
+    printf("Face: %d, Dir: %d, steps: %d\n", 
+      randFaces[i], (randDir[i]+1)%2, randSteps[i]);
   }
 }
 
@@ -93,24 +97,37 @@ void stepSlow(int motor, int dir, int turns) {
   
   // Wake up motor
   digitalWrite(disablePin, LOW);
+  // printf("Disable pin\n");
   // Set the direction
   digitalWrite(dirPin, dir);
+  // printf("Dir pin\n");
   delayMillis(1);
 
   // Play with this
-  int deay = 100;
+  int deay = 400;
+
+  int microStep = 8;
 
   // Pulse motor stepNum times
-  for (i = 0; i < stepNum*32 - 4; i++) {
+  for (i = 0; i < stepNum*microStep; i++) {
+    // printf("%d: ", i);
     // Pulse HIGH-LOW
-    digitalWrite(stepPin, HIGH); delayMicros(deay);
-    digitalWrite(stepPin, LOW);  delayMicros(deay);
-
-    if(deay > 25 && i < accelSteps*32){
+    // printf(".");
+    digitalWrite(stepPin, HIGH); //usleep(deay); 
+    // printf("-");
+    delayMicros(deay);
+    // printf(".");
+    // printf("HIGH");
+    digitalWrite(stepPin, LOW); //usleep(deay);
+    // printf("-");
+    delayMicros(deay);
+    // printf(".");
+    // printf("LOW");
+    if(deay > 300 && i < accelSteps*microStep){
       deay = deay - 1;
     }
-    else if(deay < 100 && i > accelSteps*32){
-      deay = deay + 2;
+    else if(deay < 400 && i > accelSteps*microStep){
+      deay = deay + 1;
     }
     // printf("%d\n", deay);
   }
@@ -119,6 +136,7 @@ void stepSlow(int motor, int dir, int turns) {
 
   // Turn off motor(s)  
   digitalWrite(disablePin, HIGH);
+  // printf("%s\n", "disable pin HIGH");
 }
 
 
@@ -205,6 +223,7 @@ int main(void){
     generateRandomMoves();
     randomMixUp();
     delayMillis(1000);
+    printf("\n");
     randomSolve();
 
     // for(i = 0; i < 4; i++){
