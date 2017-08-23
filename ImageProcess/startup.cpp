@@ -15,6 +15,9 @@ using namespace CommProtocol;
 using namespace CubeSolver;
 using namespace cv;
 
+#define PORT0 0
+#define PORT1 1
+
 Cube makeCube(std::vector<Color> colors) {
     EasyCube c(
         std::vector<Color>(8, colors[0]),
@@ -66,6 +69,29 @@ std::vector<std::vector<ColorMap>> faceColorMap()
 {
     size_t numFaces = 6;
     size_t numFacelets = 8;
+    
+
+    // Initialize video ports
+    VideoCapture v0(PORT0);
+    VideoCapture v1(PORT1);
+    // Initialize matrices for current frame of videos for cameras
+    Mat img0;
+    Mat img1;
+    // Open the port
+    v0.open(PORT0);
+    v1.open(PORT1);
+    if(!v0.isOpened() || !v1.isOpened()){
+        std::cout<<"ERROR ACQUIRING VIDEO FEED\n";
+        getchar();
+        return -1;
+    }
+
+    // Setup motors
+    pioInit();
+    setup();
+    digitalWrite(sleepPin,HIGH);   
+
+    std::clock_t startTime; 
 
     // assume the cube starts in the solved position
     // i.e. Up corresponds with Yellow, Front with Green, etc.
@@ -78,8 +104,15 @@ std::vector<std::vector<ColorMap>> faceColorMap()
         for (auto t : turns) {
             turn(t);
         }
-        // TODO: -Austin take picture
-        Mat img0, img1;
+        // Wait 1 second for feed to buffer
+        startTime = std::clock();
+        while( (std::clock()-startTime) / (double)CLOCKS_PER_SEC > 1.0){
+            v0.read(img0);
+            v1.read(img1);
+            waitKey(1);
+        }
+
+        // Mat img0, img1;
         std::vector<std::vector<Scalar>> faceColors = getFaceColors(img0, img1);
 
         // load the maps with colors
@@ -104,6 +137,8 @@ std::vector<std::vector<ColorMap>> faceColorMap()
             }
         }
     }
+
+    digitalWrite(sleepPin, LOW);
     return colorMaps;
 }
 
