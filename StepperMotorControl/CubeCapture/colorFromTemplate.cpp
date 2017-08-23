@@ -137,17 +137,17 @@ void findFaceColors(const Mat src0, const Mat src1)
             // Draw rectangle of that color
             rectangle(avgColorPic0, Point(col*tileSize,row*tileSize), Point((col+1)*tileSize,(row+1)*tileSize), faceAvgColors0[row*9+col], -1);
             imshow("avgColorPic0", avgColorPic0);
-            waitKey(500);
-            // Wait for user input to determine the color
-            std::string color;
-            Color colorEnum;
-            while(true){
-                cout << "What color is this?: ";
-                cin >> color;
-                colorEnum = parseColor(color);
-                if(colorEnum!=NONE) break;
-            }
-            faceColors[row*9 + col] = colorEnum;
+            waitKey(0);
+            // // Wait for user input to determine the color
+            // std::string color;
+            // Color colorEnum;
+            // while(true){
+            //     cout << "What color is this?: ";
+            //     cin >> color;
+            //     colorEnum = parseColor(color);
+            //     if(colorEnum!=NONE) break;
+            // }
+            // faceColors[row*9 + col] = colorEnum;
         }
     }
 
@@ -210,8 +210,8 @@ int main(void)
     waitKey(1);
 
     // Do all the processing here
-    //findFaceColors(img0, img1);
-    getFaceColors(img0);
+    findFaceColors(img0, img1);
+    // getFaceColors(img0);
 
 
 

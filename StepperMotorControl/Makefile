@@ -3,9 +3,11 @@ ROOT = ../
 TARGETS = CubeCameraRead.exe KillMotors StepInput Camera-SlowStepperMotorControl.exe
 OBJS = cubeCameraRead.o camera-SlowStepperMotorControl.o
 
-CPPFLAGS=-g -std=c++11 -Wall -Wextra -pedantic
+CPPFLAGS=-g -std=c++1y -Wall -Wextra -pedantic
 LDLIBS=-I/usr/local/include/opencv2 -I/usr/local/include 
 
+INCL = -I$(ROOT)CubeSolver/src -I$(ROOT)SerialComm/src -I$(ROOT)MotorControl/src/arduino-incl
+CPPFLAGS += $(INCL)
 
 all: $(TARGETS)
 

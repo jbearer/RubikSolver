@@ -68,10 +68,11 @@ int main(void)
         // Read a single frame
         v0.read(cam0);
         v1.read(cam1);
-        // Show pic
-        imshow("Image0", cam0);
-        imshow("Image1", cam1);
-        waitKey(1);
+
+        // // Show pic
+        // imshow("Image0", cam0);
+        // imshow("Image1", cam1);
+        // waitKey(1);
         
         
         // Step cube and take picture every 3 seconds
@@ -102,7 +103,7 @@ int main(void)
 
 
 
-        if(count == 50){
+        if(count == 10){
             break;
         }
 
