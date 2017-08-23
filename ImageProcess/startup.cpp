@@ -47,7 +47,7 @@ std::vector<std::vector<Turn>> colorTour()
     Cube start;
     std::vector<std::vector<Turn>> allTurns;
 
-    Solver solver("ser/endMap_big.ser");
+    Solver solver("ser/endMap_big");
 
     std::vector<Cube> patternCubes;
     for (auto& v : colorPatterns) {

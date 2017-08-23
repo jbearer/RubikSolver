@@ -17,7 +17,7 @@ OBJS = cubeCapture.o colorFromTemplate.o startup.o
 #CPPFLAGS=-g -std=c++11 -Wall -Wextra -pedantic
 LDLIBS=-I/usr/local/include/opencv2 -I/usr/local/include
 
-all: $(TARGETS)
+all: $(TARGETS) $(OBJS)
 
 clean:
 	rm -rf obj *.o *.exe
