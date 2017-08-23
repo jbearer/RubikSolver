@@ -30,4 +30,4 @@ extern "C"{
  */
 void step(int motor, int dir, int turns);
 
-void turn(Turn t);
+void turn(CubeSolver::Turn t);

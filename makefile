@@ -20,9 +20,14 @@ SERIAL_TEST_OBJS = serial-test.o
 
 MAIN_OBJS = main.o
 
+MOTOR_CONTROL_OBJS = StepperMotorControl/EasyPIO.o \
+					 StepperMotorControl/StepperMotorController.o \
+					 StepperMotorControl/turnCube.o
+
 EXTERNAL_OBJS = CubeSolver/obj/cube.o CubeSolver/obj/turn.o CubeSolver/obj/cube_nums.o CubeSolver/obj/cubeSolver.o CubeSolver/obj/cubeEncoder.o \
 				CubeSolver/obj/turn_tables.o ImageProcess/colorFromTemplate.o ImageProcess/startup.o \
-				CubeSolver/obj/translate.o CubeSolver/obj/end_maps.o
+				CubeSolver/obj/translate.o CubeSolver/obj/end_maps.o \
+				$(MOTOR_CONTROL_OBJS)
 
 #EXTERNAL_OBJS = SerialComm/failed_read_error.o SerialComm/serial.o
 

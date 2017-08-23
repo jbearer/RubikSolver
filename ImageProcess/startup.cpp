@@ -49,11 +49,13 @@ std::vector<std::vector<Turn>> colorTour()
 
     Solver solver("ser/endMap_big");
 
+    // create a vector of all the cubes used in the startup phase
     std::vector<Cube> patternCubes;
     for (auto& v : colorPatterns) {
         patternCubes.push_back(makeCube(v));
     }
 
+    // figure out the steps to get from one cube to the next
     for (auto c : patternCubes) {
         std::vector<Turn> result = solver.solveToCube(start, c);
         allTurns.push_back(result);
