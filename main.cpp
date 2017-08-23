@@ -62,7 +62,26 @@ int main()
     std::cin >> input;
 
     // TODO: Austin- take actual picture
-    Mat img0, img1;
+    // Initialize video ports
+    VideoCapture v0(PORT0);
+    VideoCapture v1(PORT1);
+    // Initialize matrices for current frame of videos for cameras
+    Mat img0;
+    Mat img1;
+    // Open the port
+    v0.open(PORT0);
+    v1.open(PORT1);
+    if(!v0.isOpened() || !v1.isOpened()){
+        std::cout<<"ERROR ACQUIRING VIDEO FEED\n";
+        getchar();
+        return -1;
+    }
+
+    // Take picture
+    v0.read(img0);
+    v1.read(img1);
+
+
     // hold the captured BGR values
     std::vector<std::vector<cv::Scalar>> faceColors = getFaceColors(img0, img1);
     // hold the actual colors
