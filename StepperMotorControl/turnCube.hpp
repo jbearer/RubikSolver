@@ -52,21 +52,21 @@ void step(int motor, int dir, int turns) {
   delayMillis(1);
 
   // Play with this
-  int deay = 100;
+  int deay = 400;
+
+  int microStep = 8;
 
   // Pulse motor stepNum times
-  for (i = 0; i < stepNum*32 - 4; i++) {
-    // Pulse HIGH-LOW
+  for (i = 0; i < stepNum*microStep; i++) {
     digitalWrite(stepPin, HIGH); delayMicros(deay);
-    digitalWrite(stepPin, LOW);  delayMicros(deay);
-
-    if(deay > 25 && i < accelSteps*32){
+    digitalWrite(stepPin, LOW); delayMicros(deay);
+    if(deay > 300 && i < accelSteps*microStep){
       deay = deay - 1;
     }
-    else if(deay < 100 && i > accelSteps*32){
-      deay = deay + 2;
+    else if(deay < 400 && i > accelSteps*microStep){
+      deay = deay + 1;
     }
-    // printf("%d\n", deay);
+
   }
 
   delayMillis(1);

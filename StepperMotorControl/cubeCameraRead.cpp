@@ -8,7 +8,7 @@
 #include <highgui.hpp> 
 #include <unistd.h>
 #include <stdio.h>
-// #include <ncurses.h>
+
 
 #include <iostream>
 #include <cstdio>
@@ -44,6 +44,7 @@ int main(void)
     // Read a single frame
     v0.read(cam0);
     v1.read(cam1);
+
     // Show pic
     imshow("Image0", cam0);
     imshow("Image1", cam1);
@@ -53,15 +54,14 @@ int main(void)
     setup();
     digitalWrite(sleepPin,HIGH);    
 
-    // // Setup ncurses
-    // initscr();
-    // timeout(0);
+    // Wait a sec for to buffer
+    waitKey(1000);
+    printf("Waited 1 seconds\n");
+    sleep(1);
 
-    waitKey(500);
-
-    std::clock_t lastTime;
-    std::clock_t curTime;
+    std::clock_t lastTime, curTime;
     int count = 0;
+    bool takePic = false;
 
     // Turn cube and take pictures
     while(true){
@@ -71,25 +71,38 @@ int main(void)
         // Show pic
         imshow("Image0", cam0);
         imshow("Image1", cam1);
-        waitKey(5);
+        waitKey(1);
+        
         
         // Step cube and take picture every 3 seconds
         curTime = std::clock();
-        if(curTime - lastTime > 5.0){
-            // Turn front face
-            step(1,CW,1);
-            sleep(1);
+        printf("%f\n", (curTime-lastTime) / (double) CLOCKS_PER_SEC);
 
-            // // Save pic
-            // imwrite("a"+std::to_string(count)+".png", cam0);
-            // imwrite("b"+std::to_string(count)+".png", cam1);
+        // Snap picture right before making another move
+        if ((curTime-lastTime)/(double)CLOCKS_PER_SEC > 0.9 && takePic){
+            imwrite("a"+std::to_string(count)+".png", cam0);
+            imwrite("b"+std::to_string(count)+".png", cam1);
+            takePic = false;
 
-            lastTime = curTime;
+            printf("COUNT: %d\n", count);
             count++;
+        }
+        
+        // Move face every 1 second
+        if( (curTime - lastTime) /(double) CLOCKS_PER_SEC > 1.0){
+            // Turn front face
+            step(rand()%6,CW,1);
+
+            // printf("%f\n", (curTime - lastTime)/ (double) CLOCKS_PER_SEC);
+            lastTime = curTime;
+            
+            takePic = true;
         }
 
 
-        if(count == 8){
+
+
+        if(count == 50){
             break;
         }
 

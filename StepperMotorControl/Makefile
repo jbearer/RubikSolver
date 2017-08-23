@@ -14,7 +14,7 @@ clean:
 	rm -f $(TARGETS)
 again: clean all
 
-cubeCameraRead.o: cubeCameraRead.cpp
+cubeCameraRead.o: cubeCameraRead.cpp turnCube.hpp
 	g++ $(CPPFLAGS) cubeCameraRead.cpp -c -o cubeCameraRead.o $(LDLIBS) -lncurses
 
 CubeCameraRead.exe: cubeCameraRead.o
@@ -32,55 +32,3 @@ camera-SlowStepperMotorControl.o: camera-SlowStepperMotorControl.cpp EasyPIO.h
 Camera-SlowStepperMotorControl.exe: camera-SlowStepperMotorControl.o
 	g++ -o Camera-SlowStepperMotorControl.exe camera-SlowStepperMotorControl.o -I/usr/local/include/opencv2
 
-
-
-# CC = gcc
-# CCFLAGS = -I -Wall
-
-# SOURCES=$(wildcard *.c)
-# OBJECTS=$(SOURCES:.c=.o)
-# TARGET=des
-
-# OBJDIR = obj
-
-# all: $(TARGET)
-
-# $(TARGET): $(OBJECTS)
-# 	$(CC) -o $@ $^ $(LDFLAGS) 
-
-# # $(OBJDIR)/%.o: %.c %.h
-# # 	$(CC) $(CCFLAGS) -c $<
-
-# $(OBJDIR)/%.o: %.c
-# 	$(CC) $(CCFLAGS) -c $<
-
-# clean:
-# 	rm -f *.o $(TARGET)
-
-
-
-##############################
-# TARGET = prog
-# LIBS = -lm
-# CC = gcc
-# CFLAGS = -g -Wall
-
-# .PHONY: default all clean
-
-# default: $(TARGET)
-# all: default
-
-# OBJECTS = $(patsubst %.c, %.o, $(wildcard *.c))
-# HEADERS = $(wildcard *.h)
-
-# %.o: %.c $(HEADERS)
-# 	$(CC) $(CFLAGS) -c $< -o $@
-
-# .PRECIOUS: $(TARGET) $(OBJECTS)
-
-# $(TARGET): $(OBJECTS)
-# 	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
-
-# clean:
-# 	-rm -f *.o
-# 	-rm -f $(TARGET)
