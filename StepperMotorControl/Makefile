@@ -26,6 +26,9 @@ EasyPIO.o: EasyPIO.c EasyPIO.h
 StepperMotorController.o: StepperMotorController.c StepperMotorController.h
 	gcc -c StepperMotorController.c
 
+killMotors.o: killMotors.c
+	gcc -c killMotors.c
+
 turnCube.o: turnCube.cpp turnCube.hpp
 	g++ $(CPPFLAGS) turnCube.cpp -c -o turnCube.o
 
@@ -35,9 +38,8 @@ camera-SlowStepperMotorControl.o: camera-SlowStepperMotorControl.cpp EasyPIO.h
 CubeCameraRead.exe: cubeCameraRead.o
 	g++ -o CubeCameraRead.exe EasyPIO.o StepperMotorController.o turnCube.o cubeCameraRead.o `pkg-config --cflags --libs opencv` -lncurses
 
-
-KillMotors: killMotors.c
-	gcc -o KillMotors killMotors.c
+KillMotors: killMotors.o EasyPIO.o StepperMotorController.o
+	gcc -o KillMotors killMotors.o EasyPIO.o StepperMotorController.o
 
 StepInput: stepInput.c
 	gcc -o StepInput stepInput.c

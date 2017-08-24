@@ -24,6 +24,12 @@ using namespace CubeSolver;
 using namespace cv;
 //using namespace SerialComm;
 
+using std::cout;
+using std::endl;
+
+#define PORT0 0
+#define PORT1 1
+
 float distance(Scalar s1, Scalar s2)
 {
     return cv::norm(s1 - s2);
@@ -49,8 +55,6 @@ int main()
 {
     readTurnTables();
     // initialize the cube solver
-    std::cout << "initializing solver" << std::endl;
-    Solver solver("ser/endMap_big");
 
     std::cout << "creating color mappings" << std::endl;
     std::vector<std::vector<ColorMap>> colorMap = faceColorMap();
@@ -81,6 +85,8 @@ int main()
     v0.read(img0);
     v1.read(img1);
 
+    imwrite("scrambled0.png", img0);
+    imwrite("scrambled1.png", img1);
 
     // hold the captured BGR values
     std::vector<std::vector<cv::Scalar>> faceColors = getFaceColors(img0, img1);
@@ -90,13 +96,20 @@ int main()
     for (size_t face = 0; face < faceColors.size(); ++face) {
         for (size_t facelet = 0; facelet < 8; ++facelet) {
             // TODO: Austin sync EasyCube facelet order with getFaceColors facelet order
-            cubeColors[face][facelet] = closestColor(faceColors[face][facelet], colorMap[face][facelet]);
+            Color color = closestColor(faceColors[face][facelet], colorMap[face][facelet]);
+            cubeColors[face][facelet] = color;
+            cout << "face " << face << " facelet " << facelet << " color " << color << endl;
         }
     }
 
     EasyCube easyCube(cubeColors);
     Cube cube = translate(easyCube);
 
+    cout << "cube is" << endl;
+    cout << cube << endl;
+
+    std::cout << "initializing solver" << std::endl;
+    Solver solver("ser/endMap_big");
     std::vector<Turn> turns = solver.solve(cube);
 
     // Setup motors

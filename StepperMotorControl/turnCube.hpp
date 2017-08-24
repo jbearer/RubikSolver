@@ -15,8 +15,8 @@ extern "C"{
 
 #include "turn.h"
 
-#define CW 0
-#define CCW 1
+#define CW 1
+#define CCW 0
 
 
 /**

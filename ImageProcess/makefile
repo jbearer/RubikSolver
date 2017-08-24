@@ -19,6 +19,8 @@ LDLIBS=-I/usr/local/include/opencv2 -I/usr/local/include
 
 all: $(TARGETS) $(OBJS)
 
+lib: $(TARGETS) $(OBJS)
+
 clean:
 	rm -rf obj *.o *.exe
 again: clean all
@@ -29,7 +31,7 @@ cubeCapture.o: cubeCapture.cpp
 colorFromTemplate.o: colorFromTemplate.hpp colorFromTemplate.cpp faceCoords.hpp
 	g++ $(CXXFLAGS) colorFromTemplate.cpp -c -o colorFromTemplate.o $(LDLIBS)
 
-startup.o: startup.hpp startup.cpp
+startup.o: startup.hpp startup.cpp ../StepperMotorControl/turnCube.hpp
 	g++ $(CXXFLAGS) startup.cpp -c -o startup.o $(LDLIBS) -I$(ROOT)CubeSolver/src
 
 CubeCapture.exe: cubeCapture.o

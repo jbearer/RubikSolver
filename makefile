@@ -20,14 +20,14 @@ SERIAL_TEST_OBJS = serial-test.o
 
 MAIN_OBJS = main.o
 
-MOTOR_CONTROL_OBJS = StepperMotorControl/EasyPIO.o \
-					 StepperMotorControl/StepperMotorController.o \
-					 StepperMotorControl/turnCube.o
+MOTOR_CONTROL_OBJS = $(addprefix StepperMotorControl/,EasyPIO StepperMotorController turnCube)
 
-EXTERNAL_OBJS = CubeSolver/obj/cube.o CubeSolver/obj/turn.o CubeSolver/obj/cube_nums.o CubeSolver/obj/cubeSolver.o CubeSolver/obj/cubeEncoder.o \
-				CubeSolver/obj/turn_tables.o ImageProcess/colorFromTemplate.o ImageProcess/startup.o \
-				CubeSolver/obj/translate.o CubeSolver/obj/end_maps.o \
-				$(MOTOR_CONTROL_OBJS)
+CUBE_SOLVER_OBJS = $(addprefix CubeSolver/obj/,cube turn cube_nums cubeSolver \
+				   cubeEncoder turn_tables translate end_maps)
+
+IMAGE_PROC_OBJS = $(addprefix ImageProcess/,colorFromTemplate startup)
+
+EXTERNAL_OBJS = $(addsuffix .o,$(CUBE_SOLVER_OBJS) $(IMAGE_PROC_OBJS) $(MOTOR_CONTROL_OBJS))
 
 #EXTERNAL_OBJS = SerialComm/failed_read_error.o SerialComm/serial.o
 
@@ -48,6 +48,7 @@ subdirectories:
 	# cd SerialComm; make lib
 	cd MotorControl; make lib
 	cd CubeSolver; make lib
+	cd ImageProcess; make lib
 
 # comm-test.o: comm-test.cpp
 # 	$(CXX) -c $(CXXFLAGS) $<
