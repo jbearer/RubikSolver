@@ -55,7 +55,7 @@ Cube translate(vector<vector<vector<Color>>> maybeCube)
         }
     }
 
-    std::cout << "found " << allCubes.size() " possibilities" << std::endl;
+    std::cout << "found " << allCubes.size() << " possibilities" << std::endl;
     vector<Cube> resultCubes;
 
     // try to convert each of the vectors into actual cubes
@@ -117,7 +117,19 @@ Cube translate(EasyCube cube) {
     if (sumCornerOrients % 3 != 0) {
         throw std::exception();
     }
+    // create a solved cube to compare with
+    const int solvedEdges[Cube::NUM_EDGES] =
+        {0,1,2,3,4,5,6,7,8,9,10,11 };
 
+    const int solvedCorners[Cube::NUM_CORNERS] =
+        { 0,1,2,3,4,5,6,7 };
+
+    if (!std::is_permutation(eColors, eColors + Cube::NUM_EDGES, solvedEdges)){
+        throw std::runtime_error("edge appears twice");
+    }
+    if (!std::is_permutation(cColors, cColors + Cube::NUM_CORNERS, solvedCorners)){
+        throw std::runtime_error("corner appears twice");
+    }
 
     return Cube(eColors, eOrients, cColors, cOrients);
 }

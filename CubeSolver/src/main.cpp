@@ -99,7 +99,7 @@ void translateWithOptions()
 
 	// throw in some uncertainty
 	left[0] = vector<Color>{Red, Orange};
-	front[4] = vector<Color>{Yellow, Orange};
+	front[4] = vector<Color>{Yellow, Green};
 
 	Cube result = translate({up, back, left, right, front, down});
 	cout << result << endl;
