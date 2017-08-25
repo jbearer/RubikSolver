@@ -7,6 +7,7 @@
 
 using std::cout;
 using std::endl;
+using std::vector;
 
 using namespace CubeSolver;
 using namespace CommProtocol;
@@ -82,6 +83,26 @@ void translate_test()
 	// }
 	// cout << endl;
 
+}
+
+void translateWithOptions()
+{
+	//vector<vector<vector<Color>>> maybeCube;
+
+	// Create the solved faces
+	vector<vector<Color>> up(8, vector<Color>(1,Yellow));
+	vector<vector<Color>> back(8, vector<Color>(1,Blue));
+	vector<vector<Color>> left(8, vector<Color>(1,Red));
+	vector<vector<Color>> right(8, vector<Color>(1,Orange));
+	vector<vector<Color>> front(8, vector<Color>(1,Green));
+	vector<vector<Color>> down(8, vector<Color>(1,White));
+
+	// throw in some uncertainty
+	left[0] = vector<Color>{Red, Orange};
+	front[4] = vector<Color>{Yellow, Orange};
+
+	Cube result = translate({up, back, left, right, front, down});
+	cout << result << endl;
 }
 
 void solveToCubeTest()
@@ -189,6 +210,7 @@ void calculateStats(std::vector<double> vec, double& max, double& avg, double& s
 
 int main()
 {
+	translateWithOptions();
 	//buildTurnTables();
 	//buildEndMaps("ser/endMap_big", 1e7/20, 1e7*2);
 	//std::cout << cycleLength() << std::endl;
@@ -196,6 +218,7 @@ int main()
 	//translate_test(e1, e2);
 	//allCycles();
 
+	/*
 	Solver solver;
 	Cube c;
 	c = Cube::turn(c, FRONT);
@@ -264,5 +287,5 @@ int main()
 	cout << "stdev turns: " << stdev << endl;
 
 	}
-
+	*/
 }

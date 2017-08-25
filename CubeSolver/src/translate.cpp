@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <exception>
 #include "translate.h"
 
 using std::tuple;
@@ -21,6 +22,62 @@ EasyCube::EasyCube(std::vector<Face> faces) :
     right_{faces[3]}, front_{faces[4]}, down_{faces[5]}
 {
     // Nothing more to do
+}
+
+Cube translate(vector<vector<vector<Color>>> maybeCube)
+{
+    vector<vector<vector<Color>>> allCubes(1,vector<vector<Color>>(6,vector<Color>(8)));
+
+    for (size_t face = 0; face < NUM_FACES; ++face) {
+        for (size_t facelet = 0; facelet < NUM_FACELETS; ++facelet) {
+            vector<Color> colors = maybeCube[face][facelet];
+            // if we know what the color is
+            if (colors.size() == 1) {
+                // update all the cubes with the color
+                for (auto& cube : allCubes) {
+                    cube[face][facelet] = colors[0];
+                }
+            }
+
+            else {
+                // create a temporary new vector of cubes
+                vector<vector<vector<Color>>> newCubes;
+                for (auto cubeCopy : allCubes) {
+                    for (auto color : colors) {
+                        // copy a version of each cube with the new color
+                        // into the new vector
+                        cubeCopy[face][facelet] = color;
+                        newCubes.push_back(cubeCopy);
+                    }
+                }
+                allCubes = newCubes;
+            }
+        }
+    }
+
+    std::cout << "found " << allCubes.size() " possibilities" << std::endl;
+    vector<Cube> resultCubes;
+
+    // try to convert each of the vectors into actual cubes
+    for (auto& cube : allCubes) {
+        EasyCube easyCube(cube);
+        try {
+            Cube result = translate(easyCube);
+            resultCubes.push_back(result);
+        }
+        catch (std::exception&){}
+    }
+
+
+    if (resultCubes.size() > 1) {
+        throw std::runtime_error("hey, there are too many cubes");
+    }
+
+    if (resultCubes.size() == 0) {
+        throw std::runtime_error("hey, none of the cubes worked");
+    }
+
+    return resultCubes[0];
 }
 
 Cube translate(EasyCube cube) {

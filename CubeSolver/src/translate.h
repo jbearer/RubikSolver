@@ -10,6 +10,9 @@
 #include "cube.h"
 //#include "cubeSolver.h"
 
+using std::vector;
+using std::list;
+
 namespace CubeSolver {
 
     /*
@@ -25,26 +28,29 @@ namespace CubeSolver {
      */
     enum Color {Red, Orange, Yellow, Green, Blue, White};
 
-    typedef std::list<Color> Corner;
-    typedef std::list<Color> Edge;
-    typedef std::vector<Color> Face;
+    typedef list<Color> Corner;
+    typedef list<Color> Edge;
+    typedef vector<Color> Face;
+
+    static const int NUM_FACES = 6;
+    static const int NUM_FACELETS = 8;
 
     /* Represents a cube by the facelets, as opposed to the cubies */
     struct EasyCube {
     public:
         EasyCube() = default;
         EasyCube(Face up, Face back, Face left, Face right, Face front, Face down);
-        EasyCube(std::vector<Face> faces);
+        EasyCube(vector<Face> faces);
 
         // default to a solved easy cube;
-        Face up_ = std::vector<Color>(8, Color::Yellow);
-        Face back_ = std::vector<Color>(8, Color::Blue);
-        Face left_ = std::vector<Color>(8, Color::Red);
-        Face right_ = std::vector<Color>(8, Color::Orange);
-        Face front_ = std::vector<Color>(8, Color::Green);
-        Face down_ = std::vector<Color>(8, Color::White);
+        Face up_ = Face(8, Color::Yellow);
+        Face back_ = Face(8, Color::Blue);
+        Face left_ = Face(8, Color::Red);
+        Face right_ = Face(8, Color::Orange);
+        Face front_ = Face(8, Color::Green);
+        Face down_ = Face(8, Color::White);
 
-        const std::vector<std::vector<Color*>> edges {
+        const vector<vector<Color*>> edges {
             {&up_[1], &back_[1]},
             {&left_[1], &up_[3]},
             {&right_[1], &up_[4]},
@@ -61,7 +67,7 @@ namespace CubeSolver {
             {&down_[6], &front_[6]}
         };
 
-        const std::vector<std::vector<Color*>> corners {
+        const vector<vector<Color*>> corners {
             {&left_[0], &back_[2], &up_[0]},
             {&right_[2], &up_[2], &back_[0]},
             {&left_[2], &up_[5], &front_[0]},
@@ -88,6 +94,15 @@ namespace CubeSolver {
      * @return     The corresponding cube object
      */
     Cube translate(EasyCube colors);
+
+    /**
+     * @brief      Translate from a list of color possibilities
+     *
+     * @param[in]  maybeCube  The maybe cube
+     *
+     * @return     A cube, or throws an error if there are multiple options
+     */
+    Cube translate(vector<vector<vector<Color>>> maybeCube);
 
     static const std::map<Cube::Corner_t, Corner> corner_map {
         {Cube::YRB, Corner{Red, Blue, Yellow}},
