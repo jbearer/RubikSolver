@@ -5,18 +5,12 @@
 include config.mk
 
 # Local includes
-INCL += -IMotorControl/src/arduino-incl -isystem -ISerialComm/src -ISerialComm/test -ICubeSolver/src -IImageProcess/
+INCL += -ICubeSolver/src -IImageProcess/
 INCL += -I/usr/local/include/opencv2 -I/usr/local/include
-ARDINCL +=
 
 CXXFLAGS += $(INCL)
-ARDCXXFLAGS += $(ARDINCL)
 
-TARGETS = main.exe #CommProtocolTest.exe SerialTest.exe main.exe
-
-COMM_PROTOCOL_TEST_OBJS = comm-protocol-test.o
-
-SERIAL_TEST_OBJS = serial-test.o
+TARGETS = main.exe test.exe
 
 MAIN_OBJS = main.o
 
@@ -29,38 +23,21 @@ IMAGE_PROC_OBJS = $(addprefix ImageProcess/,colorFromTemplate startup)
 
 EXTERNAL_OBJS = $(addsuffix .o,$(CUBE_SOLVER_OBJS) $(IMAGE_PROC_OBJS) $(MOTOR_CONTROL_OBJS))
 
-#EXTERNAL_OBJS = SerialComm/failed_read_error.o SerialComm/serial.o
-
 # Build executables:
 #	CommTest.exe: Sends a predetermined sequence of commands via the serial port
 #	to the Arduino to trigger the motors.
 all: subdirectories $(TARGETS)
 clean:
-	cd SerialComm; make clean
-	cd MotorControl; make clean
 	cd CubeSolver; make clean
+	cd ImageProcess; make clean
 	rm -rf doc
 	rm -rf *.o *.exe $(TARGETS)
 again: clean all
 
 # Build objects from subdirectories
 subdirectories:
-	# cd SerialComm; make lib
-	cd MotorControl; make lib
 	cd CubeSolver; make lib
 	cd ImageProcess; make lib
-
-# comm-test.o: comm-test.cpp
-# 	$(CXX) -c $(CXXFLAGS) $<
-
-# serial-test.o: serial-test.cpp
-# 	$(CXX) -c $(CXXFLAGS) $<
-
-# CommProtocolTest.exe: $(COMM_PROTOCOL_TEST_OBJS)
-# 	$(CXX) -o $@ $(CXXFLAGS) $^ $(EXTERNAL_OBJS)
-
-# SerialTest.exe: $(SERIAL_TEST_OBJS)
-# 	$(CXX) -o $@ $(CXXFLAGS) $^ $(EXTERNAL_OBJS)
 
 main.o: main.cpp
 	$(CXX) -c $(CXXFLAGS) $<

@@ -9,7 +9,7 @@
 #	Boost/serialization; Boost/archive (required)
 
 # Path to arduino libraries. Specific to local PC
-AVR_PATH = C:/Program_Files_x86/Arduino/hardware/arduino/avr
+# AVR_PATH = C:/Program_Files_x86/Arduino/hardware/arduino/avr
 
 # Path to Boost installation
 BOOST_PATH = /usr/local/include/boost
@@ -18,34 +18,34 @@ BOOST_PATH = /usr/local/include/boost
 # Hardware settings
 ################################################################################
 
-COM_PORT = \\.\\COM10
+# COM_PORT = \\.\\COM10
 
 ################################################################################
 # Arduino compiler settings
 ################################################################################
 
 # Pin layout (standard = Arduino Uno)
-PIN_LAYOUT = standard
+# PIN_LAYOUT = standard
 
 # Arduino Uno architecture
-MCU = atmega328p
+# MCU = atmega328p
 
 # Arduino processor frequency
-F_CPU = 16000000UL
+# F_CPU = 16000000UL
 
 # Compiler for building Arduino executables
-ARDCXX = avr-g++
+# ARDCXX = avr-g++
 
 # Arduino optimization level
-ARDOPT = s
+# ARDOPT = s
 
 # Arduino comipler C++ standard
-ARDSTD = c++11
+# ARDSTD = c++11
 
-ARDWARNINGS = -Wall -Wextra -pedantic
+# ARDWARNINGS = -Wall -Wextra -pedantic
 
 # Include path for Arduino compiler
-ARDINCL = -I$(AVR_PATH)/cores/arduino -I$(AVR_PATH)/variants/$(PIN_LAYOUT)
+# ARDINCL = -I$(AVR_PATH)/cores/arduino -I$(AVR_PATH)/variants/$(PIN_LAYOUT)
 
 ################################################################################
 # C++ compiler settings
@@ -81,8 +81,7 @@ else
 DEBUG_FLAG =
 endif
 
-ARDCXXFLAGS = $(ARDWARNINGS) -O$(ARDOPT) -DF_CPU=$(F_CPU) -std=$(ARDSTD) -mmcu=$(MCU)
-CXXFLAGS = $(DEBUG_FLAG) -O$(OPTIMIZATION) -std=$(STD) $(WARNINGS) \
--DCOM_PORT=$(COM_PORT) -DPC_BUILD=1
+# ARDCXXFLAGS = $(ARDWARNINGS) -O$(ARDOPT) -DF_CPU=$(F_CPU) -std=$(ARDSTD) -mmcu=$(MCU)
+CXXFLAGS = $(DEBUG_FLAG) -O$(OPTIMIZATION) -std=$(STD) $(WARNINGS)
 
 LINKERFLAGS = $(LIB_FLAG) $(LIBS)
