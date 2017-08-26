@@ -81,6 +81,7 @@ void getPallet(std::vector<std::vector<ColorMap>> colorMaps)
 
     for(int row = 0; row < 6; row++){
         for(int col = 0; col < 8; col++){
+            std::cout << "color map for row " << row << " col " << col << std::endl;
             const ColorMap& cm = colorMaps[row][col];
             int offset = 0;
             for (auto pair : cm) {
@@ -132,7 +133,7 @@ std::vector<std::vector<ColorMap>> faceColorMap()
     size_t numFaces = 6;
     size_t numFacelets = 8;
 
-
+    /*
     // Initialize video ports
     VideoCapture v0(PORT0);
     VideoCapture v1(PORT1);
@@ -169,7 +170,7 @@ std::vector<std::vector<ColorMap>> faceColorMap()
     digitalWrite(sleepPin,HIGH);
 
     std::clock_t startTime;
-
+    */
     // assume the cube starts in the solved position
     // i.e. Up corresponds with Yellow, Front with Green, etc.
     std::vector<std::vector<ColorMap>> colorMaps(numFaces, std::vector<ColorMap>(numFacelets));
@@ -217,8 +218,8 @@ std::vector<std::vector<ColorMap>> faceColorMap()
         // imwrite("img0_"+std::to_string(i)+".png", img0);
         // imwrite("img1_"+std::to_string(i)+".png", img1);
 
-        img0 = imread("img0_"+std::to_string(i)+".png");
-        img1 = imread("img1_"+std::to_string(i)+".png");
+        Mat img0 = imread("../TestImages/img0_"+std::to_string(i)+".png");
+        Mat img1 = imread("../TestImages/img1_"+std::to_string(i)+".png");
 
         // endwin();
 
@@ -252,7 +253,7 @@ std::vector<std::vector<ColorMap>> faceColorMap()
     std::cout << "getting pallet" << std::endl;
     getPallet(colorMaps);
 
-    digitalWrite(sleepPin, LOW);
+    //digitalWrite(sleepPin, LOW);
     return colorMaps;
 }
 

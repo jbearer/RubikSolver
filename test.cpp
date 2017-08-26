@@ -65,6 +65,8 @@ int main()
     cout << "initializing color map" << endl;
     vector<vector<ColorMap>> colorMap = faceColorMap();
 
+    cout << "reading scrambled images" << endl;
+
     Mat img0, img1;
     img0 = imread("../TestImages/scrambledA0.png");
     img1 = imread("../TestImages/scrambledA1.png");
