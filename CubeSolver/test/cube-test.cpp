@@ -14,7 +14,6 @@ using std::cout;
 using std::endl;
 
 using namespace CubeSolver;
-using namespace CommProtocol;
 using namespace boost::accumulators;
 
 const std::string ENDMAP_SMALL_PATH = "ser/endMap_small.ser";

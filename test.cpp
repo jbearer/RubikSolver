@@ -20,7 +20,6 @@ using std::endl;
 
 using namespace cv;
 using namespace CubeSolver;
-using namespace CommProtocol;
 
 float distance(Scalar s1, Scalar s2)
 {

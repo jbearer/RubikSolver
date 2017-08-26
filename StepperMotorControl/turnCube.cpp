@@ -1,12 +1,11 @@
 /**
- * 
+ *
  */
 
 
 #include "turnCube.hpp"
 
 using namespace CubeSolver;
-using namespace CommProtocol;
 
 /**
  * @brief      Slow stepping function (should always work)
@@ -14,7 +13,7 @@ using namespace CommProtocol;
  * @param[in]  motor  The motor
  * @param[in]  dir    The dir
  * @param[in]  turns  The turns
- * 
+ *
  * @note ~0.1s per quarter turn
  */
 void step(int motor, int dir, int turns) {
@@ -36,7 +35,7 @@ void step(int motor, int dir, int turns) {
     stepNum = 100;
     accelSteps = 85;
   }
-  
+
   // Wake up motor
   digitalWrite(disablePin, LOW);
   // Set the direction
@@ -63,7 +62,7 @@ void step(int motor, int dir, int turns) {
 
   delayMillis(1);
 
-  // Turn off motor(s)  
+  // Turn off motor(s)
   digitalWrite(disablePin, HIGH);
 }
 
@@ -110,7 +109,7 @@ void turn(Turn t)
     case UP_2:
       step(0,CW,2); break;
     // default:
-    //   // std::cerr << "ERROR: Invalid Turn enum passed to turn()" << std::endl; 
+    //   // std::cerr << "ERROR: Invalid Turn enum passed to turn()" << std::endl;
     //   break;
   }
 }

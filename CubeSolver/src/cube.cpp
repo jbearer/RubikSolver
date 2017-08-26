@@ -8,7 +8,6 @@
 using std::cout;
 using std::endl;
 
-using namespace CommProtocol;
 using namespace CubeSolver;
 
 Turn CubeSolver::TURNS_STEP1[NUM_TURNS_STEP1] = {

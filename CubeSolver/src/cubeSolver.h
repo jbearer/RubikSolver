@@ -14,7 +14,6 @@
 #include <queue>
 #include <memory>
 
-#include "comm-protocol.h"
 #include "cube.h"
 #include "cube_nums.h"
 #include "cubeEncoder.h"

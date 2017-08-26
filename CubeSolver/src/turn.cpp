@@ -10,7 +10,6 @@
 #include "turn.h"
 
 using namespace boost::assign;
-using namespace CommProtocol;
 using namespace CubeSolver;
 
 std::map<Turn, Turn> turnToOppTurn = map_list_of

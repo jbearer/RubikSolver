@@ -16,7 +16,6 @@
 #include <stdio.h>
 #include <ncurses.h>
 
-using namespace CommProtocol;
 using namespace CubeSolver;
 using namespace cv;
 

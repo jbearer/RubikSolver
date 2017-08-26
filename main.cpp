@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <exception>
 
-using namespace CommProtocol;
 using namespace CubeSolver;
 using namespace cv;
 //using namespace SerialComm;

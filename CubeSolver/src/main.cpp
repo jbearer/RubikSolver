@@ -10,7 +10,6 @@ using std::endl;
 using std::vector;
 
 using namespace CubeSolver;
-using namespace CommProtocol;
 using namespace boost::accumulators;
 
 /** Find how many cycles it takes to make DRFBLU*/

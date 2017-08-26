@@ -4,7 +4,6 @@
 #include "cubeSolver.h"
 
 using CubeSolver::Cube;
-using CommProtocol::MoveInstruction;
 
 using namespace CubeSolver;
 using namespace CubeSolver::TurnTables;

@@ -14,7 +14,6 @@ using std::cout;
 using std::endl;
 
 using namespace CubeSolver;
-using namespace CommProtocol;
 
 const std::string END_TABLES_PATH = "ser/end_maps.ser";
 
@@ -27,8 +26,8 @@ Solver::Solver()
 
 	// HACK to add a destination to the end maps.  FRONT
 	// should be a dummy move instruction
-	(*e1_)[CubeNumsStep1()] = MoveInstruction::FRONT;
-	(*e2_)[CubeNumsStep2()] = MoveInstruction::FRONT;
+	(*e1_)[CubeNumsStep1()] = FRONT;
+	(*e2_)[CubeNumsStep2()] = FRONT;
 
 }
 

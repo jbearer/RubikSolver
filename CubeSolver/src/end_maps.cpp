@@ -10,18 +10,17 @@
 
 using namespace CubeSolver;
 
-using CommProtocol::MoveInstruction;
 using std::cout;
 using std::endl;
 
 const std::string END_TABLES_PATH = "ser/end_maps.ser";
 
 std::unordered_map<CubeNumsStep1,
-	MoveInstruction,
+	Turn,
 	CubeNumsStep1::Hash> MAKE_STEP1MAP;
 
 std::unordered_map<CubeNumsStep2,
-	MoveInstruction,
+	Turn,
 	CubeNumsStep2::Hash> MAKE_STEP2MAP;
 
 void CubeSolver::readEndMaps(std::string pathToFile, std::unique_ptr<EndMap1>& endMap1, std::unique_ptr<EndMap2>& endMap2)
@@ -84,7 +83,7 @@ std::queue<CubeNumsStep1> CubeSolver::buildMap1(size_t mapSize)
 	Cube solvedCube;
 	CubeNumsStep1 solvedCubeNums;
 
-	MAKE_STEP1MAP[solvedCubeNums] = MoveInstruction::FRONT;
+	MAKE_STEP1MAP[solvedCubeNums] = FRONT;
 
 	std::queue<CubeNumsStep1> cubeQueue;
 	cubeQueue.push(solvedCubeNums);
@@ -128,7 +127,7 @@ void CubeSolver::buildMap2(size_t mapSize)
 
 	Cube solvedCube;
 	CubeNumsStep2 solvedCubeNums;
-	MAKE_STEP2MAP[solvedCubeNums] = MoveInstruction::FRONT;
+	MAKE_STEP2MAP[solvedCubeNums] = FRONT;
 
 	std::queue<CubeNumsStep2> cubeQueue;
 	cubeQueue.push(solvedCubeNums);

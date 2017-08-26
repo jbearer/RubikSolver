@@ -1,6 +1,17 @@
 Todo:
 
-* create `Solver` class that automatically reads turn tables and end maps
+* remove CommProtocol and SerialComm
+* Convert makeshift test into real test
+* make into obj folder
+* update make dependencies everywhere
+* Filter out makefile
+* Take all pictures first, then create color mappings
+* Use variables to condense makefiles
+* Use absolute path for image files
+* Clean out repo
+* Rename `startup.cpp`, move to appropriate place
+* Refactor taking picture into once nice function
+* Class for "cube turner"
 * `solve` take cube reference and modify it
 * Check if even permutation
 
