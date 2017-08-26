@@ -28,6 +28,8 @@ namespace CubeSolver {
      */
     enum Color {Red, Orange, Yellow, Green, Blue, White};
 
+    std::ostream& operator<<(std::ostream& out, const Color& color);
+
     typedef list<Color> Corner;
     typedef list<Color> Edge;
     typedef vector<Color> Face;
@@ -61,10 +63,10 @@ namespace CubeSolver {
             {&left_[4], &front_[3]},
             {&right_[3], &front_[4]},
 
-            {&down_[1], &back_[6]},
+            {&down_[6], &back_[6]},
             {&left_[6], &down_[3]},
             {&right_[6], &down_[4]},
-            {&down_[6], &front_[6]}
+            {&down_[1], &front_[6]}
         };
 
         const vector<vector<Color*>> corners {
@@ -73,7 +75,7 @@ namespace CubeSolver {
             {&left_[2], &up_[5], &front_[0]},
             {&right_[0], &front_[2], &up_[7]},
 
-            {&left_[7], &down_[5], &back_[7]},
+            {&left_[5], &down_[5], &back_[7]},
             {&right_[7], &back_[5], &down_[7]},
             {&left_[7], &front_[5], &down_[0]},
             {&right_[5], &down_[2], &front_[7]}

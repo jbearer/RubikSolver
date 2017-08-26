@@ -105,6 +105,24 @@ void translateWithOptions()
 	cout << result << endl;
 }
 
+void translateTest2()
+{
+	EasyCube c
+	{
+		{Yellow, Yellow, Green, Yellow, Green, Yellow, Yellow, Green},
+		{Yellow, Blue, Blue, Yellow, Blue, Red, Red, Red},
+		{Red, Red, Red, Red, Red, Green, Green, White},
+		{Orange, Orange, Orange, Orange, Orange, Yellow, Blue, Blue},
+		{Green, Green, White, Green, White, Orange, Orange, Orange},
+		{Blue, Blue, Blue, White, White, White, White, White}
+	};
+	Cube cube = translate(c);
+	Solver solver;
+	solver.solve(cube);
+
+	cout << "solved" << endl;
+}
+
 void solveToCubeTest()
 {
 	Cube start;
@@ -210,7 +228,8 @@ void calculateStats(std::vector<double> vec, double& max, double& avg, double& s
 
 int main()
 {
-	translateWithOptions();
+	translateTest2();
+	//translateWithOptions();
 	//buildTurnTables();
 	//buildEndMaps("ser/endMap_big", 1e7/20, 1e7*2);
 	//std::cout << cycleLength() << std::endl;

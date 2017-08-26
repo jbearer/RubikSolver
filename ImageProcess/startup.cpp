@@ -12,6 +12,10 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include "turnCube.hpp"
 
+#include <unistd.h>
+#include <stdio.h>
+#include <ncurses.h>
+
 using namespace CommProtocol;
 using namespace CubeSolver;
 using namespace cv;
@@ -146,6 +150,19 @@ std::vector<std::vector<ColorMap>> faceColorMap()
         // return -1;
     }
 
+
+    // Initialize master mask
+    v0.read(img0);
+    v1.read(img1);
+    Mat mask0(img0.rows, img0.cols, CV_8UC3, Scalar(0,0,0));
+    Mat mask1(img1.rows, img1.cols, CV_8UC3, Scalar(0,0,0));
+    getMasterMask0(mask0);
+    getMasterMask1(mask1);
+    Mat result0;
+    Mat result1;
+
+
+
     // Setup motors
     pioInit();
     setup();
@@ -160,23 +177,55 @@ std::vector<std::vector<ColorMap>> faceColorMap()
     //std::vector<std::vector<Turn>> turnPatterns = colorTour();
 
     for (size_t i = 0; i < turnPatterns.size(); ++i){
-        const std::vector<Turn>& turns = turnPatterns[i];
-        for (auto t : turns) {
-            turn(t);
-        }
-        std::cout <<"taking picture " << i << std::endl;
-        // Wait 1 second for feed to buffer
-        startTime = std::clock();
-        while( (std::clock()-startTime) / (double)CLOCKS_PER_SEC < 1.0){
-            v0.read(img0);
-            v1.read(img1);
-            waitKey(1);
-        }
+        // const std::vector<Turn>& turns = turnPatterns[i];
+        // for (auto t : turns) {
+        //     turn(t);
+        // }
+
+        // // std::cout << "Fix cube, then enter input to continue: ";
+        // // std::string input;
+        // // std::cin >> input;
+        // //
+
+
+        // std::cout <<"taking picture " << i << std::endl;
+
+        // // // Ncurses screen
+        // // int ncurseChar = 0;
+        // // initscr();
+        // // timeout(0);
+
+        // // Wait 1 second for feed to buffer
+        // startTime = std::clock();
+        // while( (std::clock()-startTime) / (double)CLOCKS_PER_SEC < 1.0){
+        // // while(!ncurseChar){
+        //     v0.read(img0);
+        //     v1.read(img1);
+
+        //     // bitwise_or(img0, mask0, result0); // bitwise_or to keep rest of img
+        //     // imshow("Full Mask 0", result0);
+        //     // bitwise_or(img1, mask1, result1); // bitwise_or to keep rest of img
+        //     // imshow("Full Mask 1", result1);
+
+        //     // ncurseChar=getch();
+        //     // if(ncurseChar>0) ncurseChar = 1;
+        //     // else ncurseChar = 0;
+
+        //     waitKey(1);
+        // }
+
+        // imwrite("img0_"+std::to_string(i)+".png", img0);
+        // imwrite("img1_"+std::to_string(i)+".png", img1);
+
+        img0 = imread("img0_"+std::to_string(i)+".png");
+        img1 = imread("img1_"+std::to_string(i)+".png");
+
+        // endwin();
 
         // Mat img0, img1;
-        std::vector<std::vector<Scalar>> faceColors = getFaceColors(img0, img1);
+        std::vector<std::vector<Scalar>> faceColors = getFaceColors(img0, img1, false);
 
-        std::cout << "loading map with colors" << i << std::endl;
+        std::cout << "loading map with colors " << i << std::endl;
 
         // load the maps with colors
         for (size_t face = 0; face < numFaces; ++face) {

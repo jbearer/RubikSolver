@@ -24,6 +24,26 @@ EasyCube::EasyCube(std::vector<Face> faces) :
     // Nothing more to do
 }
 
+std::ostream& operator<<(std::ostream& out, const Color& color)
+{
+    switch(color) {
+        case Red:
+            out << "Red"; break;
+        case Orange:
+            out << "Orange"; break;
+        case Yellow:
+            out << "Yellow"; break;
+        case Green:
+            out << "Green"; break;
+        case Blue:
+            out << "Blue"; break;
+        case White:
+            out << "Black"; break;
+    }
+    return out;
+}
+
+
 Cube translate(vector<vector<vector<Color>>> maybeCube)
 {
     vector<vector<vector<Color>>> allCubes(1,vector<vector<Color>>(6,vector<Color>(8)));
@@ -77,6 +97,8 @@ Cube translate(vector<vector<vector<Color>>> maybeCube)
         throw std::runtime_error("hey, none of the cubes worked");
     }
 
+    std::cout << "hey, it actually worked" << std::endl;
+
     return resultCubes[0];
 }
 
@@ -90,6 +112,7 @@ Cube translate(EasyCube cube) {
     int i = 0;
     for (auto edge_ptr : cube.edges) {
         Edge e{*edge_ptr[0], *edge_ptr[1]};
+
         tuple<Cube::Edge_t, size_t> result = translate_edge(e);
         eColors[i] = get<0>(result);
         eOrients[i] = get<1>(result);
@@ -98,6 +121,7 @@ Cube translate(EasyCube cube) {
     i=0;
     for (auto corner_ptr : cube.corners) {
         Corner c{*corner_ptr[0], *corner_ptr[1], *corner_ptr[2]};
+
         tuple<Cube::Corner_t, size_t> result = translate_corner(c);
         cColors[i] = get<0>(result);
         cOrients[i] = get<1>(result);

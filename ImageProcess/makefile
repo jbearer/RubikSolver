@@ -32,7 +32,7 @@ colorFromTemplate.o: colorFromTemplate.hpp colorFromTemplate.cpp faceCoords.hpp
 	g++ $(CXXFLAGS) colorFromTemplate.cpp -c -o colorFromTemplate.o $(LDLIBS)
 
 startup.o: startup.hpp startup.cpp ../StepperMotorControl/turnCube.hpp
-	g++ $(CXXFLAGS) startup.cpp -c -o startup.o $(LDLIBS) -I$(ROOT)CubeSolver/src
+	g++ $(CXXFLAGS) startup.cpp -c -o startup.o $(LDLIBS) -I$(ROOT)CubeSolver/src -lncurses
 
 CubeCapture.exe: cubeCapture.o
 	g++ -o CubeCapture.exe cubeCapture.o `pkg-config --cflags --libs opencv` -lncurses

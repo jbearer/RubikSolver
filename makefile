@@ -65,8 +65,15 @@ subdirectories:
 main.o: main.cpp
 	$(CXX) -c $(CXXFLAGS) $<
 
+test.o: test.cpp
+	$(CXX) -c $(CXXFLAGS) $<
+
 main.exe: $(MAIN_OBJS)
-	$(CXX) -o $@ $(CXXFLAGS) $^ $(EXTERNAL_OBJS) $(LINKERFLAGS) `pkg-config --cflags --libs opencv`
+	$(CXX) -o $@ $(CXXFLAGS) $^ $(EXTERNAL_OBJS) $(LINKERFLAGS) `pkg-config --cflags --libs opencv` -lncurses
+
+test.exe: test.o
+	$(CXX) -o $@ $(CXXFLAGS) $^ $(EXTERNAL_OBJS) $(LINKERFLAGS) `pkg-config --cflags --libs opencv` -lncurses
+
 
 doc: FORCE
 	doxygen doxygen.config; cd doc/latex; make

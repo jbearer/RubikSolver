@@ -47,8 +47,11 @@ int main(void)
     initscr();
     timeout(0);
 
+    // double exposure;
+
     sleep(1);
     while(!i){
+    // while(true){
         // Read a single frame
         v0.read(cam0);
         v1.read(cam1);
@@ -56,12 +59,15 @@ int main(void)
         imshow("Image0", cam0);
         imshow("Image1", cam1);
 
+        // // v0.set(CV_CAP_PROP_AUTO_EXPOSURE, 0 ); 
+        // exposure = v0.get(CV_CAP_PROP_EXPOSURE); 
+        // std::cout << "Exposure: " << exposure << std::endl;
 
         i=getch();
         // std::cout << i << std::endl;
         if(i>0) i = 1;
         else i = 0;
-
+// 
         waitKey(5);
     }
 
