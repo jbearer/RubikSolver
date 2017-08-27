@@ -5,7 +5,6 @@
 */
 
 #include <iostream>
-//#include "../../MotorControl/src/arduino-incl/comm-protocol.h"
 
 namespace CubeSolver {
 

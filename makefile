@@ -24,8 +24,7 @@ IMAGE_PROC_OBJS = $(addprefix ImageProcess/,colorFromTemplate startup)
 EXTERNAL_OBJS = $(addsuffix .o,$(CUBE_SOLVER_OBJS) $(IMAGE_PROC_OBJS) $(MOTOR_CONTROL_OBJS))
 
 # Build executables:
-#	CommTest.exe: Sends a predetermined sequence of commands via the serial port
-#	to the Arduino to trigger the motors.
+	# main.exe
 all: subdirectories $(TARGETS)
 clean:
 	cd CubeSolver; make clean

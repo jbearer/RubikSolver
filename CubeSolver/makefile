@@ -1,44 +1,55 @@
-ROOT = ../
+# usage:
+# make: build executables
+# make test: make and execute normal tests
+# make test_perf: make and execute performance tests
 
+ROOT = ../
 include $(ROOT)config.mk
 
-INCL += -I$(ROOT)MotorControl/src/arduino-incl -Isrc -isystem $(GTEST_DIR)/include
-ARDINCL +=
-
-CXXFLAGS += $(INCL)
-ARDCXXFLAGS += $(ARDINCL)
-
-TARGETS = Cube.exe CubeTest.exe
-OBJS = obj/cube.o obj/turn.o obj/cube_nums.o obj/cubeSolver.o obj/turn_tables.o obj/end_maps.o obj/cubeEncoder.o obj/translate.o
-TEST_OBJS = $(OBJS) obj/cube-test.o $(TEST_OBJ)/gtest_main.a
 SRC_PATH = src
 TEST_PATH = test
+OBJ_PATH = obj
+
+INCL += -I$(SRC_PATH)
+CXXFLAGS += $(INCL)
+
 GTEST_DIR = /usr/src/gtest/googletest
+TEST_INCL = -isystem $(GTEST_DIR)/include
 
-SOLVER_OBJS = obj/cube.o obj/turn.o obj/cube_nums.o obj/cubeSolver.o obj/cubeEncoder.o
-TEST_OBJS = $(OBJS) obj/turn_tables.o obj/end_maps.o obj/cube-test.o $(TEST_OBJ)/gtest_main.a
+# Google Test variables, from sample makefile
+GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
+                $(GTEST_DIR)/include/gtest/internal/*.h
 
+GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
+
+GTEST_OBJ = test/test_obj
+
+# Objects and targets:
+OBJ_FILES = cube turn cube_nums cubeSolver turn_tables end_maps cubeEncoder translate
+OBJS = $(addsuffix .o,$(addprefix $(OBJ_PATH)/,$(OBJ_FILES)))
+TEST_OBJS = $(OBJS) $(OBJ_PATH)/cube-test.o $(GTEST_OBJ)/gtest_main.a
+
+TARGETS = Cube.exe CubeTest.exe
 
 # Flags passed to the preprocessor.
 # We have no idea here whether pthreads is available in the system, so
 # disable its use.
-CPPFLAGS += -DGTEST_HAS_PTHREAD=0
-
-TESTS = CubeTest.exe
-
-
+GTEST_FLAGS += -DGTEST_HAS_PTHREAD=0
 
 # Build executables:
-#	CubeTest.exe: Scramble and solve a test cube, and time the process.
+
 all: $(TARGETS)
 
-# build and run tests
+# build and run tests:
+# make test: make and execute normal tests
 test: CubeTest.exe
 	./CubeTest.exe --gtest_filter=-Build.*:CubeSolverPerf.*
 
+# make test_build: make and execute tests for serializing solver resources
 test_build: CubeTest.exe
 	./CubeTest.exe --gtest_filter=Build.*
 
+# make test_perf: make and execute performance test (time solve for 500 cubes)
 test_perf: CubeTest.exe
 	./CubeTest.exe --gtest_filter=CubeSolverPerf.*
 
@@ -50,93 +61,88 @@ clean:
 	rm -rf obj *.exe $(TARGETS)
 again: clean all
 
-
-
 #######################################
 ############# SRC FILES ###############
 #######################################
 
-obj/cube.o: $(SRC_PATH)/cube.cpp $(SRC_PATH)/cube.h
-	@mkdir -p $(@D)
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+SRC_RECIPE = @$(CXX) -c $(CXXFLAGS) $< -o $@
 
-obj/cubeEncoder.o: $(SRC_PATH)/cubeEncoder.cpp $(SRC_PATH)/cubeEncoder.h
+$(OBJ_PATH)/turn.o: $(SRC_PATH)/turn.cpp $(SRC_PATH)/turn.h
 	@mkdir -p $(@D)
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+	$(SRC_RECIPE)
 
-obj/cubeSolver.o: $(SRC_PATH)/cubeSolver.cpp $(SRC_PATH)/cubeSolver.h
+$(OBJ_PATH)/cube.o: $(SRC_PATH)/cube.cpp $(SRC_PATH)/cube.h $(SRC_PATH)/turn.h
 	@mkdir -p $(@D)
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+	$(SRC_RECIPE)
 
-obj/turn.o: $(SRC_PATH)/turn.cpp $(SRC_PATH)/cube.h
+$(OBJ_PATH)/translate.o: $(SRC_PATH)/translate.cpp $(SRC_PATH)/translate.h \
+		$(SRC_PATH)/cube.h
 	@mkdir -p $(@D)
-	@$(CXX) -c $(CXXFLAGS) $< -o $@
+	$(SRC_RECIPE)
 
-obj/turn_tables.o: $(SRC_PATH)/turn_tables.cpp $(SRC_PATH)/cubeSolver.h $(SRC_PATH)/turn_tables.h
+$(OBJ_PATH)/cubeEncoder.o: $(SRC_PATH)/cubeEncoder.cpp $(SRC_PATH)/cubeEncoder.h \
+		$(SRC_PATH)/cube.h
 	@mkdir -p $(@D)
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+	$(SRC_RECIPE)
 
-obj/end_maps.o: $(SRC_PATH)/end_maps.cpp $(SRC_PATH)/cubeSolver.h
+$(OBJ_PATH)/turn_tables.o: $(SRC_PATH)/turn_tables.cpp $(SRC_PATH)/turn_tables.h \
+		$(SRC_PATH)/cube.h $(SRC_PATH)/turn.h
 	@mkdir -p $(@D)
-	@$(CXX) -c $(CXXFLAGS) $< -o $@
+	$(SRC_RECIPE)
 
-obj/cube_nums.o: $(SRC_PATH)/cube_nums.cpp $(SRC_PATH)/cubeSolver.h $(SRC_PATH)/cube_nums.h
+$(OBJ_PATH)/end_maps.o: $(SRC_PATH)/end_maps.cpp $(SRC_PATH)/cubeSolver.h
 	@mkdir -p $(@D)
-	@$(CXX) -c $(CXXFLAGS) $< -o $@
+	$(SRC_RECIPE)
 
-obj/translate.o: $(SRC_PATH)/translate.cpp $(SRC_PATH)/translate.h
+$(OBJ_PATH)/cube_nums.o: $(SRC_PATH)/cube_nums.cpp $(SRC_PATH)/cube_nums.h \
+		$(SRC_PATH)/cubeSolver.h $(SRC_PATH)/cube.h
 	@mkdir -p $(@D)
-	@$(CXX) -c $(CXXFLAGS) $< -o $@
+	$(SRC_RECIPE)
+
+$(OBJ_PATH)/cubeSolver.o: $(SRC_PATH)/cubeSolver.cpp $(SRC_PATH)/cubeSolver.h \
+		$(SRC_PATH)/cube.h $(SRC_PATH)/cube_nums.h $(SRC_PATH)/cubeEncoder.h \
+		$(SRC_PATH)/turn.h $(SRC_PATH)/turn_tables.h $(SRC_PATH)/translate.h
+	@mkdir -p $(@D)
+	$(SRC_RECIPE)
+
+$(OBJ_PATH)/main.o: $(SRC_PATH)/main.cpp
+	@mkdir -p $(@D)
+	$(SRC_RECIPE)
 
 #####################################
 ########## TEST FILES ###############
 #####################################
 
-
 # Adapted from googletest sample makefile
 
-# All Google Test headers.  Usually you shouldn't change this
-# definition.
-GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
-                $(GTEST_DIR)/include/gtest/internal/*.h
-
-GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
-
-TEST_OBJ = test/test_obj
-
-$(TEST_OBJ)/gtest-all.o : $(GTEST_SRCS_)
+$(GTEST_OBJ)/gtest-all.o : $(GTEST_SRCS_)
 	@mkdir -p $(@D)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
+	$(CXX) $(GTEST_FLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
             $(GTEST_DIR)/src/gtest-all.cc -o $@
 
-$(TEST_OBJ)/gtest_main.o : $(GTEST_SRCS_)
+$(GTEST_OBJ)/gtest_main.o : $(GTEST_SRCS_)
 	@mkdir -p $(@D)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
+	$(CXX) $(GTEST_FLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
             $(GTEST_DIR)/src/gtest_main.cc -o $@
 
-$(TEST_OBJ)/gtest.a : $(TEST_OBJ)/gtest-all.o
+$(GTEST_OBJ)/gtest.a : $(GTEST_OBJ)/gtest-all.o
 	@mkdir -p $(@D)
 	$(AR) $(ARFLAGS) $@ $^ -o $@
 
-$(TEST_OBJ)/gtest_main.a : $(TEST_OBJ)/gtest-all.o $(TEST_OBJ)/gtest_main.o
+$(GTEST_OBJ)/gtest_main.a : $(GTEST_OBJ)/gtest-all.o $(GTEST_OBJ)/gtest_main.o
 	@mkdir -p $(@D)
 	$(AR) $(ARFLAGS) $@ $^ -o $@
 
-obj/cube-test.o: $(TEST_PATH)/cube-test.cpp $(SRC_PATH)/cubeSolver.h $(GTEST_HEADERS)
+$(OBJ_PATH)/cube-test.o: $(TEST_PATH)/cube-test.cpp $(SRC_PATH)/cubeSolver.h $(GTEST_HEADERS)
 	@mkdir -p $(@D)
-	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
-
-obj/main.o: $(SRC_PATH)/main.cpp
-	@mkdir -p $(@D)
-	$(CXX) -c $(CXXFLAGS) $< -o $@
-
+	$(CXX) $(GTEST_FLAGS) $(CXXFLAGS) $(TEST_INCL) -c $< -o $@
 
 #######################################
 ######### EXECUTABLES #################
 #######################################
 
-Cube.exe: $(OBJS) obj/main.o
+Cube.exe: $(OBJS) $(OBJ_PATH)/main.o
 	$(CXX) -o $@ $^ $(LINKERFLAGS)
 
 CubeTest.exe: $(TEST_OBJS)
-	@$(CXX) $(CPPFLAGS) -o $@ $(CXXFLAGS) $^ $(LINKERFLAGS)
+	$(CXX) $(GTEST_FLAGS) -o $@ $(CXXFLAGS) $^ $(LINKERFLAGS)

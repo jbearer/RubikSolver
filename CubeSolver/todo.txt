@@ -1,6 +1,5 @@
 Todo:
 
-* remove CommProtocol and SerialComm
 * Convert makeshift test into real test
 * make into obj folder
 * update make dependencies everywhere
@@ -14,7 +13,7 @@ Todo:
 * Class for "cube turner"
 * `solve` take cube reference and modify it
 * Check if even permutation
-
+* abstract `main.cpp` methods into one function
 
 Testing
 	Add ASSERT_SOLVED

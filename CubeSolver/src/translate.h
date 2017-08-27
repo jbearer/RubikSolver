@@ -8,7 +8,6 @@
 #include <exception>
 #include <stdexcept>
 #include "cube.h"
-//#include "cubeSolver.h"
 
 using std::vector;
 using std::list;
