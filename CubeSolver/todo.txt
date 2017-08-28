@@ -29,9 +29,6 @@ CubeNums
 Image process functions:
 
     Main/Test:
-        closestColor(Scalar, ColorMap)
-        distance
-        unnamed (reads images, get face color mapping, builds cube)
 
     Startup.cpp:
         makeCube(colors)
@@ -39,6 +36,9 @@ Image process functions:
         getPallet (debug color maps)
         colorTour (get steps for color tour)
         faceColorMap(read images, create 2D vector of color maps)
+        closestColor(Scalar, ColorMap)
+        distance
+        getColorCandidates
 
     colorFromTemplate.cpp:
         parseColor (remove)

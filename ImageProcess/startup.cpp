@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <exception>
+#include <tuple>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include "turnCube.hpp"
@@ -131,100 +132,74 @@ std::vector<std::vector<Turn>> colorTour()
     return allTurns;
 }
 
+std::vector<std::tuple<Mat,Mat>> patternPictures()
+{
+    vector<Mat> pictures;
+
+    // set up video capture
+    VideoCapture v0(PORT0);
+    VideoCapture v1(PORT1);
+
+    v0.open(PORT0);
+    v1.open(PORT1);
+
+    if(!v0.isOpened() || !v1.isOpened())
+        throw std::runtime_error("ERROR: acquiring video feed");
+
+    // set up motors
+    pioInit();
+    setup();
+    digitalWrite(sleepPin,HIGH);
+
+    for (size_t i = 0; i < turnPatterns.size(); ++i) {
+
+        Mat img0;
+        Mat img1;
+
+        const std::vector<Turn>& turns = turnPatterns[i];
+        for (auto t : turns) {
+            turn(t);
+        }
+
+        std::cout << "taking picture " << i << std::endl;
+
+        // Wait 1 second for feed to buffer
+        startTime = std::clock();
+        while( (std::clock()-startTime) / (double)CLOCKS_PER_SEC < 1.0){
+            v0.read(img0);
+            v1.read(img1);
+
+            waitKey(1);
+        }
+
+        pictures.push_back(std::make_tuple(img0,img1));
+    }
+    digitalWrite(sleepPin, LOW);
+
+    return pictures;
+}
+
+void archivePatternPictures(const std::vector<std::tuple<Mat>>& pictures)
+{
+    for (size_t pic = 0; pic < pictures.size() ++ pic) {
+        imwrite("img0_" + std::to_string(i) + ".png", img0);
+        imwrite("img0_" + std::to_string(i) + ".png", img1);
+    }
+}
+
 std::vector<std::vector<ColorMap>> faceColorMap()
 {
     size_t numFaces = 6;
     size_t numFacelets = 8;
 
-    /*
-    // Initialize video ports
-    VideoCapture v0(PORT0);
-    VideoCapture v1(PORT1);
-    // Initialize matrices for current frame of videos for cameras
-    Mat img0;
-    Mat img1;
-    // Open the port
-    v0.open(PORT0);
-    v1.open(PORT1);
-    if(!v0.isOpened() || !v1.isOpened()){
-        //std::cout<<"ERROR ACQUIRING VIDEO FEED\n";
-        throw std::exception();
-        // std::cout<<"ERROR ACQUIRING VIDEO FEED\n";
-        // getchar();
-        // return -1;
-    }
-
-
-    // Initialize master mask
-    v0.read(img0);
-    v1.read(img1);
-    Mat mask0(img0.rows, img0.cols, CV_8UC3, Scalar(0,0,0));
-    Mat mask1(img1.rows, img1.cols, CV_8UC3, Scalar(0,0,0));
-    getMasterMask0(mask0);
-    getMasterMask1(mask1);
-    Mat result0;
-    Mat result1;
-
-
-
-    // Setup motors
-    pioInit();
-    setup();
-    digitalWrite(sleepPin,HIGH);
-
-    std::clock_t startTime;
-    */
     // assume the cube starts in the solved position
     // i.e. Up corresponds with Yellow, Front with Green, etc.
     std::vector<std::vector<ColorMap>> colorMaps(numFaces, std::vector<ColorMap>(numFacelets));
 
-    //std::vector<std::vector<Turn>> turnPatterns = colorTour();
-
     for (size_t i = 0; i < turnPatterns.size(); ++i){
-        // const std::vector<Turn>& turns = turnPatterns[i];
-        // for (auto t : turns) {
-        //     turn(t);
-        // }
-
-        // // std::cout << "Fix cube, then enter input to continue: ";
-        // // std::string input;
-        // // std::cin >> input;
-        // //
-
-
-        // std::cout <<"taking picture " << i << std::endl;
-
-        // // // Ncurses screen
-        // // int ncurseChar = 0;
-        // // initscr();
-        // // timeout(0);
-
-        // // Wait 1 second for feed to buffer
-        // startTime = std::clock();
-        // while( (std::clock()-startTime) / (double)CLOCKS_PER_SEC < 1.0){
-        // // while(!ncurseChar){
-        //     v0.read(img0);
-        //     v1.read(img1);
-
-        //     // bitwise_or(img0, mask0, result0); // bitwise_or to keep rest of img
-        //     // imshow("Full Mask 0", result0);
-        //     // bitwise_or(img1, mask1, result1); // bitwise_or to keep rest of img
-        //     // imshow("Full Mask 1", result1);
-
-        //     // ncurseChar=getch();
-        //     // if(ncurseChar>0) ncurseChar = 1;
-        //     // else ncurseChar = 0;
-
-        //     waitKey(1);
-        // }
-
-        // imwrite("img0_"+std::to_string(i)+".png", img0);
-        // imwrite("img1_"+std::to_string(i)+".png", img1);
 
         Mat img0 = imread("TestImages/img0_"+std::to_string(i)+".png");
         Mat img1 = imread("TestImages/img1_"+std::to_string(i)+".png");
-
-        // endwin();
 
         // Mat img0, img1;
         std::vector<std::vector<Scalar>> faceColors = getFaceColors(img0, img1, false);
@@ -256,7 +231,6 @@ std::vector<std::vector<ColorMap>> faceColorMap()
     std::cout << "getting pallet" << std::endl;
     getPallet(colorMaps);
 
-    //digitalWrite(sleepPin, LOW);
     return colorMaps;
 }
 
