@@ -24,10 +24,10 @@ Solver::Solver()
 	e1_ = std::move(std::unique_ptr<EndMap1>(new EndMap1));
 	e2_ = std::move(std::unique_ptr<EndMap2>(new EndMap2));
 
-	// HACK to add a destination to the end maps.  FRONT
+	// HACK to add a destination to the end maps.  F
 	// should be a dummy move instruction
-	(*e1_)[CubeNumsStep1()] = FRONT;
-	(*e2_)[CubeNumsStep2()] = FRONT;
+	(*e1_)[CubeNumsStep1()] = F;
+	(*e2_)[CubeNumsStep2()] = F;
 
 }
 

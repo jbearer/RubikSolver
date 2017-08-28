@@ -18,7 +18,7 @@ size_t cycleLength()
 	// create a solved cube
 	Cube cube, solvedCube;
 
-	std::vector<Turn> turns = {FRONT_INVERTED, RIGHT_INVERTED, DOWN_INVERTED};
+	std::vector<Turn> turns = {Fi, Ri, Di};
 	size_t num_cycles = 0;
 
 	do {
@@ -125,11 +125,11 @@ void translateTest2()
 void solveToCubeTest()
 {
 	Cube start;
-	start = Cube::turn(start, FRONT_INVERTED);
+	start = Cube::turn(start, Fi);
 
 	Cube end;
-	end = Cube::turn(end, RIGHT);
-	end = Cube::turn(end, UP);
+	end = Cube::turn(end, R);
+	end = Cube::turn(end, U);
 
 	Solver solver("ser/endMap_big.ser");
 
@@ -196,11 +196,7 @@ void allCycles()
 	}
 }
 
-std::vector<Turn> allTurns({
-		FRONT, RIGHT, BACK, LEFT, UP, DOWN,
-		FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
-		LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED
-	});
+std::vector<Turn> allTurns({F, R, B, L, U, D, Fi, Ri, Bi, Li, Ui, Di});
 
 int MAP_SIZE_SMALL = 5000;
 int MAP_SIZE_BIG = 10000000;
@@ -239,8 +235,8 @@ int main()
 	/*
 	Solver solver;
 	Cube c;
-	c = Cube::turn(c, FRONT);
-	c = Cube::turn(c, RIGHT);
+	c = Cube::turn(c, F);
+	c = Cube::turn(c, R);
 
 	std::vector<Turn> result = solver.solve(c);
 	for (auto t : result) {

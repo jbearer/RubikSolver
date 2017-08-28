@@ -66,15 +66,15 @@ L' R' D' U' B' F' F2 R L F2 U2 R' R' U2 F2 U2 R' R'
 
 static const std::vector<std::vector<Turn>> turnPatterns
 {
-    {LEFT_INVERTED, RIGHT_INVERTED, DOWN_INVERTED, UP_INVERTED, BACK_INVERTED, FRONT_INVERTED, FRONT_2, RIGHT, LEFT, BACK_2, UP_2, LEFT_INVERTED, LEFT_INVERTED, DOWN_2, FRONT_2, UP_2, RIGHT_INVERTED, RIGHT_INVERTED},
-    {FRONT_2, BACK_2, DOWN_2, BACK_2, FRONT_2, UP_2, LEFT_INVERTED, LEFT_INVERTED, BACK_2, FRONT_2, RIGHT_INVERTED, RIGHT_INVERTED},
-    {LEFT_INVERTED, RIGHT_INVERTED, BACK_INVERTED, FRONT_INVERTED, DOWN_INVERTED, UP_INVERTED, RIGHT, LEFT, FRONT_2, DOWN_2, FRONT_2, LEFT, RIGHT, UP_2, FRONT_2, LEFT, RIGHT, FRONT_2},
-    {LEFT_INVERTED, RIGHT_INVERTED, BACK_INVERTED, FRONT_INVERTED, DOWN_INVERTED, UP_INVERTED, RIGHT, RIGHT, DOWN_2, FRONT_2, DOWN_2, RIGHT_INVERTED, RIGHT_INVERTED, DOWN_2, FRONT_2, LEFT, RIGHT, FRONT_2},
-    {FRONT_2, BACK_2, DOWN_2, BACK_2, FRONT_2, UP_2, LEFT_INVERTED, LEFT_INVERTED, BACK_2, FRONT_2, RIGHT_INVERTED, RIGHT_INVERTED},
-    {LEFT_INVERTED, RIGHT_INVERTED, DOWN_INVERTED, UP_INVERTED, BACK_INVERTED, FRONT_INVERTED, BACK_2, RIGHT, LEFT, FRONT_2, UP_2, LEFT_INVERTED, LEFT_INVERTED, UP_2, FRONT_2, DOWN_2, RIGHT_INVERTED, RIGHT_INVERTED},
-    {LEFT_INVERTED, RIGHT_INVERTED, DOWN_INVERTED, UP_INVERTED, BACK_INVERTED, FRONT_INVERTED, FRONT_2, RIGHT, LEFT, BACK_2, UP_2, LEFT_INVERTED, LEFT_INVERTED, DOWN_2, FRONT_2, UP_2, RIGHT_INVERTED, RIGHT_INVERTED},
-    {LEFT_INVERTED, RIGHT_INVERTED, DOWN_INVERTED, UP_INVERTED, BACK_INVERTED, FRONT_INVERTED, FRONT_2, RIGHT, LEFT, FRONT_2, UP_2, RIGHT_INVERTED, RIGHT_INVERTED, UP_2, FRONT_2, UP_2, RIGHT_INVERTED, RIGHT_INVERTED},
-    {LEFT_INVERTED, RIGHT_INVERTED, DOWN_INVERTED, UP_INVERTED, BACK_INVERTED, FRONT_INVERTED, FRONT_2, RIGHT, LEFT, FRONT_2, UP_2, RIGHT_INVERTED, RIGHT_INVERTED, UP_2, FRONT_2, UP_2, RIGHT_INVERTED, RIGHT_INVERTED}
+    {Li, Ri, Di, Ui, Bi, Fi, F2, R, L, B2, U2, Li, Li, D2, F2, U2, Ri, Ri},
+    {F2, B2, D2, B2, F2, U2, Li, Li, B2, F2, Ri, Ri},
+    {Li, Ri, Bi, Fi, Di, Ui, R, L, F2, D2, F2, L, R, U2, F2, L, R, F2},
+    {Li, Ri, Bi, Fi, Di, Ui, R, R, D2, F2, D2, Ri, Ri, D2, F2, L, R, F2},
+    {F2, B2, D2, B2, F2, U2, Li, Li, B2, F2, Ri, Ri},
+    {Li, Ri, Di, Ui, Bi, Fi, B2, R, L, F2, U2, Li, Li, U2, F2, D2, Ri, Ri},
+    {Li, Ri, Di, Ui, Bi, Fi, F2, R, L, B2, U2, Li, Li, D2, F2, U2, Ri, Ri},
+    {Li, Ri, Di, Ui, Bi, Fi, F2, R, L, F2, U2, Ri, Ri, U2, F2, U2, Ri, Ri},
+    {Li, Ri, Di, Ui, Bi, Fi, F2, R, L, F2, U2, Ri, Ri, U2, F2, U2, Ri, Ri}
 };
 
 void getPallet(std::vector<std::vector<ColorMap>> colorMaps)
@@ -132,9 +132,19 @@ std::vector<std::vector<Turn>> colorTour()
     return allTurns;
 }
 
+void archivePatternPictures(const std::vector<std::tuple<Mat,Mat>>& pictures)
+{
+    for (size_t pic = 0; pic < pictures.size(); ++pic) {
+        const Mat& img0 = std::get<0>(pictures[pic]);
+        const Mat& img1 = std::get<1>(pictures[pic]);
+        imwrite("img0_" + std::to_string(pic) + ".png", img0);
+        imwrite("img0_" + std::to_string(pic) + ".png", img1);
+    }
+}
+
 std::vector<std::tuple<Mat,Mat>> patternPictures()
 {
-    vector<Mat> pictures;
+    vector<std::tuple<Mat,Mat>> pictures;
 
     // set up video capture
     VideoCapture v0(PORT0);
@@ -164,7 +174,7 @@ std::vector<std::tuple<Mat,Mat>> patternPictures()
         std::cout << "taking picture " << i << std::endl;
 
         // Wait 1 second for feed to buffer
-        startTime = std::clock();
+        std::clock_t startTime = std::clock();
         while( (std::clock()-startTime) / (double)CLOCKS_PER_SEC < 1.0){
             v0.read(img0);
             v1.read(img1);
@@ -174,17 +184,10 @@ std::vector<std::tuple<Mat,Mat>> patternPictures()
 
         pictures.push_back(std::make_tuple(img0,img1));
     }
+    archivePatternPictures(pictures);
     digitalWrite(sleepPin, LOW);
 
     return pictures;
-}
-
-void archivePatternPictures(const std::vector<std::tuple<Mat>>& pictures)
-{
-    for (size_t pic = 0; pic < pictures.size() ++ pic) {
-        imwrite("img0_" + std::to_string(i) + ".png", img0);
-        imwrite("img0_" + std::to_string(i) + ".png", img1);
-    }
 }
 
 std::vector<std::vector<ColorMap>> faceColorMap()

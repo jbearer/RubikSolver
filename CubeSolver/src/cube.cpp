@@ -11,14 +11,10 @@ using std::endl;
 using namespace CubeSolver;
 
 Turn CubeSolver::TURNS_STEP1[NUM_TURNS_STEP1] = {
-	FRONT, RIGHT, BACK, LEFT, UP, DOWN,
-	FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
-	LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED };
+	F, R, B, L, U, D, Fi, Ri, Bi, Li, Ui, Di };
 
 Turn CubeSolver::TURNS_STEP2[NUM_TURNS_STEP2] = {
-	FRONT_2, RIGHT, BACK_2, LEFT, UP_2, DOWN_2,
-	RIGHT_INVERTED, LEFT_INVERTED };
-
+	F2, R, B2, L, U2, D2, Ri, Li };
 
 // Vectors containing enums that correspond to faces
 const Cube::Edge_t Cube::FRONT_EDGES[EDGES_PER_FACE] = { YG, OG, WG, RG };
@@ -78,43 +74,43 @@ bool Cube::isSolved()
 
 Cube Cube::turn(Cube cube, Turn inputTurn) {
 	switch (inputTurn) {
-		case FRONT: cube.turnFrontOrBack(FRONT_EDGES, FRONT_CORNERS);
+		case F: cube.turnFrontOrBack(FRONT_EDGES, FRONT_CORNERS);
 			break;
-		case RIGHT: cube.turnRightOrLeft(RIGHT_EDGES, RIGHT_CORNERS);
+		case R: cube.turnRightOrLeft(RIGHT_EDGES, RIGHT_CORNERS);
 			break;
-		case BACK: cube.turnFrontOrBack(BACK_EDGES, BACK_CORNERS);
+		case B: cube.turnFrontOrBack(BACK_EDGES, BACK_CORNERS);
 			break;
-		case LEFT: cube.turnRightOrLeft(LEFT_EDGES, LEFT_CORNERS);
+		case L: cube.turnRightOrLeft(LEFT_EDGES, LEFT_CORNERS);
 			break;
-		case UP: cube.turnUpOrDown(UP_EDGES, UP_CORNERS);
+		case U: cube.turnUpOrDown(UP_EDGES, UP_CORNERS);
 			break;
-		case DOWN: cube.turnUpOrDown(DOWN_EDGES, DOWN_CORNERS);
-			break;
-
-		case FRONT_2: cube.turn2(FRONT);
-			break;
-		case RIGHT_2: cube.turn2(RIGHT);
-			break;
-		case BACK_2: cube.turn2(BACK);
-			break;
-		case LEFT_2: cube.turn2(LEFT);
-			break;
-		case UP_2: cube.turn2(UP);
-			break;
-		case DOWN_2: cube.turn2(DOWN);
+		case D: cube.turnUpOrDown(DOWN_EDGES, DOWN_CORNERS);
 			break;
 
-		case FRONT_INVERTED: cube.turnI(FRONT);
+		case F2: cube.turn2(F);
 			break;
-		case RIGHT_INVERTED: cube.turnI(RIGHT);
+		case R2: cube.turn2(R);
 			break;
-		case BACK_INVERTED: cube.turnI(BACK);
+		case B2: cube.turn2(B);
 			break;
-		case LEFT_INVERTED: cube.turnI(LEFT);
+		case L2: cube.turn2(L);
 			break;
-		case UP_INVERTED: cube.turnI(UP);
+		case U2: cube.turn2(U);
 			break;
-		case DOWN_INVERTED: cube.turnI(DOWN);
+		case D2: cube.turn2(D);
+			break;
+
+		case Fi: cube.turnI(F);
+			break;
+		case Ri: cube.turnI(R);
+			break;
+		case Bi: cube.turnI(B);
+			break;
+		case Li: cube.turnI(L);
+			break;
+		case Ui: cube.turnI(U);
+			break;
+		case Di: cube.turnI(D);
 			break;
 		default:
 			cube = Cube();

@@ -83,7 +83,7 @@ std::queue<CubeNumsStep1> CubeSolver::buildMap1(size_t mapSize)
 	Cube solvedCube;
 	CubeNumsStep1 solvedCubeNums;
 
-	MAKE_STEP1MAP[solvedCubeNums] = FRONT;
+	MAKE_STEP1MAP[solvedCubeNums] = F;
 
 	std::queue<CubeNumsStep1> cubeQueue;
 	cubeQueue.push(solvedCubeNums);
@@ -127,7 +127,7 @@ void CubeSolver::buildMap2(size_t mapSize)
 
 	Cube solvedCube;
 	CubeNumsStep2 solvedCubeNums;
-	MAKE_STEP2MAP[solvedCubeNums] = FRONT;
+	MAKE_STEP2MAP[solvedCubeNums] = F;
 
 	std::queue<CubeNumsStep2> cubeQueue;
 	cubeQueue.push(solvedCubeNums);

@@ -20,11 +20,7 @@ const std::string ENDMAP_SMALL_PATH = "ser/endMap_small.ser";
 const std::string ENDMAP_BIG_PATH = "ser/endMap_big.ser";
 const std::string TURNTABLES_PATH = "ser/turnTables.ser";
 
-std::vector<Turn> allTurns({
-		FRONT, RIGHT, BACK, LEFT, UP, DOWN,
-		FRONT_INVERTED, RIGHT_INVERTED, BACK_INVERTED,
-		LEFT_INVERTED, UP_INVERTED, DOWN_INVERTED
-	});
+std::vector<Turn> allTurns({F, R, B, L, U, D, Fi, Ri, Bi, Li, Ui, Di});
 
 int MAP_SIZE_SMALL = 5000;
 int MAP_SIZE_BIG = 10000000;
@@ -79,15 +75,15 @@ TEST_F(CubeTest, operator_equals)
 
 	ASSERT_TRUE(cube1 == cube2);
 
-	cube1 = Cube::turn(cube1, RIGHT);
+	cube1 = Cube::turn(cube1, R);
 	ASSERT_FALSE(cube1 == cube2);
 
-	cube2 = Cube::turn(cube2, RIGHT);
+	cube2 = Cube::turn(cube2, R);
 	ASSERT_TRUE(cube1 == cube2);
 
-	cube1 = Cube::turn(cube1, FRONT_2);
-	cube2 = Cube::turn(cube2, FRONT_INVERTED);
-	cube2 = Cube::turn(cube2, FRONT_INVERTED);
+	cube1 = Cube::turn(cube1, F2);
+	cube2 = Cube::turn(cube2, Fi);
+	cube2 = Cube::turn(cube2, Fi);
 	ASSERT_TRUE(cube1 == cube2);
 }
 
@@ -99,10 +95,10 @@ TEST_F(CubeTest, turns)
 
 	// should run R' D' R D exactly 6 times before solved
 	do {
-		cube = Cube::turn(cube, RIGHT_INVERTED);
-		cube = Cube::turn(cube, DOWN_INVERTED);
-		cube = Cube::turn(cube, RIGHT);
-		cube = Cube::turn(cube, DOWN);
+		cube = Cube::turn(cube, Ri);
+		cube = Cube::turn(cube, Di);
+		cube = Cube::turn(cube, R);
+		cube = Cube::turn(cube, D);
 		++numCycles;
 	} while (!cube.isSolved());
 
@@ -202,8 +198,8 @@ TEST(SolverTest, trivial)
 TEST(SolverTest, find_path_short)
 {
 	Cube cube;
-	cube = Cube::turn(cube, FRONT);
-	cube = Cube::turn(cube, RIGHT);
+	cube = Cube::turn(cube, F);
+	cube = Cube::turn(cube, R);
 
 	Solver small_solver;
 	small_solver.solve(cube);
@@ -215,11 +211,11 @@ TEST(SolverTest, find_path_long)
 {
 
 	Cube cube;
-	cube = Cube::turn(cube, FRONT);
-	cube = Cube::turn(cube, RIGHT);
-	cube = Cube::turn(cube, BACK);
-	cube = Cube::turn(cube, UP_INVERTED);
-	cube = Cube::turn(cube, RIGHT_2);
+	cube = Cube::turn(cube, F);
+	cube = Cube::turn(cube, R);
+	cube = Cube::turn(cube, B);
+	cube = Cube::turn(cube, Ui);
+	cube = Cube::turn(cube, R2);
 
 	Solver small_solver;
 	small_solver.solve(cube);
@@ -230,9 +226,9 @@ TEST(SolverTest, find_path_long)
 TEST(SolverTest, lookup_path_short)
 {
 	Cube cube;
-	cube = Cube::turn(cube, FRONT);
-	cube = Cube::turn(cube, BACK);
-	cube = Cube::turn(cube, UP);
+	cube = Cube::turn(cube, F);
+	cube = Cube::turn(cube, B);
+	cube = Cube::turn(cube, U);
 
 	Solver solver(ENDMAP_SMALL_PATH);
 
@@ -244,13 +240,13 @@ TEST(SolverTest, find_and_lookup_path)
 {
 	Cube cube;
 
-	cube = Cube::turn(cube, DOWN);
-	cube = Cube::turn(cube, RIGHT);
-	cube = Cube::turn(cube, FRONT_INVERTED);
-	cube = Cube::turn(cube, UP_INVERTED);
-	cube = Cube::turn(cube, FRONT_INVERTED);
-	cube = Cube::turn(cube, BACK);
-	cube = Cube::turn(cube, LEFT);
+	cube = Cube::turn(cube, D);
+	cube = Cube::turn(cube, R);
+	cube = Cube::turn(cube, Fi);
+	cube = Cube::turn(cube, Ui);
+	cube = Cube::turn(cube, Fi);
+	cube = Cube::turn(cube, B);
+	cube = Cube::turn(cube, L);
 
 	Solver solver(ENDMAP_SMALL_PATH);
 	solver.solve(cube);

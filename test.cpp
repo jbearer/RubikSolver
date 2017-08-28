@@ -18,7 +18,6 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-using namespace cv;
 using namespace CubeSolver;
 
 int main()
@@ -28,12 +27,12 @@ int main()
 
     cout << "reading scrambled images" << endl;
 
-    Mat img0, img1;
-    img0 = imread("TestImages/scrambledA0.png");
-    img1 = imread("TestImages/scrambledA1.png");
+    cv::Mat img0, img1;
+    img0 = cv::imread("TestImages/scrambledA0.png");
+    img1 = cv::imread("TestImages/scrambledA1.png");
 
     // hold the captured BGR values
-    vector<vector<Scalar>> faceColors = getFaceColors(img0, img1, false);
+    vector<vector<cv::Scalar>> faceColors = getFaceColors(img0, img1, false);
 
     vector<vector<vector<Color>>> colorCandidates = getColorCandidates(faceColors, colorMap);
 
@@ -41,9 +40,8 @@ int main()
 
     vector<Turn> steps
     {
-        FRONT_INVERTED, DOWN_INVERTED, FRONT, BACK_INVERTED, RIGHT_INVERTED, BACK,
-        DOWN_INVERTED, UP_INVERTED, RIGHT, FRONT_INVERTED, FRONT_2, RIGHT_INVERTED,
-        DOWN_2, LEFT, BACK_2, DOWN_2, BACK_2, RIGHT, BACK_2, LEFT_2, BACK_2, UP_2, FRONT_2
+        Fi, Di, F, Bi, Ri, B, Di, Ui, R, Fi, F2, Ri,
+        D2, L, B2, D2, B2, R, B2, L2, B2, U2, F2
     };
 
     for (auto t : steps) {

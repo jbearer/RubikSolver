@@ -68,45 +68,45 @@ void step(int motor, int dir, int turns) {
 
 void turn(Turn t)
 {
-  // LEFT = clockwise
+  // L = clockwise
   // Green = front
   // White = Bottom
   switch(t){
-    case FRONT:
+    case F:
       step(1,CW,1); break;
-    case RIGHT:
+    case R:
       step(5,CW,1); break;
-    case DOWN:
+    case D:
       step(3,CW,1); break;
-    case BACK:
+    case B:
       step(4,CW,1); break;
-    case LEFT:
+    case L:
       step(2,CW,1); break;
-    case UP:
+    case U:
       step(0,CW,1); break;
-    case FRONT_INVERTED:
+    case Fi:
       step(1,CCW,1); break;
-    case RIGHT_INVERTED:
+    case Ri:
       step(5,CCW,1); break;
-    case DOWN_INVERTED:
+    case Di:
       step(3,CCW,1); break;
-    case BACK_INVERTED:
+    case Bi:
       step(4,CCW,1); break;
-    case LEFT_INVERTED:
+    case Li:
       step(2,CCW,1); break;
-    case UP_INVERTED:
+    case Ui:
       step(0,CCW,1); break;
-    case FRONT_2:
+    case F2:
       step(1,CW,2); break;
-    case RIGHT_2:
+    case R2:
       step(5,CW,2); break;
-    case DOWN_2:
+    case D2:
       step(3,CW,2); break;
-    case BACK_2:
+    case B2:
       step(4,CW,2); break;
-    case LEFT_2:
+    case L2:
       step(2,CW,2); break;
-    case UP_2:
+    case U2:
       step(0,CW,2); break;
     // default:
     //   // std::cerr << "ERROR: Invalid Turn enum passed to turn()" << std::endl;

@@ -8,34 +8,41 @@
 
 namespace CubeSolver {
 
+	/**
+	 * @brief      Represents a turn of a rubik's cube
+	 * @detail     Follows standard labelling procedure.
+	 * 			   L = Left, R = Right, U = Up, D = Down,
+	 * 			   F = Front, B = Back,
+	 * 			   *2 means turn twice, *i means counterclockwise
+	 */
 	enum Turn {
-	    LEFT = 0,
-	    RIGHT = 1,
-	    UP = 2,
-	    DOWN = 3,
-	    FRONT = 4,
-	    BACK = 5,
+	    L = 0,
+	    R = 1,
+	    U = 2,
+	    D = 3,
+	    F = 4,
+	    B = 5,
 
-	    LEFT_2 = 6,
-	    RIGHT_2 = 7,
-	    UP_2 = 8,
-	    DOWN_2 = 9,
-	    FRONT_2 = 10,
-	    BACK_2 = 11,
+	    L2 = 6,
+	    R2 = 7,
+	    U2 = 8,
+	    D2 = 9,
+	    F2 = 10,
+	    B2 = 11,
 
-	    LEFT_INVERTED = 12,
-	    RIGHT_INVERTED = 13,
-	    UP_INVERTED = 14,
-	    DOWN_INVERTED = 15,
-	    FRONT_INVERTED = 16,
-	    BACK_INVERTED = 17
+	    Li = 12,
+	    Ri = 13,
+	    Ui = 14,
+	    Di = 15,
+	    Fi = 16,
+	    Bi = 17
 	};
 
 	/**
 	 * @brief      Return the inverse Turn
 	 *
-	 * @param[in]  For example, oppTurn(FRONT) = FRONT_INVERTED
-	 *			   and oppTurn(FRONT_2) = FRONT_2
+	 * @param[in]  For example, oppTurn(F) = Fi
+	 *			   and oppTurn(F2) = F2
 	 *
 	 * @return     Returns a Turn
 	 */
