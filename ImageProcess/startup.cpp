@@ -19,6 +19,10 @@
 using namespace CubeSolver;
 using namespace cv;
 
+using std::cout;
+using std::endl;
+using std::vector;
+
 #define PORT0 0
 #define PORT1 1
 
@@ -217,8 +221,8 @@ std::vector<std::vector<ColorMap>> faceColorMap()
         // imwrite("img0_"+std::to_string(i)+".png", img0);
         // imwrite("img1_"+std::to_string(i)+".png", img1);
 
-        Mat img0 = imread("../TestImages/img0_"+std::to_string(i)+".png");
-        Mat img1 = imread("../TestImages/img1_"+std::to_string(i)+".png");
+        Mat img0 = imread("TestImages/img0_"+std::to_string(i)+".png");
+        Mat img1 = imread("TestImages/img1_"+std::to_string(i)+".png");
 
         // endwin();
 
@@ -255,6 +259,65 @@ std::vector<std::vector<ColorMap>> faceColorMap()
     //digitalWrite(sleepPin, LOW);
     return colorMaps;
 }
+
+float distance(Scalar s1, Scalar s2)
+{
+    return cv::norm(s1, s2, NORM_L2);
+}
+
+vector<Color> closestColor(Scalar rgb, ColorMap colorMap)
+{
+    int threshold = 25;
+
+    float min_dist = std::numeric_limits<float>::max();
+    Color min_color;
+
+    for (auto pair : colorMap) {
+        float this_distance = distance(rgb, pair.second);
+        // cout << "  " << pair.first << ": " << rgb << "," << pair.second << " = " << this_distance << endl;
+        if (this_distance < min_dist) {
+            min_dist = this_distance;
+            min_color = pair.first;
+        }
+    }
+
+    // find all the colors that are pretty close
+    vector<Color> min_colors;
+    for (auto pair : colorMap) {
+        if (distance(rgb, pair.second) < min_dist + threshold) {
+            min_colors.push_back(pair.first);
+        }
+    }
+
+    // debug info
+    if (min_colors.size() > 1) {
+        cout << "  found " << min_colors.size() << " candidates" << endl;
+    }
+
+    return min_colors;
+}
+
+vector<vector<vector<Color>>> getColorCandidates(const vector<vector<Scalar>>& faceColors, const vector<vector<ColorMap>>& colorMap)
+{
+    // hold the color candidates
+    vector<vector<vector<Color>>> cubeColors(6, vector<vector<Color>>(8));
+
+    cout << "filling out list of color candidates" << endl;
+
+    for (size_t face = 0; face < faceColors.size(); ++face) {
+        for (size_t facelet = 0; facelet < 8; ++facelet) {
+            vector<Color> close_colors = closestColor(faceColors[face][facelet], colorMap[face][facelet]);
+            cubeColors[face][facelet] = close_colors;
+            cout << "face " << face << " facelet " << facelet << " color ";
+            for (auto color : close_colors) {
+                cout << color << " ";
+            } cout << endl;
+
+        }
+    }
+    return cubeColors;
+}
+
 
 // TODO: serialize the color maps
 

@@ -2,8 +2,8 @@ Todo:
 
 * Convert makeshift test into real test
 * make into obj folder
+* better logging
 * update make dependencies everywhere
-* Filter out makefile
 * Take all pictures first, then create color mappings
 * Use variables to condense makefiles
 * Use absolute path for image files
@@ -14,6 +14,7 @@ Todo:
 * `solve` take cube reference and modify it
 * Check if even permutation
 * abstract `main.cpp` methods into one function
+* switch to cmake
 
 Testing
 	Add ASSERT_SOLVED
@@ -25,6 +26,30 @@ CubeNums
 	Template
 
 
+Image process functions:
+
+    Main/Test:
+        closestColor(Scalar, ColorMap)
+        distance
+        unnamed (reads images, get face color mapping, builds cube)
+
+    Startup.cpp:
+        makeCube(colors)
+        colorPatterns/turnPatterns
+        getPallet (debug color maps)
+        colorTour (get steps for color tour)
+        faceColorMap(read images, create 2D vector of color maps)
+
+    colorFromTemplate.cpp:
+        parseColor (remove)
+        ScalarBGR2HSV
+        median(channel)
+        averageColor(get average color of a facelet)
+        averageColor2(get average color of facelet with two parts)
+        findFaceColors (remove)
+        getFaceColors(get the average colors of each face)
+        getMasterMask0
+        getMasterMask1
 
 
 

@@ -21,44 +21,6 @@ using std::endl;
 using namespace cv;
 using namespace CubeSolver;
 
-float distance(Scalar s1, Scalar s2)
-{
-    return cv::norm(s1, s2, NORM_L2);
-}
-
-vector<Color> closestColor(Scalar rgb, ColorMap colorMap)
-{
-    int threshold = 25;
-
-    float min_dist = std::numeric_limits<float>::max();
-    Color min_color;
-
-    for (auto pair : colorMap) {
-        float this_distance = distance(rgb, pair.second);
-        // cout << "  " << pair.first << ": " << rgb << "," << pair.second << " = " << this_distance << endl;
-        if (this_distance < min_dist) {
-            min_dist = this_distance;
-            min_color = pair.first;
-        }
-    }
-
-    // find all the colors that are pretty close
-    vector<Color> min_colors;
-    for (auto pair : colorMap) {
-        if (distance(rgb, pair.second) < min_dist + threshold) {
-            min_colors.push_back(pair.first);
-        }
-    }
-
-    // debug info
-    if (min_colors.size() > 1) {
-        cout << "  found " << min_colors.size() << " candidates" << endl;
-    }
-
-    return min_colors;
-}
-
-
 int main()
 {
     cout << "initializing color map" << endl;
@@ -67,30 +29,15 @@ int main()
     cout << "reading scrambled images" << endl;
 
     Mat img0, img1;
-    img0 = imread("../TestImages/scrambledA0.png");
-    img1 = imread("../TestImages/scrambledA1.png");
+    img0 = imread("TestImages/scrambledA0.png");
+    img1 = imread("TestImages/scrambledA1.png");
 
     // hold the captured BGR values
     vector<vector<Scalar>> faceColors = getFaceColors(img0, img1, false);
-    // hold the color candidates
-    vector<vector<vector<Color>>> cubeColors(6, vector<vector<Color>>(8, vector<Color>(1)));
 
-    cout << "filling out list of color candidates" << endl;
+    vector<vector<vector<Color>>> colorCandidates = getColorCandidates(faceColors, colorMap);
 
-    for (size_t face = 0; face < faceColors.size(); ++face) {
-        for (size_t facelet = 0; facelet < 8; ++facelet) {
-            // TODO: Austin sync EasyCube facelet order with getFaceColors facelet order
-            vector<Color> close_colors = closestColor(faceColors[face][facelet], colorMap[face][facelet]);
-            cubeColors[face][facelet] = close_colors;
-            cout << "face " << face << " facelet " << facelet << " color ";
-            for (auto color : close_colors) {
-                cout << color << " ";
-            } cout << endl;
-
-        }
-    }
-
-    Cube cube = translate(cubeColors);
+    Cube cube = translate(colorCandidates);
 
     vector<Turn> steps
     {

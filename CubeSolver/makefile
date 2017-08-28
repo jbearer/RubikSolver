@@ -37,7 +37,6 @@ TARGETS = Cube.exe CubeTest.exe
 GTEST_FLAGS += -DGTEST_HAS_PTHREAD=0
 
 # Build executables:
-
 all: $(TARGETS)
 
 # build and run tests:
@@ -65,48 +64,39 @@ again: clean all
 ############# SRC FILES ###############
 #######################################
 
-SRC_RECIPE = @$(CXX) -c $(CXXFLAGS) $< -o $@
+SRC_RECIPE = @mkdir -p $(@D); $(CXX) -c $(CXXFLAGS) $< -o $@
 
 $(OBJ_PATH)/turn.o: $(SRC_PATH)/turn.cpp $(SRC_PATH)/turn.h
-	@mkdir -p $(@D)
 	$(SRC_RECIPE)
 
 $(OBJ_PATH)/cube.o: $(SRC_PATH)/cube.cpp $(SRC_PATH)/cube.h $(SRC_PATH)/turn.h
-	@mkdir -p $(@D)
 	$(SRC_RECIPE)
 
 $(OBJ_PATH)/translate.o: $(SRC_PATH)/translate.cpp $(SRC_PATH)/translate.h \
 		$(SRC_PATH)/cube.h
-	@mkdir -p $(@D)
 	$(SRC_RECIPE)
 
 $(OBJ_PATH)/cubeEncoder.o: $(SRC_PATH)/cubeEncoder.cpp $(SRC_PATH)/cubeEncoder.h \
 		$(SRC_PATH)/cube.h
-	@mkdir -p $(@D)
 	$(SRC_RECIPE)
 
 $(OBJ_PATH)/turn_tables.o: $(SRC_PATH)/turn_tables.cpp $(SRC_PATH)/turn_tables.h \
 		$(SRC_PATH)/cube.h $(SRC_PATH)/turn.h
-	@mkdir -p $(@D)
 	$(SRC_RECIPE)
 
 $(OBJ_PATH)/end_maps.o: $(SRC_PATH)/end_maps.cpp $(SRC_PATH)/cubeSolver.h
-	@mkdir -p $(@D)
 	$(SRC_RECIPE)
 
 $(OBJ_PATH)/cube_nums.o: $(SRC_PATH)/cube_nums.cpp $(SRC_PATH)/cube_nums.h \
 		$(SRC_PATH)/cubeSolver.h $(SRC_PATH)/cube.h
-	@mkdir -p $(@D)
 	$(SRC_RECIPE)
 
 $(OBJ_PATH)/cubeSolver.o: $(SRC_PATH)/cubeSolver.cpp $(SRC_PATH)/cubeSolver.h \
 		$(SRC_PATH)/cube.h $(SRC_PATH)/cube_nums.h $(SRC_PATH)/cubeEncoder.h \
 		$(SRC_PATH)/turn.h $(SRC_PATH)/turn_tables.h $(SRC_PATH)/translate.h
-	@mkdir -p $(@D)
 	$(SRC_RECIPE)
 
 $(OBJ_PATH)/main.o: $(SRC_PATH)/main.cpp
-	@mkdir -p $(@D)
 	$(SRC_RECIPE)
 
 #####################################
