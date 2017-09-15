@@ -77,11 +77,6 @@ std::deque<Turn> Solver::solveStep1DFS(Cube cube)
 
 bool Solver::solveStep1Helper(int depth, const CubeNumsStep1& curr, std::deque<Turn>& result)
 {
-	if (SOLVE_STEP_1_COUNTER % 100000 == 0) {
-		cout << "step 1: " << SOLVE_STEP_1_COUNTER << endl;
-		++SOLVE_STEP_1_COUNTER;
-	}
-
 	if (depth == 0) {
 		if (e1_->count(curr) > 0) {
 			//cout << "found it" << endl;
@@ -174,11 +169,8 @@ bool Solver::solveStep2Helper(int depth, const CubeNumsStep2& curr, std::deque<T
 
 std::deque<Turn> CubeSolver::turnsFromEndMap1(CubeNumsStep1 start, std::unique_ptr<EndMap1>& e1)
 {
-	//cout << "end maps" << endl;
 	std::deque<Turn> path;
 	CubeNumsStep1 currNums = start;
-	//cout << "finding turns" << endl;
-	//start.print();
 	int pathLength = 0;
 
 	while (currNums != CubeNumsStep1()) {

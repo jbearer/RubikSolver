@@ -37,14 +37,51 @@ public:
 	// Construct end maps of a specified size
 	Solver(size_t map1, size_t map2);
 
+	/**
+	 * @brief      Solves a rubik's cube
+	 *
+	 * @param      cube  The scrambled cube
+	 *
+	 * @return     Vector of turns used to solve the cube
+	 */
 	std::vector<Turn> solve(Cube& cube);
 
+	/**
+	 * @brief      Outputs the turn sequence to get from the start cube
+	 *  		   to the end cube
+	 *
+	 * @param      start  The start
+	 * @param[in]  end    The end
+	 *
+	 * @return     Vector of turns used to transform the cube
+	 */
 	std::vector<Turn> solveToCube(Cube& start, Cube end);
 
 private:
+	/**
+	 * @brief      Outputs the sequence of moves to solve step 1
+	 *
+	 * @param[in]  cube  The cube
+	 *
+	 * @return     A deque of turns to solve this phase
+	 * @details    Encodes the cube as a set of three "CubeNums"
+	 * 			   Uses iterative deepening DFS to turn the cube until it
+	 * 			   reaches one of the precomputed cubes from the end maps.
+	 */
 	std::deque<Turn> solveStep1DFS(Cube cube);
 	bool solveStep1Helper(int depth, const CubeNumsStep1& curr, std::deque<Turn>& result);
 
+	/**
+	 * @brief      Outputs the sequence of moves from step 2
+	 *
+	 * @param[in]  cube  The cube
+	 *
+	 * @return     A deque to of turns to solve this phase
+	 * @details    Like solveStep1DFS, uses an IDDFS to solve the cube.
+	 * 			   The solution space for step 2 is much larger, so even with
+	 * 			   a larger end map than step 1, results here can take up to
+	 * 			   0.1 seconds (about 100 times longer than step 1)
+	 */
 	std::deque<Turn> solveStep2DFS(Cube cube);
 	bool solveStep2Helper(int depth, const CubeNumsStep2& curr, std::deque<Turn>& result);
 
@@ -53,6 +90,17 @@ private:
 
 };
 
+/**
+ * @brief      Extract the turns to the solution from the end maps
+ *
+ * @param[in]  start    The start cube
+ * @param      endMap1  The EndMap
+ *
+ * @return     A deque of turns to the solved cube
+ * @details    Each entry in an end map stores the turn to get to the next
+ * 			   cube.  So this method follows that sequence of turns, each cube
+ * 			   one step closer to the solution, until the cube is solved.
+ */
 std::deque<Turn> turnsFromEndMap1(CubeNumsStep1 start, std::unique_ptr<EndMap1>& endMap1);
 std::deque<Turn> turnsFromEndMap2(CubeNumsStep2 start, std::unique_ptr<EndMap2>& endMap2);
 
