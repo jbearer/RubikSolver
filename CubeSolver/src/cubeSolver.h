@@ -32,7 +32,10 @@ public:
 	// Constructors
 	// Default constructor has no end maps
 	Solver();
+	// Read in end maps from a file
 	Solver(std::string file);
+	// Construct end maps of a specified size
+	Solver(size_t map1, size_t map2);
 
 	std::vector<Turn> solve(Cube& cube);
 
@@ -63,10 +66,10 @@ void readEndMaps(std::string pathToFile, std::unique_ptr<EndMap1>& endMap1, std:
 ////////////////////////////////
 
 void buildEndMaps( std::string pathToFile, size_t map1Size = 5000, size_t map2Size = 5000);
-std::queue<CubeNumsStep1> buildMap1(size_t mapSize);
-void buildMap2(size_t mapSize);
+void buildMap1(std::unique_ptr<EndMap1>& map, size_t mapSize);
+void buildMap2(std::unique_ptr<EndMap2>& map, size_t mapSize);
 
-void archiveEndMaps(std::string pathToFile);
+void archiveEndMaps(std::unique_ptr<EndMap1>& e1, std::unique_ptr<EndMap2>& e2, std::string pathToFile);
 
 
 } // end namespace CubeSolver

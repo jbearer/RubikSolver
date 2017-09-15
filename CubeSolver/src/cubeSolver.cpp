@@ -39,6 +39,15 @@ Solver::Solver(std::string file)
 	readEndMaps(file, e1_, e2_);
 }
 
+Solver::Solver(size_t map1, size_t map2)
+{
+	readTurnTables();
+	e1_ = std::move(std::unique_ptr<EndMap1>(new EndMap1));
+	e2_ = std::move(std::unique_ptr<EndMap2>(new EndMap2));
+	buildMap1(e1_, map1);
+	buildMap2(e2_, map2);
+}
+
 int SOLVE_STEP_1_COUNTER = 1;
 std::deque<Turn> Solver::solveStep1DFS(Cube cube)
 {

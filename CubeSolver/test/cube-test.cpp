@@ -161,30 +161,31 @@ TEST_F(CubeTest, cube_nums_sequence2)
 	}
 }
 
-TEST(EndMapTest, endMap)
-{
-	std::unique_ptr<EndMap1> endMap1(new EndMap1);
-	std::unique_ptr<EndMap2> endMap2(new EndMap2);
-	readEndMaps(ENDMAP_SMALL_PATH, endMap1, endMap2);
-
-	std::queue<CubeNumsStep1> cubeQueue = buildMap1(MAP_SIZE_SMALL);
-
-	for (size_t i = 0; i < cubeQueue.size(); ++i) {
-		CubeNumsStep1 cubeNums = cubeQueue.front();
-		turnsFromEndMap1(cubeNums, endMap1);
-		cubeQueue.pop();
-	}
-}
-
 TEST(EndMapTest, turnsFromEndMap_trivial)
 {
 	std::unique_ptr<EndMap1> endMap1(new EndMap1);
-	std::unique_ptr<EndMap2> endMap2(new EndMap2);
-	readEndMaps(ENDMAP_SMALL_PATH, endMap1, endMap2);
+	buildMap1(endMap1, MAP_SIZE_SMALL);
 
-	Cube cube;
-	CubeNumsStep1 cubeNums(cube);
+	CubeNumsStep1 cubeNums;		// initialize to solved cube
 	turnsFromEndMap1(cubeNums, endMap1);
+}
+
+TEST(EndMapTest, endMap)
+{
+	std::unique_ptr<EndMap1> endMap1(new EndMap1);
+	buildMap1(endMap1, MAP_SIZE_SMALL);
+
+	// confirm that the end maps have all cubes
+	// two turns away from a solved cube
+	for (auto t1 : allTurns) {
+		for (auto t2 : allTurns) {
+			Cube cube;
+			cube = Cube::turn(cube, t1);
+			cube = Cube::turn(cube, t2);
+			CubeNumsStep1 nums(cube);
+			turnsFromEndMap1(nums, endMap1);
+		}
+	}
 }
 
 TEST(SolverTest, trivial)
@@ -230,7 +231,7 @@ TEST(SolverTest, lookup_path_short)
 	cube = Cube::turn(cube, B);
 	cube = Cube::turn(cube, U);
 
-	Solver solver(ENDMAP_SMALL_PATH);
+	Solver solver(MAP_SIZE_SMALL, MAP_SIZE_SMALL);
 
 	solver.solve(cube);
 	ASSERT_TRUE(cube.isSolved());
@@ -248,7 +249,7 @@ TEST(SolverTest, find_and_lookup_path)
 	cube = Cube::turn(cube, B);
 	cube = Cube::turn(cube, L);
 
-	Solver solver(ENDMAP_SMALL_PATH);
+	Solver solver(MAP_SIZE_SMALL, MAP_SIZE_SMALL);
 	solver.solve(cube);
 
 	// assert that the cube is now solved

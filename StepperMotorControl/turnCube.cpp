@@ -73,41 +73,41 @@ void turn(Turn t)
   // White = Bottom
   switch(t){
     case F:
-      step(1,CW,1); break;
+      step(FRONT_MOTOR,CW,1); break;
     case R:
-      step(5,CW,1); break;
+      step(RIGHT_MOTOR,CW,1); break;
     case D:
-      step(3,CW,1); break;
+      step(DOWN_MOTOR,CW,1); break;
     case B:
-      step(4,CW,1); break;
+      step(BACK_MOTOR,CW,1); break;
     case L:
-      step(2,CW,1); break;
+      step(LEFT_MOTOR,CW,1); break;
     case U:
-      step(0,CW,1); break;
+      step(UP_MOTOR,CW,1); break;
     case Fi:
-      step(1,CCW,1); break;
+      step(FRONT_MOTOR,CCW,1); break;
     case Ri:
-      step(5,CCW,1); break;
+      step(RIGHT_MOTOR,CCW,1); break;
     case Di:
-      step(3,CCW,1); break;
+      step(DOWN_MOTOR,CCW,1); break;
     case Bi:
-      step(4,CCW,1); break;
+      step(BACK_MOTOR,CCW,1); break;
     case Li:
-      step(2,CCW,1); break;
+      step(LEFT_MOTOR,CCW,1); break;
     case Ui:
-      step(0,CCW,1); break;
+      step(UP_MOTOR,CCW,1); break;
     case F2:
-      step(1,CW,2); break;
+      step(FRONT_MOTOR,CW,2); break;
     case R2:
-      step(5,CW,2); break;
+      step(RIGHT_MOTOR,CW,2); break;
     case D2:
-      step(3,CW,2); break;
+      step(DOWN_MOTOR,CW,2); break;
     case B2:
-      step(4,CW,2); break;
+      step(BACK_MOTOR,CW,2); break;
     case L2:
-      step(2,CW,2); break;
+      step(LEFT_MOTOR,CW,2); break;
     case U2:
-      step(0,CW,2); break;
+      step(UP_MOTOR,CW,2); break;
     // default:
     //   // std::cerr << "ERROR: Invalid Turn enum passed to turn()" << std::endl;
     //   break;
